@@ -1,0 +1,18 @@
+# YAML 1.2
+---
+cff-version: "1.2.0"
+title: "scikit-talk"
+authors:
+  -
+    family-names: Vreede
+    given-names: Barbara
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+date-released: 20??-MM-DD
+doi: <insert your DOI here>
+version: "0.1.0"
+repository-code: "git@github.com:elpaco-escience/scikit-talk"
+keywords:
+  - conversation
+  - keyword2
+message: "If you use this software, please cite it using these metadata."
+license: Apache-2.0
