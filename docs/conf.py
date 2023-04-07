@@ -61,7 +61,7 @@ todo_include_todos = False
 
 # -- Use autoapi.extension to run sphinx-apidoc -------
 
-autoapi_dirs = ['../scikit-talk']
+autoapi_dirs = ['../sktalk']
 
 # -- Options for HTML output ----------------------------------------------
 
