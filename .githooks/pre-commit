@@ -1,5 +1,8 @@
 #!/bin/sh
 
+### To enable this githook, run:
+### git config --local core.hooksPath .githooks
+
 echo "Script $0 triggered ..."
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -17,13 +20,13 @@ fi
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 echo "Starting isort analysis using configuration from setup.cfg..."
 
-# recursively run isort on scikit-talk/ directory, don't try to automatically fix anything
-isort --recursive --check-only scikit-talk
+# recursively run isort on sktalk/ directory, don't try to automatically fix anything
+isort --check-only sktalk
 
 if [ $? != "0" ]; then
     echo "Commit aborted."
     echo "  Run 'isort --check-only --diff scikit-talk' to see what's wrong."
-    echo "  Run 'isort scikit-talk' to let isort fix problems automatically."
+    echo "  Run 'isort sktalk' to let isort fix problems automatically."
     exit 1
 fi
 

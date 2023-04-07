@@ -19,7 +19,7 @@ def hello(name):
     Example:
         This function can be called with `Jane Smith` as argument using
 
-        >>> from scikit-talk.my_module import hello
+        >>> from sktalk.my_module import hello
         >>> hello('Jane Smith')
         'Hello Jane Smith!'
 
