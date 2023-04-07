@@ -2,7 +2,7 @@
 """
 import pytest
 
-from scikit-talk.my_module import hello
+from sktalk.my_module import hello
 
 
 def test_hello():

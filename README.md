@@ -15,10 +15,12 @@
 | Coverage                           | [![workflow scc badge](https://sonarcloud.io/api/project_badges/measure?project=elpaco-escience_scikit-talk&metric=coverage)](https://sonarcloud.io/dashboard?id=elpaco-escience_scikit-talk) |
 | Documentation                      | [![Documentation Status](https://readthedocs.org/projects/scikit-talk/badge/?version=latest)](https://scikit-talk.readthedocs.io/en/latest/?badge=latest) |
 | **GitHub Actions**                 | &nbsp; |
-| Build                              | [![build](git@github.com:elpaco-escience/scikit-talk/actions/workflows/build.yml/badge.svg)](git@github.com:elpaco-escience/scikit-talk/actions/workflows/build.yml) |
-| Citation data consistency               | [![cffconvert](git@github.com:elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml/badge.svg)](git@github.com:elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml) |
-| SonarCloud                         | [![sonarcloud](git@github.com:elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml/badge.svg)](git@github.com:elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml) |
-| MarkDown link checker              | [![markdown-link-check](git@github.com:elpaco-escience/scikit-talk/actions/workflows/markdown-link-check.yml/badge.svg)](git@github.com:elpaco-escience/scikit-talk/actions/workflows/markdown-link-check.yml) |
+| Build                              | [![build](https://github.com/elpaco-escience/scikit-talk/actions/workflows/build.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/build.yml) |
+| SonarCloud                         | [![sonarcloud](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml) |
+| Citation data consistency               | [![cffconvert](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml) |
+
+
+
 
 ## How to use scikit-talk
 
