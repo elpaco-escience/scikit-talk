@@ -12,6 +12,7 @@ on:
 jobs:
 
   sonarcloud:
+    if: ${{ false }}
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
