@@ -16,7 +16,10 @@
 | Documentation                      | [![Documentation Status](https://readthedocs.org/projects/scikit-talk/badge/?version=latest)](https://scikit-talk.readthedocs.io/en/latest/?badge=latest) |
 | **GitHub Actions**                 | &nbsp; |
 | Build                              | [![build](https://github.com/elpaco-escience/scikit-talk/actions/workflows/build.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/build.yml) |
-| SonarCloud                         | [![sonarcloud](ghttps://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml) |
+| SonarCloud                         | [![sonarcloud](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml) |
+| Citation data consistency               | [![cffconvert](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml) |
+
+
 
 
 ## How to use scikit-talk
