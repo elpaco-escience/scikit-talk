@@ -1,10 +1,10 @@
 ---
-title: 'Next step: Sonarcloud integration'
+title: Sonarcloud integration
 ---
 
 Continuous code quality can be handled by [Sonarcloud](https://sonarcloud.io/). This repository is configured to use Sonarcloud to perform quality analysis and code coverage report on each push.
 
-In order to configure Sonarcloud analysis [GitHub Action workflow](git@github.com:elpaco-escience/scikit-talk/blob/main/.github/workflows/sonarcloud.yml) you must follow the steps below:
+In order to configure Sonarcloud analysis [GitHub Action workflow](https://github.com/elpaco-escience/scikit-talk/blob/main/.github/workflows/sonarcloud.yml) you must follow the steps below:
 
 1. go to [Sonarcloud](https://sonarcloud.io/projects/create) to create a new Sonarcloud project
 1. login with your GitHub account

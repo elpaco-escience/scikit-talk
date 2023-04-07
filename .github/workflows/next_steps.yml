@@ -1,4 +1,8 @@
-on: [push]
+on:
+  push:
+    branches:
+    - fix-basics
+
 name: Create issues for next steps
 jobs:
   next_steps:
