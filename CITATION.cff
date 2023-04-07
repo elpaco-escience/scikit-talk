@@ -6,13 +6,29 @@ authors:
   -
     family-names: Vreede
     given-names: Barbara
-    orcid: "https://orcid.org/0000-0000-0000-0000"
-date-released: 20??-MM-DD
+    orcid: "https://orcid.org/0000-0002-5023-4601"
+  -
+    family-names: Liesenfeld
+    given-names: Andreas
+    orcid: "https://orcid.org/0000-0001-6076-4406"
+  -
+    family-names: Gabor
+    given-names: Parti
+  -
+    family-names: Viviani
+    given-names: Eva
+    orcid: "https://orcid.org/0000-0002-1330-0585"
+  -
+    family-names: Dingemanse
+    given-names: Mark
+    orcid: "https://orcid.org/0000-0002-3290-5723"
+date-released: 2023-MM-DD
 doi: <insert your DOI here>
 version: "0.1.0"
-repository-code: "git@github.com:elpaco-escience/scikit-talk"
+repository-code: "https://github.com/elpaco-escience/scikit-talk"
 keywords:
-  - conversation
-  - keyword2
+    - conversation
+    - language corpora
+    - turn-taking
 message: "If you use this software, please cite it using these metadata."
 license: Apache-2.0
