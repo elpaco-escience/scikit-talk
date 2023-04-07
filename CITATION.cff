@@ -23,7 +23,7 @@ authors:
     given-names: Mark
     orcid: "https://orcid.org/0000-0002-3290-5723"
 date-released: 2023-03-03
-doi: <insert your DOI here>
+doi: 10.0000/FIXME
 version: "0.1.0"
 repository-code: "https://github.com/elpaco-escience/scikit-talk"
 keywords:
