@@ -1,5 +1,5 @@
 ---
-title: Sonarcloud integration
+title: 'Next step: Sonarcloud integration'
 ---
 
 Continuous code quality can be handled by [Sonarcloud](https://sonarcloud.io/). This repository is configured to use Sonarcloud to perform quality analysis and code coverage report on each push.
