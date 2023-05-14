@@ -1,30 +1,42 @@
-"""Documentation about the scikit-talk module."""
+import subprocess
+import json
+import numpy as np
 
-#module .py to build the read_audio feature
+def get_sampling_rate(file_path):
+    cmd = [
+        "ffprobe",
+        "-v", "quiet",
+        "-print_format", "json",
+        "-show_streams",
+        file_path
+    ]
 
-# FIXME: put actual code here
-def hello(name):
-    """Say hello
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output = json.loads(result.stdout)
 
-    Function docstring using Google docstring style.
+    for stream in output["streams"]:
+        if stream["codec_type"] == "audio":
+            return int(stream["sample_rate"])
 
-    Args:
-        name (str): Name to say hello to
+    raise ValueError("No audio stream found in the file")
 
-    Returns:
-        str: Hello message
+# Replace 'list_audio_3_40_balanced.wav' with the path to your audio file
+# file_path = './Elpaco dataset/akhoe_haikom1/state_hospital.wav'
 
-    Raises:
-        ValueError: If `name` is equal to `nobody`
+# sampling_rate = get_sampling_rate(file_path)
+# print(sampling_rate)
 
-    Example:
-        This function can be called with `Jane Smith` as argument using
 
-        >>> from sktalk.my_module import hello
-        >>> hello('Jane Smith')
-        'Hello Jane Smith!'
+def get_audio_ffmpeg(file_path):
+    cmd = ["ffmpeg", "-i", file_path, '-f', 's16le',
+           '-acodec', 'pcm_s16le',
+           '-ar', '22050',
+           '-ac', '1',
+           '-']
 
-    """
-    if name == 'nobody':
-        raise ValueError('Can not say hello to nobody')
-    return f'Hello {name}!'
+    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    raw_audio = pipe.stdout
+    audio_array = np.frombuffer(raw_audio, dtype="int16")
+    audio_array = audio_array.astype(np.float32) / np.iinfo(np.int16).max
+
+    return audio_array
