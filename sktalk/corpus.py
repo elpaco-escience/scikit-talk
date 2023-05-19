@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class Corpus:
     """The Corpus class represents a conversation corpus.
 
@@ -7,9 +8,9 @@ class Corpus:
         path (str): The path to the CSV file containing the corpus data.
 
     Attributes:
-        df (pandas.DataFrame): The pandas DataFrame representing the corpus data.
+        df (pandas.DataFrame): The pandas DataFrame containing corpus data.
         json (str): The JSON representation of the corpus data.
-        speakers (list): The list of unique speakers extracted from the corpus data.
+        speakers (list): A list of unique speakers extracted from the corpus.
     """
 
     def __init__(self, path):
@@ -25,8 +26,8 @@ class Corpus:
         """Extract the unique speakers from the corpus data.
 
         Args:
-            speakercol (str, optional): The name of the column containing the speaker information. Default is 'participant'.
+            speakercol (str, optional): The name of the column containing
+            the speaker information. Default is 'participant'.
         """
         speakers = self.df[speakercol]
         self.speakers = list(set(speakers))
-
