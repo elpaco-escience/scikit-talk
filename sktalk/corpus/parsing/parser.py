@@ -7,7 +7,3 @@ class Parser(abc.ABC):
     @abc.abstractmethod
     def parse(self, file) -> "Conversation":  # noqa: F821
         return NotImplemented
-
-    @abc.abstractmethod
-    def parse_corpus(self, files) -> "Corpus":  # noqa: F821
-        return NotImplemented
