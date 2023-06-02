@@ -1,6 +1,7 @@
 import abc
-from sktalk.corpus.conversation import Conversation
-from sktalk.corpus.corpus import Corpus
+
+from ..conversation import Conversation
+from ..corpus import Corpus
 
 
 class Parser(abc.ABC):
@@ -12,4 +13,4 @@ class Parser(abc.ABC):
 
     @abc.abstractmethod
     def parse_corpus(self, files) -> Corpus:
-        [self.parse(file) for file in files]
+        return NotImplemented

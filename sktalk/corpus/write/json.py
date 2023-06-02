@@ -2,4 +2,5 @@ from .writer import Writer
 
 
 class JsonWriter(Writer):
-    pass
+    def write(self):
+        raise NotImplementedError()
