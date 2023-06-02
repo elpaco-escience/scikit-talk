@@ -1,10 +1,11 @@
-from .conversation import Conversation
-from .parsing.xml import XmlParser
 from .parsing.json import JsonParser
+from .parsing.xml import XmlParser
 
 
 class Corpus:
-    def __init__(self, conversations: list[Conversation], metadata: dict):
+    def __init__(
+        self, conversations: list["Conversation"], metadata: dict  # noqa: F821
+    ):
         self._conversations = conversations
         self._metadata = metadata
 

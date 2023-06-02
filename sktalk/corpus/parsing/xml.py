@@ -2,4 +2,5 @@ from .parser import Parser
 
 
 class XmlParser(Parser):
-    pass
+    def parse(self, file) -> "Conversation":  # noqa: F821
+        raise NotImplementedError()
