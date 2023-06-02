@@ -1,5 +1,5 @@
-from .parsing.xml import XmlParser
 from .parsing.json import JsonParser
+from .parsing.xml import XmlParser
 
 
 class Corpus:
