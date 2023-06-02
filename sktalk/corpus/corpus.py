@@ -1,5 +1,6 @@
 from .conversation import Conversation
 from .parsing.xml import XmlParser
+from .parsing.json import JsonParser
 
 
 class Corpus:
