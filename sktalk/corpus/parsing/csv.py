@@ -4,8 +4,8 @@ from .parser import Parser
 
 
 class CsvParser(Parser):
-    def parse(self, file) -> Conversation:
+    def parse(self, file) -> "Conversation":
         raise NotImplementedError()
 
-    def parse_corpus(self, files) -> Corpus:
+    def parse_corpus(self, files) -> "Corpus":
         raise NotImplementedError()

@@ -1,9 +1,7 @@
-from .parsing.xml import XmlParser
-from .utterance import Utterance
-
-
 class Conversation:
-    def __init__(self, utterances: list[Utterance], metadata: dict) -> None:
+    def __init__(
+        self, utterances: list["Utterance"], metadata: dict  # noqa: F821
+    ) -> None:
         self._utterances = utterances
         self._metadata = metadata
 
@@ -15,10 +13,5 @@ class Conversation:
     def metadata(self):
         return self._metadata
 
-    def get_utterance(self, index) -> Utterance:
+    def get_utterance(self, index) -> "Utterance":  # noqa: F821
         pass
-
-    @classmethod
-    def from_xml(cls, file):
-        # read xml to dataframe
-        return XmlParser.parse(file)
