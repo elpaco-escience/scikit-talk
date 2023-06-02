@@ -5,11 +5,11 @@ from .speaker import Speaker
 
 @dataclass
 class Utterance:
-    speaker: Speaker = None
-    time: str
     utterance: str
     source: str
-    metadata: dict[str, Any]
+    speaker: Speaker = None
+    time: str = None
+    metadata: dict[str, Any] = None
 
     def get_audio(self):
         pass

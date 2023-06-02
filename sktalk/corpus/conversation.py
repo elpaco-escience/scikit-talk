@@ -1,6 +1,6 @@
 class Conversation:
     def __init__(
-        self, utterances: list["Utterance"], metadata: dict  # noqa: F821
+        self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
     ) -> None:
         self._utterances = utterances
         self._metadata = metadata
