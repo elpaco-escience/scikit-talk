@@ -1,8 +1,8 @@
-from .parser import Parser
+import pylangacq
+
 from ..conversation import Conversation
 from ..utterance import Utterance
-
-import pylangacq
+from .parser import Parser
 
 
 class ChaParser(Parser):
@@ -10,10 +10,11 @@ class ChaParser(Parser):
         chatfile = pylangacq.read_chat(file)
         chat_utterances = chatfile.utterances(by_files=False)
 
-        utterances = [self._to_utterance(row, file) for row in chat_utterances]
+        utterances = [ChaParser._to_utterance(row, file) for row in chat_utterances]
         return Conversation(utterances)
 
-    def _to_utterance(self, row, file):
+    @staticmethod
+    def _to_utterance(row, file):
         return Utterance(
             speaker=row.participant,
             time=str(row.time_marks),
