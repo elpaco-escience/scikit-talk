@@ -6,11 +6,12 @@ import os
 import sktalk
 from sktalk.corpus.parsing.cha import ChaParser
 
+
 class TestChaParser:
     URLs = [
         'https://ca.talkbank.org/data-orig/GCSAusE/01.cha',
         'https://ca.talkbank.org/data-orig/GCSAusE/02.cha'
-        ]
+    ]
 
     @pytest.fixture(params=URLs)
     def download_file(self, request):
