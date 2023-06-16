@@ -19,4 +19,3 @@ class Conversation:
     def summarize(self):
         for utterance in self._utterances:
             print(utterance)
-
