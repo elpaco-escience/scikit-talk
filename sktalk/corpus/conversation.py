@@ -15,3 +15,8 @@ class Conversation:
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         pass
+
+    def summarize(self):
+        for utterance in self._utterances:
+            print(utterance)
+
