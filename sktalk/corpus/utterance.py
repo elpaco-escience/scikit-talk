@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from typing import Any
-from .speaker import Speaker
+from .participant import Participant
 
 
 @dataclass
 class Utterance:
     utterance: str
     source: str
-    speaker: Speaker = None
+    participant: Participant = None
     time: str = None
     metadata: dict[str, Any] = None
 
