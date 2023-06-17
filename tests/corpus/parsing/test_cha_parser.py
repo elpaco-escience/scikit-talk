@@ -29,9 +29,9 @@ class TestParser:
 
 class TestChaParser:
     URLs = [
-        'https://ca.talkbank.org/data-orig/GCSAusE/01.cha',
-        'https://ca.talkbank.org/data-orig/GCSAusE/02.cha',
-        'https://ca.talkbank.org/data-orig/GCSAusE/03.cha'
+        "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
+        "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
+        "https://ca.talkbank.org/data-orig/GCSAusE/03.cha"
     ]
 
     @pytest.fixture(params=URLs)

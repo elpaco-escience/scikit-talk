@@ -1,6 +1,8 @@
+from typing import List, Dict
+
 class Conversation:
     def __init__(
-        self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
+        self, utterances: List["Utterance"], metadata: Dict = None  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
 
