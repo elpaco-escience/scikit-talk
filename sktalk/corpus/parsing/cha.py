@@ -69,4 +69,3 @@ class ChaParser(Parser):
         utterance = re.sub(r" {2}", " ", utterance)
         utterance = re.sub(r"\s+$", "", utterance)
         return utterance
-

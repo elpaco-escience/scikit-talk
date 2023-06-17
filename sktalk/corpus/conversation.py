@@ -41,4 +41,3 @@ class Conversation:
         """
         for utterance in self._utterances[:10]:
             print(utterance)
-
