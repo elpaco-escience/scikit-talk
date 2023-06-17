@@ -1,11 +1,10 @@
-import requests
-import pytest
-import tempfile
 import os
-
+import tempfile
+import pytest
+import requests
 import sktalk
-from sktalk.corpus.parsing.parser import Parser
 from sktalk.corpus.parsing.cha import ChaParser
+from sktalk.corpus.parsing.parser import Parser
 
 
 class TestParser:

@@ -1,6 +1,5 @@
-import pylangacq
 import re
-
+import pylangacq
 from ..conversation import Conversation
 from ..utterance import Utterance
 from .parser import Parser
