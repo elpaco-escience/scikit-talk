@@ -36,7 +36,7 @@ class TestChaParser:
     @pytest.fixture(params=URLs)
     def download_file(self, request):
         remote = request.param
-        response = requests.get(remote)
+        response = requests.get(remote, timeout=5)
         response.raise_for_status()
 
         ext = os.path.splitext(remote)[1]
