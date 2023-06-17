@@ -16,9 +16,8 @@ class TestParser:
         ["None", None]
     ]
 
-    @pytest.mark.parametrize("milliseconds_timestamp", milliseconds_timestamp)
-    def test_to_timestamp(self, milliseconds_timestamp):
-        milliseconds, timestamp = milliseconds_timestamp
+    @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
+    def test_to_timestamp(self, milliseconds, timestamp):
         assert Parser._to_timestamp(milliseconds) == timestamp
 
         with pytest.raises(ValueError, match="exceeds 24h"):
@@ -63,10 +62,33 @@ class TestChaParser:
         # assert that there are no empty data fields
 
     def test_split_time(self):
-        time_input = "(1748070, 1751978)"
-        expected_output = ("00:29:08.070", "00:29:11.978")
-        assert ChaParser._split_time(time_input) == expected_output
+        time = "(1748070, 1751978)"
+        begin_end = ("00:29:08.070", "00:29:11.978")
+        assert ChaParser._split_time(time) == begin_end
 
-        time_input = None
-        expected_output = (None, None)
-        assert ChaParser._split_time(time_input) == expected_output
+        time = None
+        begin_end = (None, None)
+        assert ChaParser._split_time(time) == begin_end
+
+    unclean_clean = [
+        [
+            r"{'SAM': 'que (0.5) e(u) gosto \x151790561_1793421\x15 (0.2)→'}",
+            "que (0.5) e(u) gosto (0.2)→"
+        ],
+        [
+            r"{'SOR': 'hm → \x151706328_1706744\x15'}",
+            "hm →"
+        ],
+        [
+            r"",
+            ""
+        ],
+        [
+            r"{'T': '- what \x15128_128\x15 just (0.3) (.) \x15136_236\x15'}",
+            "- what just (0.3) (.)"
+        ]
+    ]
+
+    @pytest.mark.parametrize("unclean, clean", unclean_clean)
+    def test_clean_utterance(self, unclean, clean):
+        assert ChaParser._clean_utterance(unclean) == clean

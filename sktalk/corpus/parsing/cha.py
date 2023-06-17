@@ -24,6 +24,7 @@ class ChaParser(Parser):
             source=file,
         )
         utterance.begin, utterance.end = ChaParser._split_time(utterance.time)
+        utterance.utterance = ChaParser._clean_utterance(utterance.utterance)
         return utterance
 
     @staticmethod
@@ -37,3 +38,20 @@ class ChaParser(Parser):
         begin = Parser._to_timestamp(begin)
         end = Parser._to_timestamp(end)
         return (begin, end)
+
+    @staticmethod
+    def _clean_utterance(utterance):
+        utterance = str(utterance)
+        utterance = re.sub(r'^([^:]+):', "", utterance)
+        utterance = re.sub(r'^\s+', "", utterance)
+        utterance = re.sub(r'\s+$', "", utterance)
+        utterance = re.sub(r'\}$', "", utterance)
+        utterance = re.sub(r'^\"', "", utterance)
+        utterance = re.sub(r'\"$', "", utterance)
+        utterance = re.sub(r"^\'", "", utterance)
+        utterance = re.sub(r"\'$", "", utterance)
+        utterance = re.sub(r'\\x15\d+_\d+\\x15', "", utterance)
+        utterance = re.sub(r" {2}", " ", utterance)
+        utterance = re.sub(r"\s+$", "", utterance)
+        return utterance
+
