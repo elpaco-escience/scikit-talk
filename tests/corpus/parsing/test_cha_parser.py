@@ -49,7 +49,7 @@ class TestChaParser:
 
         os.remove(temp_file_path)
 
-    @pytest.mark.parametrize("download_file", URLs, indirect=True)
+    @pytest.mark.parametrize("download_file", urls, indirect=True)
     def test_parse(self, download_file):
         parsed_cha = ChaParser().parse(download_file)
         assert isinstance(parsed_cha, sktalk.corpus.conversation.Conversation)
