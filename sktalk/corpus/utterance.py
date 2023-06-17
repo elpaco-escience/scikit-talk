@@ -6,7 +6,7 @@ from .participant import Participant
 @dataclass
 class Utterance:
     utterance: str
-    source: str
+    source: str # TODO should be in conversation metadata?
     participant: Participant = None
     time: str = None
     begin: str = None
@@ -16,5 +16,5 @@ class Utterance:
     def get_audio(self):
         pass
 
-    # function: that prints summary of data, shows it to user
-    # function: create a pandas data frame with the utterances
+    # TODO function: that prints summary of data, shows it to user
+    # TODO function: create a pandas data frame with the utterances

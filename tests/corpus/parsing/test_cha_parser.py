@@ -59,7 +59,9 @@ class TestChaParser:
         assert parsed_cha.utterances[0].begin == "00:00:00.000"
         participant = parsed_cha.utterances[0].participant
         assert participant in ["A", "B", "S"]
-        # assert that there are no empty data fields
+        language = parsed_cha.metadata["Languages"]
+        assert language == ["eng"]
+        # TODO assert that there are no empty utterances
 
     def test_split_time(self):
         time = "(1748070, 1751978)"

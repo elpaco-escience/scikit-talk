@@ -8,12 +8,23 @@ from .parser import Parser
 
 class ChaParser(Parser):
     def parse(self, file):
+        """Parse conversation file in Chat format
+
+        Args:
+            file (str): path to file in .cha format
+
+        Returns:
+            conversation (corpus.conversation.Conversation): Conversation object containing utterances and metadata
+        """
         chatfile = pylangacq.read_chat(file)
         chat_utterances = chatfile.utterances(by_files=False)
 
+        metadata = ChaParser._get_metadata(chatfile)
+
         utterances = [ChaParser._to_utterance(
             row, file) for row in chat_utterances]
-        return Conversation(utterances)
+
+        return Conversation(utterances, metadata)
 
     @staticmethod
     def _to_utterance(row, file):
@@ -26,6 +37,10 @@ class ChaParser(Parser):
         utterance.begin, utterance.end = ChaParser._split_time(utterance.time)
         utterance.utterance = ChaParser._clean_utterance(utterance.utterance)
         return utterance
+
+    @staticmethod
+    def _get_metadata(chatfile):
+        return chatfile.headers()[0]
 
     @staticmethod
     def _split_time(time):
