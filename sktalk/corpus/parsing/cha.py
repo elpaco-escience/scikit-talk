@@ -58,7 +58,7 @@ class ChaParser(Parser):
         utterance = str(utterance)
         utterance = re.sub(r"^([^:]+):", "", utterance)
         utterance = re.sub(r"^\s+", "", utterance)
-        utterance = re.sub(r"[ \t]+$", "", utterance)
+        utterance = re.sub(r"[ \t]{1,5}$", "", utterance)
         utterance = re.sub(r"\}$", "", utterance)
         utterance = re.sub(r'^\"', "", utterance)
         utterance = re.sub(r'\"$', "", utterance)
@@ -66,5 +66,5 @@ class ChaParser(Parser):
         utterance = re.sub(r"\'$", "", utterance)
         utterance = re.sub(r"\\x15\d+_\d+\\x15", "", utterance)
         utterance = re.sub(r" {2}", " ", utterance)
-        utterance = re.sub(r"[ \t]+$", "", utterance)
+        utterance = re.sub(r"[ \t]{1,5}$", "", utterance)
         return utterance
