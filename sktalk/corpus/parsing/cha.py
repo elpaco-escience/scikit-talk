@@ -13,7 +13,7 @@ class ChaParser(Parser):
             file (str): path to file in .cha format
 
         Returns:
-            conversation (corpus.conversation.Conversation): Conversation object containing utterances and metadata
+            Conversation: A Conversation object representing the conversation in the file.
         """
         chatfile = pylangacq.read_chat(file)
         chat_utterances = chatfile.utterances(by_files=False)

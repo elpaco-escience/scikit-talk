@@ -27,13 +27,13 @@ class TestParser:
 
 
 class TestChaParser:
-    URLs = [
+    urls = [
         "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
         "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
         "https://ca.talkbank.org/data-orig/GCSAusE/03.cha"
     ]
 
-    @pytest.fixture(params=URLs)
+    @pytest.fixture(params=urls)
     def download_file(self, request):
         remote = request.param
         response = requests.get(remote, timeout=5)
