@@ -46,10 +46,9 @@ class ChaParser(Parser):
     def _split_time(time):
         if time is None:
             return None, None
-        time = str(time).split(', ')
-        begin, end = time[0], time[1]
-        begin = re.sub(r'\(', "", begin)
-        end = re.sub(r'\)', "", end)
+        begin, end = str(time).split(", ")
+        begin = begin.replace("(", "")
+        end = end.replace(")", "")
         begin = Parser._to_timestamp(begin)
         end = Parser._to_timestamp(end)
         return (begin, end)
@@ -57,15 +56,15 @@ class ChaParser(Parser):
     @staticmethod
     def _clean_utterance(utterance):
         utterance = str(utterance)
-        utterance = re.sub(r'^([^:]+):', "", utterance)
-        utterance = re.sub(r'^\s+', "", utterance)
-        utterance = re.sub(r'\s+$', "", utterance)
-        utterance = re.sub(r'\}$', "", utterance)
+        utterance = re.sub(r"^([^:]+):", "", utterance)
+        utterance = re.sub(r"^\s+", "", utterance)
+        utterance = re.sub(r"[ \t]+$", "", utterance)
+        utterance = re.sub(r"\}$", "", utterance)
         utterance = re.sub(r'^\"', "", utterance)
         utterance = re.sub(r'\"$', "", utterance)
         utterance = re.sub(r"^\'", "", utterance)
         utterance = re.sub(r"\'$", "", utterance)
-        utterance = re.sub(r'\\x15\d+_\d+\\x15', "", utterance)
+        utterance = re.sub(r"\\x15\d+_\d+\\x15", "", utterance)
         utterance = re.sub(r" {2}", " ", utterance)
-        utterance = re.sub(r"\s+$", "", utterance)
+        utterance = re.sub(r"[ \t]+$", "", utterance)
         return utterance
