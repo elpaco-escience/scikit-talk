@@ -1,5 +1,5 @@
-from .parsing.json import JsonParser
-from .parsing.xml import XmlParser
+from .parsing.json import JsonFile
+from .parsing.xml import XmlFile
 
 
 class Corpus:
@@ -17,9 +17,9 @@ class Corpus:
         self.json = self.df.to_json()
 
     @classmethod
-    def from_json(cls, file):
-        return JsonParser().parse(file)
+    def from_json(cls, path):
+        return JsonFile(path).parse()
 
     @classmethod
-    def from_xml(cls, file):
-        return XmlParser().parse(file)
+    def from_xml(cls, path):
+        return XmlFile(path).parse()
