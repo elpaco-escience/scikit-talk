@@ -37,7 +37,7 @@ class Conversation:
         return self._metadata
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
-        pass
+        raise NotImplementedError
 
     def summarize(self):
         """
