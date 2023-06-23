@@ -1,12 +1,10 @@
-from typing import Dict
-from typing import List
 from .parsing.json import JsonParser
 from .parsing.xml import XmlParser
 
 
 class Corpus:
     def __init__(
-        self, conversations: List["Conversation"], metadata: Dict  # noqa: F821
+        self, conversations: list["Conversation"], metadata: dict  # noqa: F821
     ):
         self._conversations = conversations
         self._metadata = metadata

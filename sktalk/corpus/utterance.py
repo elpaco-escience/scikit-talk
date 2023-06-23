@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any
-from typing import Dict
 from .participant import Participant
 
 
@@ -12,7 +11,7 @@ class Utterance:
     time: str = None
     begin: str = None
     end: str = None
-    metadata: Dict[str, Any] = None
+    metadata: dict[str, Any] = None
 
     def get_audio(self):
         pass
