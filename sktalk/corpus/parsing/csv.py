@@ -1,6 +1,6 @@
 from .parser import InputFile
 
 
-class CsvParser(InputFile):
-    def parse(self, file) -> "Conversation":  # noqa: F821
+class CsvFile(InputFile):
+    def parse(self) -> "Conversation":  # noqa: F821
         raise NotImplementedError()

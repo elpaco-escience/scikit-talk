@@ -19,11 +19,10 @@ class InputFile(abc.ABC):
         metadata = self._extract_metadata()
         if metadata.keys().isdisjoint(self._metadata):
             return self._metadata | metadata
-        else:
-            raise ValueError("Duplicate key in the metadata")
+        raise ValueError("Duplicate key in the metadata")
     
     def _extract_metadata(self):
-        return dict()
+        return {}
             
     @staticmethod
     def _to_timestamp(time_ms):
@@ -39,7 +38,7 @@ class InputFile(abc.ABC):
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
     @classmethod
-    def download(cls, url):
+    def download(cls, url):              # noqa: W0613
         # download
         # downloaded_file = ...
         return NotImplemented
