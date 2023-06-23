@@ -2,44 +2,40 @@ import re
 import pylangacq
 from ..conversation import Conversation
 from ..utterance import Utterance
-from .parser import Parser
+from .parser import InputFile
 
 
-class ChaParser(Parser):
-    def parse(self, file):
+class ChaFile(InputFile):
+    def _pla_reader(self) -> pylangacq.Reader:
+        return pylangacq.read_chat(self._path)
+    
+    def parse(self):
         """Parse conversation file in Chat format
-
-        Args:
-            file (str): path to file in .cha format
 
         Returns:
             Conversation: A Conversation object representing the conversation in the file.
         """
-        chatfile = pylangacq.read_chat(file)
-        chat_utterances = chatfile.utterances(by_files=False)
+        chat_utterances = self._pla_reader().utterances(by_files=False)
 
-        metadata = ChaParser._get_metadata(chatfile)
+        utterances = [ChaFile._to_utterance(
+            chat_utterance) for chat_utterance in chat_utterances]
 
-        utterances = [ChaParser._to_utterance(
-            row, file) for row in chat_utterances]
-
-        return Conversation(utterances, metadata)
+        return Conversation(utterances, self.metadata)
 
     @staticmethod
-    def _to_utterance(row, file):
+    def _to_utterance(chat_utterance) -> Utterance:
         utterance = Utterance(
-            participant=row.participant,
-            time=row.time_marks,
-            utterance=str(row.tiers),
-            source=file,
+            participant=chat_utterance.participant,
+            time=chat_utterance.time_marks,
+            utterance=str(chat_utterance.tiers),
         )
-        utterance.begin, utterance.end = ChaParser._split_time(utterance.time)
-        utterance.utterance = ChaParser._clean_utterance(utterance.utterance)
+        utterance.begin, utterance.end = ChaFile._split_time(utterance.time)
+        utterance.utterance = ChaFile._clean_utterance(utterance.utterance)
         return utterance
 
-    @staticmethod
-    def _get_metadata(chatfile):
-        return chatfile.headers()[0]
+    def _extract_metadata(self):
+        return self._pla_reader().headers()[0]
+
 
     @staticmethod
     def _split_time(time):
@@ -48,8 +44,8 @@ class ChaParser(Parser):
         begin, end = str(time).split(", ")
         begin = begin.replace("(", "")
         end = end.replace(")", "")
-        begin = Parser._to_timestamp(begin)
-        end = Parser._to_timestamp(end)
+        begin = InputFile._to_timestamp(begin)
+        end = InputFile._to_timestamp(end)
         return (begin, end)
 
     @staticmethod

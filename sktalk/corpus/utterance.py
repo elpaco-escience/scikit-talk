@@ -6,7 +6,6 @@ from .participant import Participant
 @dataclass
 class Utterance:
     utterance: str
-    source: str # TODO should be in conversation metadata?
     participant: Participant = None
     time: str = None
     begin: str = None

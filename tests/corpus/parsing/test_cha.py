@@ -3,8 +3,8 @@ import tempfile
 import pytest
 import requests
 import sktalk
-from sktalk.corpus.parsing.cha import ChaParser
-from sktalk.corpus.parsing.parser import Parser
+from sktalk.corpus.parsing.cha import ChaFile
+from sktalk.corpus.parsing.parser import InputFile
 
 
 class TestParser:
@@ -17,16 +17,16 @@ class TestParser:
 
     @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
     def test_to_timestamp(self, milliseconds, timestamp):
-        assert Parser._to_timestamp(milliseconds) == timestamp
+        assert InputFile._to_timestamp(milliseconds) == timestamp
 
         with pytest.raises(ValueError, match="exceeds 24h"):
-            Parser._to_timestamp("987654321")
+            InputFile._to_timestamp("987654321")
 
         with pytest.raises(ValueError, match="negative"):
-            Parser._to_timestamp("-1")
+            InputFile._to_timestamp("-1")
 
 
-class TestChaParser:
+class TestChaFile:
     urls = [
         "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
         "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
@@ -51,9 +51,9 @@ class TestChaParser:
 
     @pytest.mark.parametrize("download_file", urls, indirect=True)
     def test_parse(self, download_file):
-        parsed_cha = ChaParser().parse(download_file)
+        parsed_cha = ChaFile(download_file).parse()
         assert isinstance(parsed_cha, sktalk.corpus.conversation.Conversation)
-        source = parsed_cha.utterances[0].source
+        source = parsed_cha.metadata["source"]
         assert os.path.splitext(source)[1] == ".cha"
         assert parsed_cha.utterances[0].begin == "00:00:00.000"
         participant = parsed_cha.utterances[0].participant
@@ -65,11 +65,11 @@ class TestChaParser:
     def test_split_time(self):
         time = "(1748070, 1751978)"
         begin_end = ("00:29:08.070", "00:29:11.978")
-        assert ChaParser._split_time(time) == begin_end
+        assert ChaFile._split_time(time) == begin_end
 
         time = None
         begin_end = (None, None)
-        assert ChaParser._split_time(time) == begin_end
+        assert ChaFile._split_time(time) == begin_end
 
     unclean_clean = [
         [
@@ -92,4 +92,4 @@ class TestChaParser:
 
     @pytest.mark.parametrize("unclean, clean", unclean_clean)
     def test_clean_utterance(self, unclean, clean):
-        assert ChaParser._clean_utterance(unclean) == clean
+        assert ChaFile._clean_utterance(unclean) == clean

@@ -1,6 +1,6 @@
-from .parser import Parser
+from .parser import InputFile
 
 
-class XmlParser(Parser):
+class XmlParser(InputFile):
     def parse(self, file) -> "Conversation":  # noqa: F821
         raise NotImplementedError()
