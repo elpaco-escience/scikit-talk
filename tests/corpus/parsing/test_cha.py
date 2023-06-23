@@ -17,13 +17,13 @@ class TestParser:
 
     @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
     def test_to_timestamp(self, milliseconds, timestamp):
-        assert InputFile._to_timestamp(milliseconds) == timestamp
+        assert InputFile._to_timestamp(milliseconds) == timestamp   # noqa: W0212
 
         with pytest.raises(ValueError, match="exceeds 24h"):
-            InputFile._to_timestamp("987654321")
+            InputFile._to_timestamp("987654321")                    # noqa: W0212
 
         with pytest.raises(ValueError, match="negative"):
-            InputFile._to_timestamp("-1")
+            InputFile._to_timestamp("-1")                           # noqa: W0212
 
 
 class TestChaFile:
@@ -65,11 +65,11 @@ class TestChaFile:
     def test_split_time(self):
         time = "(1748070, 1751978)"
         begin_end = ("00:29:08.070", "00:29:11.978")
-        assert ChaFile._split_time(time) == begin_end
+        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
 
         time = None
         begin_end = (None, None)
-        assert ChaFile._split_time(time) == begin_end
+        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
 
     unclean_clean = [
         [
@@ -92,4 +92,4 @@ class TestChaFile:
 
     @pytest.mark.parametrize("unclean, clean", unclean_clean)
     def test_clean_utterance(self, unclean, clean):
-        assert ChaFile._clean_utterance(unclean) == clean
+        assert ChaFile._clean_utterance(unclean) == clean            # noqa: W0212
