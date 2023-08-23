@@ -40,7 +40,8 @@ python3 -m pip install .
 
 ## Documentation
 
-Include a link to your project's full documentation here.
+The user documentation can be found [here](https://sktalk.readthedocs.io/en/latest/?badge=latest).
+To read more about the aims of this software, [this paper](https://aclanthology.org/2021.sigdial-1.26/) by Liesenfeld _et al._ (2021) describes the project in detail.
 
 ## Contributing
 
