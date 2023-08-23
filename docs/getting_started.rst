@@ -3,16 +3,16 @@
 Getting started
 ---------------
 
-To get started with scikit-talk, you need a transcription file.
+To get started with scikit-talk, you will need a transcription file.
 For example, you can download a file from the
-`Griffith Corpus of Spoken Australian English <https://ca.talkbank.org/data-orig/GCSAusE/01.cha>`_.
+`Griffith Corpus of Spoken Australian English <https://ca.talkbank.org/data-orig/GCSAusE/>`_.
 
 Load a corpus using the parser for .cha files:
 
 .. code-block:: python
 
     from sktalk.corpus.parsing.cha import ChaFile
-    parsed_cha = ChaFile(download_file).parse()
+    parsed_cha = ChaFile('path/to/your/file.cha').parse()
 
 Access the metadata with:
 
