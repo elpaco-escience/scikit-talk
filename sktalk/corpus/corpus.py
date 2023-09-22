@@ -16,6 +16,16 @@ class Corpus:
         self.return_dataframe()
         self.json = self.df.to_json()
 
+    @property
+    def metadata(self):
+        """
+        Get the metadata associated with the Corpus.
+
+        Returns:
+            dict: Additional metadata associated with the Corpus.
+        """
+        return self._metadata
+
     @classmethod
     def from_json(cls, path):
         return JsonFile(path).parse()
