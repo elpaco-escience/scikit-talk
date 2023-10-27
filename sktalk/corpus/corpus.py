@@ -4,7 +4,7 @@ from .parsing.xml import XmlFile
 
 class Corpus:
     def __init__(
-        self, conversations: list["Conversation"], metadata: dict  # noqa: F821
+        self, conversations: list["Conversation"] = None, **metadata: dict  # noqa: F821
     ):
         self._conversations = conversations
         self._metadata = metadata
