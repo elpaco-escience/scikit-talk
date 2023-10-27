@@ -1,3 +1,6 @@
+import os
+import json
+
 class Conversation:
     def __init__(
         self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
@@ -41,3 +44,37 @@ class Conversation:
         """
         for utterance in self._utterances[:10]:
             print(utterance)
+
+    def to_json(self, name, directory):
+        """
+        Dump a conversation to a JSONL file.
+
+        Args:
+            name (str): The name of the corpus that will be the file name.
+            directory (str): The path to the directory where the .jsonl
+            file will be saved.
+        """
+        name = f"{name}.jsonl"
+        destination = os.path.join(directory, name)
+        with open(destination, "w") as file:
+
+            # dump the metadata
+            metastr = json.dumps(self._metadata, indent=4)
+            metastr = f"{metastr[:-1]},"
+            file.write(metastr)
+
+            # initialize conversation
+            file.write('"Conversation": [\n')
+
+            # dump of the utterances
+            conversationstr = ""
+            for _ in self._utterances:
+                json_object = json.dumps(_.__dict__, indent=4)
+                conversationstr += json_object
+                conversationstr += ",\n"
+
+            file.write(conversationstr[:-2])
+            file.write('\n')
+
+            # close conversation
+            file.write("]}")
