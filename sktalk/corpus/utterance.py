@@ -16,7 +16,14 @@ class Utterance:
         pass
 
     def to_dict(self):
+        """
+        Convert the object to a dictionary.
+
+        Returns:
+            dict: A dictionary representation of the object.
+        """
         return asdict(self)
+
 
     # TODO function: that prints summary of data, shows it to user
     # TODO function: create a pandas data frame with the utterances
