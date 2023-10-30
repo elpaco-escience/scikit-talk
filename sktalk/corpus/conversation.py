@@ -1,5 +1,6 @@
 import os
 import json
+from dataclasses import asdict
 
 class Conversation:
     def __init__(
@@ -45,9 +46,9 @@ class Conversation:
         for utterance in self._utterances[:10]:
             print(utterance)
 
-    def to_json(self, name, directory):
+    def write_json(self, name, directory):
         """
-        Dump a conversation to a JSONL file.
+        Write a conversation to a JSONL file.
 
         Args:
             name (str): The name of the corpus that will be the file name.
@@ -57,7 +58,7 @@ class Conversation:
         name = f"{name}.jsonl"
         destination = os.path.join(directory, name)
 
-        utt_list = [u.to_dict() for u in self._utterances]
+        utt_list = [asdict(u) for u in self._utterances]
         conv_dict = self._metadata.copy()
         conv_dict["Conversation"] = utt_list
 
