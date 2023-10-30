@@ -56,25 +56,10 @@ class Conversation:
         """
         name = f"{name}.jsonl"
         destination = os.path.join(directory, name)
+
+        utt_list = [u.to_dict() for u in self._utterances]
+        conv_dict = self._metadata.copy()
+        conv_dict["Conversation"] = utt_list
+
         with open(destination, "w") as file:
-
-            # dump the metadata
-            metastr = json.dumps(self._metadata, indent=4)
-            metastr = f"{metastr[:-1]},"
-            file.write(metastr)
-
-            # initialize conversation
-            file.write('"Conversation": [\n')
-
-            # dump of the utterances
-            conversationstr = ""
-            for _ in self._utterances:
-                json_object = json.dumps(_.__dict__, indent=4)
-                conversationstr += json_object
-                conversationstr += ",\n"
-
-            file.write(conversationstr[:-2])
-            file.write('\n')
-
-            # close conversation
-            file.write("]}")
+            json.dump(conv_dict, file, indent=4)

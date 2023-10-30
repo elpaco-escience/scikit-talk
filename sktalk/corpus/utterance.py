@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Any
 from .participant import Participant
 
@@ -14,6 +14,9 @@ class Utterance:
 
     def get_audio(self):
         pass
+
+    def to_dict(self):
+        return asdict(self)
 
     # TODO function: that prints summary of data, shows it to user
     # TODO function: create a pandas data frame with the utterances
