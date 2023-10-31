@@ -1,6 +1,7 @@
 import pytest
 import os
-from sktalk import Conversation
+from sktalk.corpus.conversation import Conversation
+from sktalk.corpus.utterance import Utterance
 
 @pytest.fixture
 def my_convo():
@@ -19,14 +20,14 @@ def my_convo():
                 }
                 }
 
-    utterances = [{
+    utterances = [Utterance({
             "utterance": "Hello",
             "participant": "A"
-        },
-        {
+        }),
+        Utterance({
             "utterance": "Monde",
             "participant": "B"
-        }]
+        })]
     return Conversation(utterances, metadata)
 
 class TestConversation:
@@ -35,7 +36,7 @@ class TestConversation:
 
     def test_write_json(self, my_convo):
         # Write a mock file and confirm that it has worked
-        my_convo.write_json('file.json', '.')
-        assert os.path.exists('file.json')
+        my_convo.write_json('file', '.')
+        assert os.path.exists('file.jsonl')
         # Clean up
-        os.remove('file.json')
+        os.remove('file.jsonl')
