@@ -6,7 +6,7 @@ class Corpus:
     def __init__(
         self, conversations: list["Conversation"] = None, **metadata: dict  # noqa: F821
     ):
-        self._conversations = conversations
+        self._conversations = conversations or []
         self._metadata = metadata
 
     def __add__(self, other: "Corpus") -> "Corpus":
@@ -25,6 +25,16 @@ class Corpus:
             dict: Additional metadata associated with the Corpus.
         """
         return self._metadata
+
+    @property
+    def conversations(self):
+        """
+        Get the conversations contained in the Corpus
+
+        Returns:
+            list: listed conversations contained in this Corpus
+        """
+        return self._conversations
 
     @classmethod
     def from_json(cls, path):
