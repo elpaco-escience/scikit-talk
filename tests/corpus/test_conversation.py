@@ -44,7 +44,7 @@ class TestConversation:
         my_convo.write_json(tmp_file)
         tmp_file_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
         assert os.path.exists(tmp_file_exp)
-        with open(tmp_file_exp) as f:
+        with open(tmp_file_exp, encoding='utf-8') as f:
             my_convo_read = json.load(f)
             assert isinstance(my_convo_read, dict)
             assert my_convo_read == my_convo.asdict()
