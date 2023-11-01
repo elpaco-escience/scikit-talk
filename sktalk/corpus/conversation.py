@@ -1,7 +1,7 @@
 import json
 import os
-from sktalk.corpus.utterance import Utterance
 import warnings
+from sktalk.corpus.utterance import Utterance
 
 
 class Conversation:
