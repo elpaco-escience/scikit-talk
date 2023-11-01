@@ -41,4 +41,9 @@ class TestCorpus():
         with pytest.raises(TypeError, match="type Conversation"):
             my_corpus.append("Not A Conversation")
 
-    # def test_asdict(self, my_corpus):
+    def test_asdict(self, my_corpus):
+        """Verify content of dictionary based on corpus"""
+        corpusdict = my_corpus.asdict()
+        assert isinstance(corpusdict, dict)
+        assert corpusdict["language"] == my_corpus.metadata["language"]
+        assert corpusdict["importer"] == my_corpus.metadata["importer"]
