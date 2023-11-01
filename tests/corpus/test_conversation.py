@@ -1,3 +1,5 @@
+import json
+import os
 import pytest
 from sktalk.corpus.conversation import Conversation
 
@@ -32,3 +34,17 @@ class TestConversation:
         assert convodict["Utterances"][0] == my_convo.utterances[0].asdict()
         assert convodict["source"] == my_convo.metadata["source"]
         assert isinstance(convodict["Utterances"][0], dict)
+
+    @pytest.mark.parametrize("user_path, expected_path", [
+        ("tmp_convo.json", "tmp_convo.json"),
+        ("tmp_convo", "tmp_convo.json")
+    ])
+    def test_write_json(self, my_convo, tmp_path, user_path, expected_path):
+        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
+        my_convo.write_json(tmp_file)
+        tmp_file_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
+        assert os.path.exists(tmp_file_exp)
+        with open(tmp_file_exp) as f:
+            my_convo_read = json.load(f)
+            assert isinstance(my_convo_read, dict)
+            assert my_convo_read == my_convo.asdict()
