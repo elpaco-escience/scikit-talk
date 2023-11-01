@@ -1,6 +1,7 @@
+from contextlib import nullcontext as does_not_raise
 import pytest
 from sktalk.corpus.corpus import Corpus
-from contextlib import nullcontext as does_not_raise
+
 
 class TestCorpus():
 

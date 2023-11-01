@@ -1,6 +1,6 @@
+from sktalk.corpus.conversation import Conversation
 from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
-from sktalk.corpus.conversation import Conversation
 
 
 class Corpus:

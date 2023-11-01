@@ -1,7 +1,8 @@
-import pytest
 import os
+import pytest
 from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.utterance import Utterance
+
 
 @pytest.fixture
 def my_convo():
