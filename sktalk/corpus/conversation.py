@@ -1,10 +1,9 @@
-import json
-import os
 import warnings
 from sktalk.corpus.utterance import Utterance
+from sktalk.corpus.write.writer import Writer
 
 
-class Conversation:
+class Conversation(Writer):
     def __init__(
         self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
     ) -> None:
@@ -66,20 +65,3 @@ class Conversation:
         conv_dict = self._metadata.copy()
         conv_dict["Utterances"] = utt_list
         return conv_dict
-
-    def write_json(self, name, directory):
-        """
-        Write a conversation to a JSON file.
-
-        Args:
-            name (str): The name of the corpus that will be the file name.
-            directory (str): The path to the directory where the .json
-            file will be saved.
-        """
-        name = f"{name}.json"
-        destination = os.path.join(directory, name)
-
-        conv_dict = self.asdict()
-
-        with open(destination, "w", encoding='utf-8') as file:
-            json.dump(conv_dict, file, indent=4)
