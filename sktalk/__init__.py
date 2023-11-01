@@ -2,10 +2,10 @@
 import logging
 
 # Import the modules that are part of the sktalk package
-from .corpus.parsing.cha import ChaFile
-from .corpus.corpus import Corpus
-from .corpus.conversation import Conversation
-from .corpus.utterance import Utterance
+from .corpus.parsing.cha import ChaFile             # noqa: F401
+from .corpus.corpus import Corpus                   # noqa: F401
+from .corpus.conversation import Conversation       # noqa: F401
+from .corpus.utterance import Utterance             # noqa: F401
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
