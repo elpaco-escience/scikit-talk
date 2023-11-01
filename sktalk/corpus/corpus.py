@@ -1,7 +1,8 @@
 from sktalk.corpus.conversation import Conversation
+from sktalk.corpus.write.writer import Writer
 from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
-from sktalk.corpus.write.writer import Writer
+
 
 class Corpus(Writer):
     def __init__(

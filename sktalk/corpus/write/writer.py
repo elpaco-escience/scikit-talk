@@ -2,6 +2,7 @@ import abc
 import json
 import os
 
+
 class Writer(abc.ABC):
     @abc.abstractmethod
     def asdict(self):
