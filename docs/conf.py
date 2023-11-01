@@ -46,6 +46,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "autoapi.extension",
     "myst_parser",
+    "nbpshinx",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

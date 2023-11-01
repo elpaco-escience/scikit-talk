@@ -23,6 +23,7 @@ You can read the full paper here: `Liesenfeld et al. (2021) <https://aclantholog
 
    installation
    getting_started
+   notebooks/example
 
 
 .. Indices and tables
