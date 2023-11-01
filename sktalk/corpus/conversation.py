@@ -1,5 +1,7 @@
 import json
 import os
+from sktalk.corpus.utterance import Utterance
+import warnings
 
 
 class Conversation:
@@ -12,8 +14,21 @@ class Conversation:
             utterances (list[Utterance]): A list of Utterance objects representing the utterances in the conversation.
             metadata (dict, optional): Additional metadata associated with the conversation. Defaults to None.
         """
+        self._metadata = metadata or {}
         self._utterances = utterances
-        self._metadata = metadata
+        # Input utterances should be a list of type Utterance
+        errormsg = "All utterances in a conversation should be of type Utterance"
+        if not isinstance(self._utterances, list):
+            try:
+                self._utterances = list(self._utterances)
+            except TypeError as e:
+                raise TypeError(errormsg) from e
+        for utterance in self._utterances:
+            if not isinstance(utterance, Utterance):
+                raise TypeError(errormsg)
+        # The list can be empty. This would be weird and the user needs to be warned.
+        if not self._utterances:
+            warnings.warn("This conversation appears to be empty: no Utterances are read.")
 
     @property
     def utterances(self):
