@@ -21,23 +21,16 @@ def convo_meta():
     }
 
 @pytest.fixture
-def utt1():
-    return {
-        "utterance": "Hello",
-        "participant": "A"
-    }
-
-@pytest.fixture
-def utt2():
-    return {
-            "utterance": "Monde",
-            "participant": "B"
-        }
-
-@pytest.fixture
-def convo_utts(utt1, utt2):
-    return [Utterance(utt1),
-        Utterance(utt2)]
+def convo_utts():
+    utterance1 = Utterance(
+        utterance= "Hello",
+        participant = "A"
+    )
+    utterance2 = Utterance(
+        utterance = "Monde",
+        participant = "B"
+    )
+    return [utterance1, utterance2]
 
 @pytest.fixture
 def my_convo(convo_utts, convo_meta):
