@@ -23,7 +23,6 @@ class Conversation:
         Returns:
             list[Utterance]: A list of Utterance objects representing the utterances in the conversation.
         """
-
         return self._utterances
 
     @property

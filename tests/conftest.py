@@ -3,9 +3,8 @@ from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.utterance import Utterance
 
 
-
 @pytest.fixture
-def conversation_metadata():
+def convo_meta():
     return {
         'source': 'file.cha',
         'Languages': ['eng', 'fra'],
@@ -22,7 +21,7 @@ def conversation_metadata():
     }
 
 @pytest.fixture
-def conversation_utterances():
+def convo_utts():
     return [Utterance({
         "utterance": "Hello",
         "participant": "A"
@@ -33,5 +32,5 @@ def conversation_utterances():
         })]
 
 @pytest.fixture
-def my_convo(conversation_utterances, conversation_metadata):
-    return Conversation(conversation_utterances, conversation_metadata)
+def my_convo(convo_utts, convo_meta):
+    return Conversation(convo_utts, convo_meta)
