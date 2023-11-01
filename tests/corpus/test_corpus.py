@@ -1,4 +1,6 @@
 from contextlib import nullcontext as does_not_raise
+import json
+import os
 import pytest
 from sktalk.corpus.corpus import Corpus
 
@@ -47,3 +49,17 @@ class TestCorpus():
         assert isinstance(corpusdict, dict)
         assert corpusdict["language"] == my_corpus.metadata["language"]
         assert corpusdict["importer"] == my_corpus.metadata["importer"]
+
+    @pytest.mark.parametrize("user_path, expected_path", [
+        ("tmp_convo.json", "tmp_convo.json"),
+        ("tmp_convo", "tmp_convo.json")
+    ])
+    def test_write_json(self, my_corpus, tmp_path, user_path, expected_path):
+        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
+        my_corpus.write_json(tmp_file)
+        tmp_file_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
+        assert os.path.exists(tmp_file_exp)
+        with open(tmp_file_exp) as f:
+            my_corpus_read = json.load(f)
+            assert isinstance(my_corpus_read, dict)
+            assert my_corpus_read == my_corpus.asdict()
