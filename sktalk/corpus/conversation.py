@@ -54,19 +54,17 @@ class Conversation:
 
     def write_json(self, name, directory):
         """
-        Write a conversation to a JSONL file.
+        Write a conversation to a JSON file.
 
         Args:
             name (str): The name of the corpus that will be the file name.
-            directory (str): The path to the directory where the .jsonl
+            directory (str): The path to the directory where the .json
             file will be saved.
         """
-        name = f"{name}.jsonl"
+        name = f"{name}.json"
         destination = os.path.join(directory, name)
 
-        utt_list = [u.asdict() for u in self._utterances]
-        conv_dict = self._metadata.copy()
-        conv_dict["Conversation"] = utt_list
+        conv_dict = self.asdict()
 
-        with open(destination, "w") as file:
+        with open(destination, "w", encoding='utf-8') as file:
             json.dump(conv_dict, file, indent=4)

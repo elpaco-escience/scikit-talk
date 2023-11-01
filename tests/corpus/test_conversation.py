@@ -37,6 +37,6 @@ class TestConversation:
     def test_write_json(self, my_convo):
         # Write a mock file and confirm that it has worked
         my_convo.write_json('file', '.')
-        assert os.path.exists('file.jsonl')
+        assert os.path.exists('file.json')
         # Clean up
-        os.remove('file.jsonl')
+        os.remove('file.json')
