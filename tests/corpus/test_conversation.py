@@ -12,7 +12,7 @@ class TestConversation:
         assert isinstance(new_convo, Conversation)
         # cannot instantiate an empty conversation
         with pytest.raises(TypeError):
-            Conversation()
+            Conversation() #noqa E1120
         # A conversation without metadata still has metadata property
         new_convo = Conversation(utterances=convo_utts)
         assert new_convo.metadata == {}
@@ -24,7 +24,6 @@ class TestConversation:
         # The user should be warned if there are no Utterances
         with pytest.warns(match="no Utterances"):
             Conversation(utterances=[])
-         # A conversation cannot be instantiated with utterances not of Utterance class
 
     def test_asdict(self, my_convo):
         """Verify content of dictionary based on conversation"""
