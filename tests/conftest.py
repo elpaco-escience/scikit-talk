@@ -1,5 +1,6 @@
 import pytest
 from sktalk.corpus.conversation import Conversation
+from sktalk.corpus.corpus import Corpus
 from sktalk.corpus.utterance import Utterance
 
 
@@ -20,18 +21,27 @@ def convo_meta():
         }
     }
 
+
 @pytest.fixture
 def convo_utts():
     utterance1 = Utterance(
-        utterance= "Hello",
-        participant = "A"
+        utterance="Hello",
+        participant="A"
     )
     utterance2 = Utterance(
-        utterance = "Monde",
-        participant = "B"
+        utterance="Monde",
+        participant="B"
     )
     return [utterance1, utterance2]
+
 
 @pytest.fixture
 def my_convo(convo_utts, convo_meta):
     return Conversation(convo_utts, convo_meta)
+
+
+@pytest.fixture
+def my_corpus():
+    return Corpus(language="French",
+                  importer="John Doe",
+                  collections=["IADV", "Callosum"])
