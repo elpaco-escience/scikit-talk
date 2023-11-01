@@ -49,7 +49,7 @@ class Conversation:
     def asdict(self):
         utt_list = [u.asdict() for u in self._utterances]
         conv_dict = self._metadata.copy()
-        conv_dict["Conversation"] = utt_list
+        conv_dict["Utterances"] = utt_list
         return conv_dict
 
     def write_json(self, name, directory):

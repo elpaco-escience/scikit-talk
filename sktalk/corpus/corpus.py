@@ -1,11 +1,13 @@
-from sktalk.corpus.conversation import Conversation
 from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
+from sktalk.corpus.conversation import Conversation
+import os
+import json
 
 
 class Corpus:
     def __init__(
-        self, conversations: list["Conversation"] = None, **metadata: dict  # noqa: F821
+        self, conversations: list["Conversation"] = None, **metadata  # noqa: F821
     ):
         self._conversations = conversations or []
         for conversation in self._conversations:
@@ -30,9 +32,34 @@ class Corpus:
             raise TypeError(
                 "Conversations added should be of type Conversation")
 
-    def return_json(self):
-        self.return_dataframe()
-        self.json = self.df.to_json()
+    def asdict(self):
+        """
+        Return the Corpus as a dictionary
+
+        Returns:
+            dict: A dictionary representation of the object.
+        """
+        conv_dicts = [c.asdict() for c in self._conversations]
+        corpus_dict = self._metadata.copy()
+        corpus_dict["Conversations"] = conv_dicts
+        return corpus_dict
+
+    def write_json(self, name: str = 'corpus', directory: str = '.'):
+        """
+        Write a Corpus object to a JSON file.
+
+        Args:
+            name (str): The name of the corpus that will be the file name.
+            directory (str): The path to the directory where the .json
+            file will be saved.
+        """
+        name = f"{name}.json"
+        destination = os.path.join(directory, name)
+
+        corpus_dict = self.asdict()
+
+        with open(destination, "w", encoding='utf-8') as file:
+            json.dump(corpus_dict, file, indent=4)
 
     @property
     def metadata(self):

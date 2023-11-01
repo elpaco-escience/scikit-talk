@@ -1,4 +1,3 @@
-import os
 import pytest
 from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.utterance import Utterance
@@ -18,26 +17,27 @@ def my_convo():
                 'name': 'Btwo',
                 'age': '22',
                 'sex': 'M'}
-                }
-                }
+        }
+    }
 
     utterances = [Utterance({
-            "utterance": "Hello",
-            "participant": "A"
-        }),
+        "utterance": "Hello",
+        "participant": "A"
+    }),
         Utterance({
             "utterance": "Monde",
             "participant": "B"
         })]
     return Conversation(utterances, metadata)
 
+
 class TestConversation:
     def test_instantiate(self, my_convo):
         assert isinstance(my_convo, Conversation)
 
-    def test_write_json(self, my_convo):
-        # Write a mock file and confirm that it has worked
-        my_convo.write_json('file', '.')
-        assert os.path.exists('file.json')
-        # Clean up
-        os.remove('file.json')
+    def test_asdict(self, my_convo):
+        """Verify content of dictionary based on conversation"""
+        convodict = my_convo.asdict()
+        assert isinstance(convodict, dict)
+        assert convodict["Utterances"][0] == my_convo.utterances[0].asdict()
+        assert convodict["source"] == my_convo.metadata["source"]
