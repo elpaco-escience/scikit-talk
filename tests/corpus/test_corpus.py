@@ -30,4 +30,3 @@ class TestCorpus():
             # assert corpus.conversations == conversations
             assert isinstance(corpus.conversations, list)
             assert conversations is None or corpus.conversations == conversations
-
