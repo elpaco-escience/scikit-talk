@@ -28,7 +28,8 @@ class Conversation:
                 raise TypeError(errormsg)
         # The list can be empty. This would be weird and the user needs to be warned.
         if not self._utterances:
-            warnings.warn("This conversation appears to be empty: no Utterances are read.")
+            warnings.warn(
+                "This conversation appears to be empty: no Utterances are read.")
 
     @property
     def utterances(self):
