@@ -22,7 +22,6 @@ You can read the full paper here: `Liesenfeld et al. (2021) <https://aclantholog
    :caption: Contents:
 
    installation
-   getting_started
    notebooks/example
 
 
