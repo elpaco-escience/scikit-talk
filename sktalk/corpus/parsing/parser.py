@@ -20,10 +20,10 @@ class InputFile(abc.ABC):
         if metadata.keys().isdisjoint(self._metadata):
             return self._metadata | metadata
         raise ValueError("Duplicate key in the metadata")
-    
+
     def _extract_metadata(self):
         return {}
-            
+
     @staticmethod
     def _to_timestamp(time_ms):
         try:

@@ -10,7 +10,8 @@ class Corpus:
         self._conversations = conversations or []
         for conversation in self._conversations:
             if not isinstance(conversation, Conversation):
-                raise TypeError("All conversations should be of type Conversation")
+                raise TypeError(
+                    "All conversations should be of type Conversation")
         self._metadata = metadata
 
     def __add__(self, other: "Corpus") -> "Corpus":
@@ -26,7 +27,8 @@ class Corpus:
         if isinstance(conversation, Conversation):
             self._conversations.append(conversation)
         else:
-            raise TypeError("Conversations added should be of type Conversation")
+            raise TypeError(
+                "Conversations added should be of type Conversation")
 
     def return_json(self):
         self.return_dataframe()
