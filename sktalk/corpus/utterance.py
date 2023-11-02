@@ -14,9 +14,6 @@ class Utterance(Audio):
     end: str = None
     metadata: dict[str, Any] = None
 
-    def get_audio(self):
-        pass
-
     def asdict(self):
         return asdict(self)
 

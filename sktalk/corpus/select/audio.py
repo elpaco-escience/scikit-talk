@@ -17,7 +17,7 @@ class Audio(abc.ABC):
         ]
 
         result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=True)
         output = json.loads(result.stdout)
 
         sample_rate = None
@@ -25,7 +25,7 @@ class Audio(abc.ABC):
             if stream["codec_type"] == "audio":
                 sample_rate = stream["sample_rate"]
                 # TODO the channels need to be preserved
-                no_channels = stream["channels"]
+                # no_channels = stream["channels"]
 
         if sample_rate is None:
             raise ValueError("No audio stream found in the file")
@@ -37,7 +37,8 @@ class Audio(abc.ABC):
                '-']
 
         pipe = subprocess.run(cmd, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
+                              stderr=subprocess.PIPE,
+                              check=True)
         raw_audio = pipe.stdout
         audio_array = np.frombuffer(raw_audio, dtype="int16")
         audio_array = audio_array.astype(np.float32) / np.iinfo(np.int16).max
