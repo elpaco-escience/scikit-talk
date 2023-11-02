@@ -61,7 +61,4 @@ class Conversation(Writer):
             print(utterance)
 
     def asdict(self):
-        utt_list = [u.asdict() for u in self._utterances]
-        conv_dict = self._metadata.copy()
-        conv_dict["Utterances"] = utt_list
-        return conv_dict
+        return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
