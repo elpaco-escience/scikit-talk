@@ -61,4 +61,10 @@ class Conversation(Writer):
             print(utterance)
 
     def asdict(self):
+        """
+        Return the Conversation as a dictionary
+
+        Returns:
+            dict: dictionary containing Conversation metadata and Utterances
+        """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}

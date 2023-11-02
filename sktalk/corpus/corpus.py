@@ -36,7 +36,7 @@ class Corpus(Writer):
         Return the Corpus as a dictionary
 
         Returns:
-            dict: A dictionary representation of the object.
+            dict: dictionary containing Corpus metadata and Conversations
         """
         return self._metadata | {"Conversations": [u.asdict() for u in self._conversations]}
 
