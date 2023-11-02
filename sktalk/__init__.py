@@ -1,8 +1,8 @@
 """Documentation about scikit-talk"""
 import logging
+# Import the modules that are part of the sktalk package
 from .corpus.conversation import Conversation  # noqa: F401
 from .corpus.corpus import Corpus  # noqa: F401
-# Import the modules that are part of the sktalk package
 from .corpus.parsing.cha import ChaFile  # noqa: F401
 from .corpus.utterance import Utterance  # noqa: F401
 
