@@ -33,7 +33,6 @@ class TestConversation:
         assert isinstance(convodict, dict)
         assert convodict["Utterances"][0] == my_convo.utterances[0].asdict()
         assert convodict["source"] == my_convo.metadata["source"]
-        assert isinstance(convodict["Utterances"][0], dict)
 
     @pytest.mark.parametrize("user_path, expected_path", [
         ("tmp_convo.json", "tmp_convo.json"),
