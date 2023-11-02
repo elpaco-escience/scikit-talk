@@ -8,7 +8,7 @@ from .parser import InputFile
 class ChaFile(InputFile):
     def _pla_reader(self) -> pylangacq.Reader:
         return pylangacq.read_chat(self._path)
-    
+
     def parse(self):
         """Parse conversation file in Chat format
 
@@ -35,7 +35,6 @@ class ChaFile(InputFile):
 
     def _extract_metadata(self):
         return self._pla_reader().headers()[0]
-
 
     @staticmethod
     def _split_time(time):
