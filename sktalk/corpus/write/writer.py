@@ -1,6 +1,6 @@
 import abc
 import json
-import os
+from pathlib import Path
 
 
 class Writer(abc.ABC):
@@ -17,11 +17,9 @@ class Writer(abc.ABC):
             directory (str): The path to the directory where the .json
             file will be saved.
         """
-        ext = os.path.splitext(path)[1]
-        if ext != ".json":
-            path += ".json"
+        _path = Path(path).with_suffix(".json")
 
         object_dict = self.asdict()
 
-        with open(path, "w", encoding='utf-8') as file:
+        with open(_path, "w", encoding='utf-8') as file:
             json.dump(object_dict, file, indent=4)
