@@ -22,6 +22,6 @@ class TestUtterance():
             Utterance()  # noqa no-value-for-parameter
 
     def test_get_audio(self, utterances_with_time):
-        # for utterance in utterances_with_time:
-        #    utterance.get_audio()
-        pass
+        utt = utterances_with_time[0]
+        utt.get_audio()
+        assert utterance.audio is not None
