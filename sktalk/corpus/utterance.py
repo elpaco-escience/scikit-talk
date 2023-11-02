@@ -2,10 +2,11 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from typing import Any
 from .participant import Participant
+from .select.audio import Audio
 
 
 @dataclass
-class Utterance:
+class Utterance(Audio):
     utterance: str
     participant: Participant = None
     time: str = None
