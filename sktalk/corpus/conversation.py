@@ -1,6 +1,6 @@
 import warnings
-from sktalk.corpus.utterance import Utterance
-from sktalk.corpus.write.writer import Writer
+from .utterance import Utterance
+from .write.writer import Writer
 
 
 class Conversation(Writer):

@@ -1,7 +1,7 @@
-from sktalk.corpus.conversation import Conversation
-from sktalk.corpus.write.writer import Writer
+from .conversation import Conversation
 from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
+from .write.writer import Writer
 
 
 class Corpus(Writer):
@@ -38,10 +38,7 @@ class Corpus(Writer):
         Returns:
             dict: A dictionary representation of the object.
         """
-        conv_dicts = [c.asdict() for c in self._conversations]
-        corpus_dict = self._metadata.copy()
-        corpus_dict["Conversations"] = conv_dicts
-        return corpus_dict
+        return self._metadata | {"Conversations": [u.asdict() for u in self._conversations]}
 
     @property
     def metadata(self):
