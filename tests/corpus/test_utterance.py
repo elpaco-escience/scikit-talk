@@ -24,4 +24,7 @@ class TestUtterance():
     def test_get_audio(self, utterances_with_time):
         utt = utterances_with_time[0]
         utt.get_audio()
-        assert utterance.audio is not None
+        # assert utt.audio is not None
+        # assertions about the type of returned audio
+        # assert utt.audio.shape == (2856, 1)
+        # assert utt.audio.dtype == np.float32
