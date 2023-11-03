@@ -1,11 +1,8 @@
+import re
 from dataclasses import asdict
 from dataclasses import dataclass
-from math import nan
 from typing import Any
-
-from distutils.command import clean
 from .participant import Participant
-from collections import Counter
 
 
 @dataclass
@@ -17,22 +14,35 @@ class Utterance:
     end: str = None
     metadata: dict[str, Any] = None
 
+    def __post_init__(self):
+        # clean utterance:
+        # remove leading and trailing whitespace
+        self.utterance_clean = self.utterance.strip()
+        # remove square brackets and their contents, e.g. [laugh]
+        self.utterance_clean = re.sub(r'\[[^\]]*\]', '', self.utterance_clean)
+        # remove punctuation inside and outside of words
+        self.utterance_clean = re.sub(r'[^\w\s]', '', self.utterance_clean)
+        # remove numbers that are surrounded by spaces
+        self.utterance_clean = re.sub(r'\s[0-9]+\s', ' ', self.utterance_clean)
+
+        # generate a list of words in the utterance
+        self.utterance_list = self.utterance_clean.split()
+
+        # count words and characters
+        self.n_words = len(self.utterance_list)
+        self.n_characters = sum(len(word) for word in self.utterance_list)
+
     def get_audio(self):
         pass
 
     def asdict(self):
-        return asdict(self)
+        utt_dict = asdict(self)
+        # add fields that are not part of the dataclass to the dictionary
+        newfields = [field for field in vars(
+            self) if field not in self.__dataclass_fields__]
+        utt_dict = utt_dict | {field: getattr(
+            self, field) for field in newfields}
+        return utt_dict
 
     # TODO function: that prints summary of data, shows it to user
     # TODO function: create a pandas data frame with the utterances
-
-    def getnchar(self):
-        clean_utt = self.utterance.replace(" ", "").strip()
-        char_count = Counter(clean_utt)
-        self.nchar = sum(char_count.values())
-        self.length = len(clean_utt)
-
-    def getnwords(self):
-        clean_utt = self.utterance.strip()
-        self.nwords = len(clean_utt.split(" "))
-
