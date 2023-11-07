@@ -1,6 +1,6 @@
 import pytest
-from sktalk.corpus.parsing.json import JsonFile
 from sktalk.corpus.conversation import Conversation
+from sktalk.corpus.parsing.json import JsonFile
 
 
 def test_jsonfile_parse():

@@ -1,7 +1,7 @@
-from .parser import InputFile
+import json
 from ..conversation import Conversation
 from ..utterance import Utterance
-import json
+from .parser import InputFile
 
 
 class JsonFile(InputFile):
@@ -15,4 +15,4 @@ class JsonFile(InputFile):
             json_in = json.load(f)
         utterances = [Utterance(**u) for u in json_in["Utterances"]]
         del json_in["Utterances"]
-        return Conversation(utterances, metadata = json_in)
+        return Conversation(utterances, metadata=json_in)
