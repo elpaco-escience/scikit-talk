@@ -13,6 +13,6 @@ class JsonFile(InputFile):
         """
         with open(self._path) as f:
             json_in = json.load(f)
-        utterances = [Utterance("")]
-        metadata = json_in
-        return Conversation(utterances, metadata)
+        utterances = [Utterance(**u) for u in json_in["Utterances"]]
+        del json_in["Utterances"]
+        return Conversation(utterances, metadata = json_in)
