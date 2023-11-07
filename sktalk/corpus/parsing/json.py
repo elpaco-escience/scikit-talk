@@ -11,7 +11,7 @@ class JsonFile(InputFile):
         Returns:
             Conversation: A Conversation object representing the conversation in the file.
         """
-        with open(self._path) as f:
+        with open(self._path, encoding='utf-8') as f:
             json_in = json.load(f)
         utterances = [Utterance(**u) for u in json_in["Utterances"]]
         del json_in["Utterances"]

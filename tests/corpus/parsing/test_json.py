@@ -9,5 +9,5 @@ def test_jsonfile_parse():
     assert len(json_in.utterances) == 3
     assert json_in.utterances[0].utterance == "Hello world"
     with pytest.raises(KeyError):
-        json_in.metadata["Utterances"]
+        json_in.metadata["Utterances"] # noqa pointless-statement
     assert json_in.metadata["Languages"] == ["eng"]
