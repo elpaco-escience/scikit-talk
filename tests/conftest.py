@@ -27,12 +27,12 @@ def convo_utts():
     utterance1 = Utterance(
         utterance="Hello",
         participant="A",
-        time = [0, 1000]
+        time=[0, 1000]
     )
     utterance2 = Utterance(
         utterance="Monde",
         participant="B",
-        time = [900, 1800]
+        time=[900, 1800]
     )
     return [utterance1, utterance2]
 

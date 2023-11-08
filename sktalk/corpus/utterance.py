@@ -47,6 +47,5 @@ class Utterance:
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
 
-
     # TODO function: that prints summary of data, shows it to user
     # TODO function: create a pandas data frame with the utterances
