@@ -28,3 +28,7 @@ class TestUtterance():
         utt_dict = utt.asdict()
         assert utt_dict["utterance"] == "Hello world"
         assert utt_dict["n_words"] == 2
+
+    def test_until(self, convo_utts):
+        utt1, utt2 = convo_utts
+        assert utt1.until(utt2) == -100
