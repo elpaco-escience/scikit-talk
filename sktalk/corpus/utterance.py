@@ -13,6 +13,10 @@ class Utterance:
     begin: str = None
     end: str = None
     metadata: dict[str, Any] = None
+    utterance_clean: str = None
+    utterance_list: list[str] = None
+    n_words: int = None
+    n_characters: int = None
 
     def __post_init__(self):
         # clean utterance:
@@ -37,11 +41,6 @@ class Utterance:
 
     def asdict(self):
         utt_dict = asdict(self)
-        # add fields that are not part of the dataclass to the dictionary
-        newfields = [field for field in vars(
-            self) if field not in self.__dataclass_fields__]
-        utt_dict = utt_dict | {field: getattr(
-            self, field) for field in newfields}
         return utt_dict
 
     # TODO function: that prints summary of data, shows it to user
