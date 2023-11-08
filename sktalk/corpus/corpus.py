@@ -1,3 +1,4 @@
+import json
 from .conversation import Conversation
 from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
@@ -62,7 +63,14 @@ class Corpus(Writer):
 
     @classmethod
     def from_json(cls, path):
-        return JsonFile(path).parse()
+        """Parse conversation file in JSON format
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
+        with open(path, encoding='utf-8') as f:
+            json_in = json.load(f)
+        return Corpus(**json_in)
 
     @classmethod
     def from_xml(cls, path):

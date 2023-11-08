@@ -5,7 +5,7 @@ from .parser import InputFile
 
 
 class JsonFile(InputFile):
-    def parse(self) -> "Conversation":  # noqa: F821
+    def parse(self) -> "Conversation":
         """Parse conversation file in JSON format
 
         Returns:
