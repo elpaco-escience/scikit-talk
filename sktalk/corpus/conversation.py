@@ -68,3 +68,15 @@ class Conversation(Writer):
             dict: dictionary containing Conversation metadata and Utterances
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
+
+    def subconversation(self, index):
+        # start with utterance
+        # obtain utterance context; search criteria may be time, or [i]
+        # create a new conversation object from this
+        return Conversation(self.utterances[index:index+2], self.metadata)
+
+    @property
+    def until_next(self):
+        if len(self.utterances) != 2:
+            raise ValueError("Conversation must have 2 utterances")
+        return self.utterances[0].until(self.utterances[1])

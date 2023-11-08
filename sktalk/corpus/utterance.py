@@ -17,6 +17,7 @@ class Utterance:
     utterance_list: list[str] = None
     n_words: int = None
     n_characters: int = None
+    time_to_next: int = None
 
     def __post_init__(self):
         # clean utterance:
