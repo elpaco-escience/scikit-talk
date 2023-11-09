@@ -69,11 +69,11 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def subconversation(self, index):
+    def subconversation(self, index: int, before: int = 0, after: int = 0):
         # start with utterance
         # obtain utterance context; search criteria may be time, or [i]
         # create a new conversation object from this
-        return Conversation(self.utterances[index:index+2], self.metadata)
+        return Conversation(self.utterances[index-before:index+after+1], self.metadata)
 
     @property
     def until_next(self):

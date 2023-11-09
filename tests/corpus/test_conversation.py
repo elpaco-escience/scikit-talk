@@ -48,4 +48,4 @@ class TestConversation:
             assert my_convo_read == my_convo.asdict()
 
     def test_until(self, my_convo):
-        assert my_convo.subconversation(0).until_next == -100
+        assert my_convo.subconversation(index=0, after=1).until_next == -100
