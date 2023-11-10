@@ -69,7 +69,29 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def subconversation(self, index: int, before: int = 0, after: int = 0):
+    def subconversation(self,
+                        index: int,
+                        before: int = 0,
+                        after: int = 0,
+                        time_or_index: str = "index"):
+        # select utterance based on the value of utterance.begin
+        # type index = select utterance based on index
+        # type time = select utterance based on time
+
+        # verify if index is within range:
+        if index < 0 or index >= len(self.utterances):
+            raise IndexError("Index out of range")
+        if time_or_index == "time":
+            begin = self.utterances[index].time[0] - before
+            end = self.utterances[index].time[1] + after
+            [u for u in self.utterances if u.time[0] >= begin and u.time[1] <= end]
+        elif time_or_index == "index":
+            # check if selection is within range
+            if index - before < 0 or index + after + 1 > len(self.utterances):
+                raise IndexError("Index out of range")
+        else:
+            raise ValueError("time_or_index must be either 'time' or 'index'")
+
         # start with utterance
         # obtain utterance context; search criteria may be time, or [i]
         # create a new conversation object from this

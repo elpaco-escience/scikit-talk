@@ -3,23 +3,25 @@ from sktalk.corpus.utterance import Utterance
 
 
 class TestUtterance():
-    @pytest.mark.parametrize("utt_in, nwords, nchars", [
-        ("Hello world", 2, 10),
-        ("One", 1, 3),
-        ("", 0, 0),
-        ("Hello [laugh]", 1, 5),
-        ("[laugh] hello [laugh] [noise]!", 1, 5),
-        ("Hello 567 world", 2, 10),
-        ("He5lo wor4d", 2, 10),
-        ("zung1 ji3 jyut6", 3, 13),
-        ("我 我 是 上学 去, 我 现在 给 她 买 diaper@s 了 .", 12, 20)
+    @pytest.mark.parametrize("utt_in, nwords, nchars, uttlist", [
+        ("Hello world", 2, 10, ["Hello", "world"]),
+        ("One", 1, 3, ["One"]),
+        ("", 0, 0, []),
+        ("Hello [laugh]", 1, 5,  ["Hello"]),
+        ("[laugh] hello [laugh] [noise]!", 1, 5, ["hello"]),
+        ("Hello 567 world", 2, 10, ["Hello", "world"]),
+        ("He5lo wor4d", 2, 10, ["He5lo", "wor4d"]),
+        ("zung1 ji3 jyut6", 3, 13, ["zung1", "ji3", "jyut6"]),
+        ("上学 去, 我 现在 diaper@s 了 .", 6, 14,
+         ["上学", "去", "我", "现在", "diapers", "了"])
     ])
-    def test_postinit(self, utt_in, nwords, nchars):
+    def test_postinit(self, utt_in, nwords, nchars, uttlist):
         utt = Utterance(
             utterance=utt_in
         )
         assert utt.n_words == nwords
         assert utt.n_characters == nchars
+        assert utt.utterance_list == uttlist
 
     def test_asdict(self):
         utt = Utterance(
@@ -30,7 +32,7 @@ class TestUtterance():
         assert utt_dict["n_words"] == 2
 
     def test_until(self, convo_utts):
-        utt1, utt2 = convo_utts
+        utt1, utt2 = convo_utts[:2]
         assert utt1.until(utt2) == -100
 
     milliseconds_timestamp = [

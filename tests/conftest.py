@@ -24,21 +24,62 @@ def convo_meta():
 
 @pytest.fixture
 def convo_utts():
-    utterance1 = Utterance(
-        utterance="Hello",
-        participant="A",
-        time=[0, 1000]
-    )
-    utterance2 = Utterance(
-        utterance="Monde",
-        participant="B",
-        time=[900, 1800]
-    )
-    return [utterance1, utterance2]
+    return [
+        Utterance(
+            utterance="Hello A",
+            participant="A",
+            time=[0, 1000]
+        ),
+        Utterance(
+            utterance="Monde B",
+            participant="B",
+            time=[900, 3500]
+        ),
+        Utterance(
+            utterance="Hello C",
+            participant="A",
+            time=[1000, 12000]
+        ),
+        Utterance(
+            utterance="Monde D",
+            participant="B",
+            time=[1200, 2000]
+        ),
+        Utterance(
+            utterance="Hello E",
+            participant="A",
+            time=[3500, 4500]
+        ),
+        Utterance(
+            utterance="Utterance U",
+            participant="B",
+            time=[5000, 8000]
+        ),
+        Utterance(
+            utterance="Monde F",
+            participant="B",
+            time=[5500, 7500]
+        ),
+        Utterance(
+            utterance="Hello G",
+            participant="A",
+            time=[7000, 9500]
+        ),
+        Utterance(
+            utterance="Monde H",
+            participant="B",
+            time=[9000, 12500]
+        ),
+        Utterance(
+            utterance="Hello I",
+            participant="A",
+            time=[12000, 13000]
+        )
+    ]
 
 
 @pytest.fixture
-def my_convo(convo_utts, convo_meta):
+def convo(convo_utts, convo_meta):
     return Conversation(convo_utts, convo_meta)
 
 
