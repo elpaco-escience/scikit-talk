@@ -29,23 +29,11 @@ class ChaFile(InputFile):
             time=chat_utterance.time_marks,
             utterance=str(chat_utterance.tiers),
         )
-        utterance.begin, utterance.end = ChaFile._split_time(utterance.time)
         utterance.utterance = ChaFile._clean_utterance(utterance.utterance)
         return utterance
 
     def _extract_metadata(self):
         return self._pla_reader().headers()[0]
-
-    @staticmethod
-    def _split_time(time):
-        if time is None:
-            return None, None
-        begin, end = str(time).split(", ")
-        begin = begin.replace("(", "")
-        end = end.replace(")", "")
-        begin = InputFile._to_timestamp(begin)
-        end = InputFile._to_timestamp(end)
-        return (begin, end)
 
     @staticmethod
     def _clean_utterance(utterance):
