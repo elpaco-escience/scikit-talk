@@ -2,9 +2,8 @@ import os
 import tempfile
 import pytest
 import requests
-import sktalk
+from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
-from sktalk.corpus.parsing.parser import InputFile
 
 
 class TestChaFile:
@@ -33,7 +32,7 @@ class TestChaFile:
     @pytest.mark.parametrize("download_file", urls, indirect=True)
     def test_parse(self, download_file):
         parsed_cha = ChaFile(download_file).parse()
-        assert isinstance(parsed_cha, sktalk.corpus.conversation.Conversation)
+        assert isinstance(parsed_cha, Conversation)
         source = parsed_cha.metadata["source"]
         assert os.path.splitext(source)[1] == ".cha"
         assert parsed_cha.utterances[0].begin == "00:00:00.000"

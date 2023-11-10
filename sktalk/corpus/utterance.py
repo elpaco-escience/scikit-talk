@@ -51,15 +51,14 @@ class Utterance:
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
 
-    def _split_time(self, time: list):
-        if time is None:
-            return None, None
-        begin, end = str(time).split(", ")
-        begin = begin.replace("(", "")
-        end = end.replace(")", "")
-        begin = self._to_timestamp(begin)
-        end = self._to_timestamp(end)
-        return (begin, end)
+    def _split_time(self):
+        try:
+            begin, end = self.time
+            self.begin = self._to_timestamp(begin)
+            self.end = self._to_timestamp(end)
+        except (ValueError, TypeError):
+            self.begin = None
+            self.end = None
 
     @staticmethod
     def _to_timestamp(time_ms):

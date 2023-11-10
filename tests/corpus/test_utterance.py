@@ -51,9 +51,12 @@ class TestUtterance():
             utt._to_timestamp("987654321")                    # noqa: W0212
 
         with pytest.raises(ValueError, match="negative"):
-            Utterance._to_timestamp("-1")                           # noqa: W0212
+            utt._to_timestamp("-1")                           # noqa: W0212
 
     time_begin_end = [[(1748070, 1751978), "00:29:08.070", "00:29:11.978"],
+                      [[1748070, 1751978], "00:29:08.070", "00:29:11.978"],
+                      [[1], None, None],
+                      [1, None, None],
                       [None, None, None]]
 
     @pytest.mark.parametrize("time, begin, end", time_begin_end)
