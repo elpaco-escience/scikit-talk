@@ -22,6 +22,31 @@ class Utterance:
 
     def __post_init__(self):
         # clean utterance:
+        if not self.utterance_clean:
+            self._clean_utterance()
+
+        # generate a list of words in the utterance
+        if not self.utterance_list:
+            self.utterance_list = self.utterance_clean.split()
+
+        # count words and characters
+        if not self.n_words:
+            self.n_words = len(self.utterance_list)
+        if not self.n_characters:
+            self.n_characters = sum(len(word) for word in self.utterance_list)
+
+        # calculate timestamps
+        if not self.begin or not self.end:
+            self._split_time()
+
+    def get_audio(self):
+        pass
+
+    def asdict(self):
+        utt_dict = asdict(self)
+        return utt_dict
+
+    def _clean_utterance(self):
         # remove leading and trailing whitespace
         self.utterance_clean = self.utterance.strip()
         # remove square brackets and their contents, e.g. [laugh]
@@ -30,23 +55,6 @@ class Utterance:
         self.utterance_clean = re.sub(r'[^\w\s]', '', self.utterance_clean)
         # remove numbers that are surrounded by spaces
         self.utterance_clean = re.sub(r'\s[0-9]+\s', ' ', self.utterance_clean)
-
-        # generate a list of words in the utterance
-        self.utterance_list = self.utterance_clean.split()
-
-        # count words and characters
-        self.n_words = len(self.utterance_list)
-        self.n_characters = sum(len(word) for word in self.utterance_list)
-
-        # calculate timestamps
-        self.begin, self.end = self._split_time(self.time)
-
-    def get_audio(self):
-        pass
-
-    def asdict(self):
-        utt_dict = asdict(self)
-        return utt_dict
 
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
