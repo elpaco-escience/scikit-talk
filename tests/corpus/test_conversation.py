@@ -66,17 +66,18 @@ class TestConversationMetrics:
                                   after=after,
                                   time_or_index=time_or_index)
 
-    @pytest.mark.parametrize("index, before, after, time_or_index, expected_length",
+    @pytest.mark.parametrize("args, expected_length",
                              [
-                                 (0, 0, 1, "index", 2),
-                                 (5, 2, 0, "index", 3),
-                                 (0, 2, 2, "index", 3),
-                                 (0, 2, None, "index", 3),
-                                 (0, 0, 0, "time", 2),  # A, B
-                                 (5, 3000, 3000, "time", 7),  # B,C,E,U,F,G,H
-                                 (5, 0, 0, "time", 4),  # C, U, F, G
+                                 ([0, 0, 1, "index"], 2),
+                                 ([5, 2, 0, "index"], 3),
+                                 ([0, 2, 2, "index"], 3),
+                                 ([0, 2, None, "index"], 3),
+                                 ([0, 0, 0, "time"], 2),  # A, B
+                                 ([5, 3000, 3000, "time"], 7),  # B,C,E,U,F,G,H
+                                 ([5, 0, 0, "time"], 4),  # C, U, F, G
                              ])
-    def test_subconversation(self, convo, index, before, after, time_or_index, expected_length):
+    def test_subconversation(self, convo, args, expected_length):
+        index, before, after, time_or_index = args
         sub = convo.subconversation(index=index,
                                     before=before,
                                     after=after,
