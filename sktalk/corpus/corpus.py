@@ -2,6 +2,7 @@ import json
 from .conversation import Conversation
 from .parsing.xml import XmlFile
 from .write.writer import Writer
+from .utterance import Utterance
 
 
 class Corpus(Writer):
@@ -69,8 +70,13 @@ class Corpus(Writer):
         """
         with open(path, encoding='utf-8') as f:
             json_in = json.load(f)
-        return Corpus(**json_in)
-
+        conversations_lst = []    
+        for con in json_in["Conversations"]:
+            utterances = [Utterance(**u) for u in con["Utterances"]]
+            del con["Utterances"]
+            conversations_lst.append(Conversation(utterances, metadata=con))
+        return Corpus(conversations=conversations_lst)
+        
     @classmethod
     def from_xml(cls, path):
         return XmlFile(path).parse()

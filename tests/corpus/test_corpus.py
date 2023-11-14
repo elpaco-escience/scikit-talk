@@ -67,3 +67,5 @@ class TestCorpus():
     def test_from_jsonfile(self):
         json_in = Corpus.from_json("tests/testdata/dummy_corpus.json")
         assert isinstance(json_in, Corpus)
+        assert len(json_in.conversations) == 2
+        #assert json_in.utterances[0].utterance == "Hello world"
