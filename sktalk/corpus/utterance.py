@@ -3,22 +3,22 @@ import re
 from dataclasses import asdict
 from dataclasses import dataclass
 from typing import Any
-from .participant import Participant
+from typing import Optional
 
 
 @dataclass
 class Utterance:
     utterance: str
-    participant: Participant = None
-    time: list = None
-    begin: str = None
-    end: str = None
-    metadata: dict[str, Any] = None
-    utterance_clean: str = None
-    utterance_list: list[str] = None
-    n_words: int = None
-    n_characters: int = None
-    time_to_next: int = None
+    participant: Optional[str] = None
+    time: Optional[list] = None
+    begin: Optional[str] = None
+    end: Optional[str] = None
+    metadata: Optional[dict[str, Any]] = None
+    utterance_clean: Optional[str] = None
+    utterance_list: Optional[list[str]] = None
+    n_words: Optional[int] = None
+    n_characters: Optional[int] = None
+    time_to_next: Optional[int] = None
 
     def __post_init__(self):
         # clean utterance:
@@ -43,8 +43,7 @@ class Utterance:
         pass
 
     def asdict(self):
-        utt_dict = asdict(self)
-        return utt_dict
+        return asdict(self)
 
     def _clean_utterance(self):
         # remove leading and trailing whitespace
@@ -54,7 +53,7 @@ class Utterance:
         # remove punctuation inside and outside of words
         self.utterance_clean = re.sub(r'[^\w\s]', '', self.utterance_clean)
         # remove numbers that are surrounded by spaces
-        self.utterance_clean = re.sub(r'\s[0-9]+\s', ' ', self.utterance_clean)
+        self.utterance_clean = re.sub(r'\s\d+\s', ' ', self.utterance_clean)
 
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
