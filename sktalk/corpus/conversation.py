@@ -1,11 +1,12 @@
 import warnings
+from typing import Optional
 from .utterance import Utterance
 from .write.writer import Writer
 
 
 class Conversation(Writer):
     def __init__(
-        self, utterances: list["Utterance"], metadata: dict | None = None  # noqa: F821
+        self, utterances: list["Utterance"], metadata: Optional[dict] = None  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -72,15 +73,20 @@ class Conversation(Writer):
     def subconversation(self,
                         index: int,
                         before: int = 0,
-                        after: int | None = None,
+                        after: Optional[int] = None,
                         time_or_index: str = "index") -> "Conversation":
         """Select utterances to provide context as a sub-conversation
 
         Args:
             index (int): The index of the utterance for which to provide context
-            before (int, optional): Either the number of utterances prior to indicated utterance, or the time in ms preceding the utterance's begin. Defaults to 0.
-            after (int, optional): Either the number of utterances after the indicated utterance, or the time in ms following the utterance's end. Defaults to None, which then assumes the same value as `before`.
-            time_or_index (str, optional): Use "time" to select based on time (in ms), or "index" to select a set number of utterances irrespective of timing. Defaults to "index".
+            before (int, optional): Either the number of utterances prior to indicated utterance,
+                                or the time in ms preceding the utterance's begin. Defaults to 0.
+            after (int, optional): Either the number of utterances after the indicated utterance,
+                                or the time in ms following the utterance's end. Defaults to None,
+                                which then assumes the same value as `before`.
+            time_or_index (str, optional): Use "time" to select based on time (in ms), or "index"
+                                to select a set number of utterances irrespective of timing.
+                                Defaults to "index".
 
         Raises:
             IndexError: Index provided must be within range of utterances
@@ -124,7 +130,4 @@ class Conversation(Writer):
         # time[0] is before begin and time[1] is after end
         if begin <= time[0] <= end or begin <= time[1] <= end:
             return True
-        elif time[0] <= begin and time[1] >= end:
-            return True
-        else:
-            return False
+        return time[0] <= begin and time[1] >= end

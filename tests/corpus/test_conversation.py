@@ -50,15 +50,16 @@ class TestConversation:
 
 
 class TestConversationMetrics:
-    @pytest.mark.parametrize("index, before, after, time_or_index, error",
+    @pytest.mark.parametrize("args, error",
                              [
-                                 (0, 0, 1, "index", does_not_raise()),
-                                 (20, 1, 1, "index", pytest.raises(IndexError)),
-                                 (0, 50, 50, "index", does_not_raise()),
-                                 (0, 0, 0, "neither_time_nor_index",
+                                 ([0, 0, 1, "index"], does_not_raise()),
+                                 ([20, 1, 1, "index"], pytest.raises(IndexError)),
+                                 ([0, 50, 50, "index"], does_not_raise()),
+                                 ([0, 0, 0, "neither_time_nor_index"],
                                      pytest.raises(ValueError))
                              ])
-    def test_subconversation_errors(self, convo, index, before, after, time_or_index, error):
+    def test_subconversation_errors(self, convo, args, error):
+        index, before, after, time_or_index = args
         with error:
             convo.subconversation(index=index,
                                   before=before,
