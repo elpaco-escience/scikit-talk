@@ -122,6 +122,11 @@ class Conversation(Writer):
             raise ValueError("Conversation must have 2 utterances")
         return self.utterances[0].until(self.utterances[1])
 
+    @property
+    def dyadic(self) -> bool:
+        participants = [u.participant for u in self.utterances]
+        return len(set(participants)) == 2
+
     @staticmethod
     def overlap(begin: int, end: int, time: list):
         # there is overlap if:

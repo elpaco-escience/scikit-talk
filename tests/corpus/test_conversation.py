@@ -106,3 +106,10 @@ class TestConversationMetrics:
             120, 140, [90, 110])  # utterance before window
         assert not Conversation.overlap(
             70, 80, [90, 110])  # utterance after window
+
+    def test_dyadic(self, convo):
+        assert not convo.dyadic
+        convo2 = convo.subconversation(0, 2)
+        assert convo2.dyadic
+        convo3 = convo.subconversation(0)
+        assert not convo3.dyadic
