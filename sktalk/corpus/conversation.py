@@ -5,7 +5,7 @@ from .write.writer import Writer
 
 class Conversation(Writer):
     def __init__(
-        self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
+        self, utterances: list["Utterance"], metadata: dict | None = None  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -72,33 +72,59 @@ class Conversation(Writer):
     def subconversation(self,
                         index: int,
                         before: int = 0,
-                        after: int = 0,
-                        time_or_index: str = "index"):
-        # select utterance based on the value of utterance.begin
-        # type index = select utterance based on index
-        # type time = select utterance based on time
+                        after: int | None = None,
+                        time_or_index: str = "index") -> "Conversation":
+        """Select utterances to provide context as a sub-conversation
 
-        # verify if index is within range:
+        Args:
+            index (int): The index of the utterance for which to provide context
+            before (int, optional): Either the number of utterances prior to indicated utterance, or the time in ms preceding the utterance's begin. Defaults to 0.
+            after (int, optional): Either the number of utterances after the indicated utterance, or the time in ms following the utterance's end. Defaults to None, which then assumes the same value as `before`.
+            time_or_index (str, optional): Use "time" to select based on time (in ms), or "index" to select a set number of utterances irrespective of timing. Defaults to "index".
+
+        Raises:
+            IndexError: Index provided must be within range of utterances
+            ValueError: time_or_index must be either "time" or "index"
+
+        Returns:
+            Conversation: Conversation object containing a reduced set of utterances
+        """
         if index < 0 or index >= len(self.utterances):
             raise IndexError("Index out of range")
-        if time_or_index == "time":
+        if after is None:
+            after = before
+        if time_or_index == "index":
+            # if before/after would exceed the bounds of the list, adjust
+            if index - before < 0:
+                before = index
+            if index + after + 1 > len(self.utterances):
+                after = len(self.utterances) - index - 1
+            returned_utterances = self.utterances[index-before:index+after+1]
+        elif time_or_index == "time":
             begin = self.utterances[index].time[0] - before
             end = self.utterances[index].time[1] + after
-            [u for u in self.utterances if u.time[0] >= begin and u.time[1] <= end]
-        elif time_or_index == "index":
-            # check if selection is within range
-            if index - before < 0 or index + after + 1 > len(self.utterances):
-                raise IndexError("Index out of range")
+            returned_utterances = [
+                u for u in self.utterances if self.overlap(begin, end, u.time)]
         else:
             raise ValueError("time_or_index must be either 'time' or 'index'")
 
-        # start with utterance
-        # obtain utterance context; search criteria may be time, or [i]
-        # create a new conversation object from this
-        return Conversation(self.utterances[index-before:index+after+1], self.metadata)
+        return Conversation(returned_utterances, self.metadata)
 
     @property
     def until_next(self):
         if len(self.utterances) != 2:
             raise ValueError("Conversation must have 2 utterances")
         return self.utterances[0].until(self.utterances[1])
+
+    @staticmethod
+    def overlap(begin: int, end: int, time: list):
+        # there is overlap if:
+        # time[0] falls between begin and end
+        # time[1] falls between and end
+        # time[0] is before begin and time[1] is after end
+        if begin <= time[0] <= end or begin <= time[1] <= end:
+            return True
+        elif time[0] <= begin and time[1] >= end:
+            return True
+        else:
+            return False

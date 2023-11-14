@@ -53,9 +53,8 @@ class TestConversationMetrics:
     @pytest.mark.parametrize("index, before, after, time_or_index, error",
                              [
                                  (0, 0, 1, "index", does_not_raise()),
-                                 (0, 1, 1, "index", pytest.raises(IndexError)),
-                                 (9, 1, 0, "index", does_not_raise()),
-                                 (9, 1, 1, "index", pytest.raises(IndexError)),
+                                 (20, 1, 1, "index", pytest.raises(IndexError)),
+                                 (0, 50, 50, "index", does_not_raise()),
                                  (0, 0, 0, "neither_time_nor_index",
                                      pytest.raises(ValueError))
                              ])
@@ -70,8 +69,11 @@ class TestConversationMetrics:
                              [
                                  (0, 0, 1, "index", 2),
                                  (5, 2, 0, "index", 3),
-                                 (1, 1000, 0, "time", 2),
-                                 (5, 3000, 3000, "time", 7),
+                                 (0, 2, 2, "index", 3),
+                                 (0, 2, None, "index", 3),
+                                 (0, 0, 0, "time", 2),  # A, B
+                                 (5, 3000, 3000, "time", 7),  # B,C,E,U,F,G,H
+                                 (5, 0, 0, "time", 4),  # C, U, F, G
                              ])
     def test_subconversation(self, convo, index, before, after, time_or_index, expected_length):
         sub = convo.subconversation(index=index,
@@ -88,3 +90,17 @@ class TestConversationMetrics:
                                      before=before,
                                      after=after,
                                      time_or_index=time_or_index).until_next == expected
+
+    def test_overlap(self):
+        # entire utterance in window
+        assert Conversation.overlap(80, 120, [90, 110])
+        # beginning of utterance in window
+        assert Conversation.overlap(80, 100, [90, 110])
+        # end of utterance in window
+        assert Conversation.overlap(100, 120, [90, 110])
+        # utterance covers window entirely
+        assert Conversation.overlap(95, 105, [90, 110])
+        assert not Conversation.overlap(
+            120, 140, [90, 110])  # utterance before window
+        assert not Conversation.overlap(
+            70, 80, [90, 110])  # utterance after window
