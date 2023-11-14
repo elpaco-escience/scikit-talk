@@ -19,5 +19,9 @@ class Utterance:
     def asdict(self):
         return asdict(self)
 
+    @classmethod
+    def fromdict(cls, fields):
+        return Utterance(**fields)
+
     # TODO function: that prints summary of data, shows it to user
     # TODO function: create a pandas data frame with the utterances

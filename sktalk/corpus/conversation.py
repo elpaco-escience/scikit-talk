@@ -59,8 +59,8 @@ class Conversation(Writer):
             Conversation: A Conversation object representing the conversation in the file.
         """
         with open(path, encoding='utf-8') as f:
-            json_in = json.load(f)
-        utterances = [Utterance(**u) for u in json_in["Utterances"]]
+            json_in = json.load(f)      
+        utterances = [Utterance.fromdict(u) for u in json_in["Utterances"]]
         del json_in["Utterances"]
         return Conversation(utterances, metadata=json_in)
 
