@@ -63,3 +63,7 @@ class TestCorpus():
             my_corpus_read = json.load(f)
             assert isinstance(my_corpus_read, dict)
             assert my_corpus_read == my_corpus.asdict()
+
+    def test_from_jsonfile(self):
+        json_in = Corpus.from_json("tests/testdata/dummy_corpus.json")
+        assert isinstance(json_in, Corpus)

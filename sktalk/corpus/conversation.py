@@ -1,3 +1,4 @@
+import json
 import warnings
 from .utterance import Utterance
 from .write.writer import Writer
@@ -49,6 +50,19 @@ class Conversation(Writer):
             dict: Additional metadata associated with the conversation.
         """
         return self._metadata
+
+    @classmethod
+    def from_json(cls, path):
+        """Parse conversation file in JSON format
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
+        with open(path, encoding='utf-8') as f:
+            json_in = json.load(f)
+        utterances = [Utterance(**u) for u in json_in["Utterances"]]
+        del json_in["Utterances"]
+        return Conversation(utterances, metadata=json_in)
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError

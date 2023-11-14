@@ -46,3 +46,13 @@ class TestConversation:
             my_convo_read = json.load(f)
             assert isinstance(my_convo_read, dict)
             assert my_convo_read == my_convo.asdict()
+
+    def test_from_jsonfile(self):
+        json_in = Conversation.from_json(
+            "tests/testdata/dummy_conversation.json")
+        assert isinstance(json_in, Conversation)
+        assert len(json_in.utterances) == 3
+        assert json_in.utterances[0].utterance == "Hello world"
+        with pytest.raises(KeyError):
+            json_in.metadata["Utterances"]  # noqa pointless-statement
+        assert json_in.metadata["Languages"] == ["eng"]
