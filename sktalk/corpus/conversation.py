@@ -107,25 +107,51 @@ class Conversation(Writer):
                 after = len(self.utterances) - index - 1
             returned_utterances = self.utterances[index-before:index+after+1]
         elif time_or_index == "time":
-            begin = self.utterances[index].time[0] - before
-            end = self.utterances[index].time[1] + after
-            returned_utterances = [
-                u for u in self.utterances if self.overlap(begin, end, u.time)]
+            try:
+                begin = self.utterances[index].time[0] - before
+                end = self.utterances[index].time[1] + after
+                returned_utterances = [
+                    u for u in self.utterances if self.overlap(begin, end, u.time)]
+            except (TypeError, IndexError):
+                return Conversation([], self.metadata)
         else:
-            raise ValueError("time_or_index must be either 'time' or 'index'")
+            raise ValueError(
+                "`time_or_index` must be either 'time' or 'index'")
 
+        # TODO should metadata be part of this?
         return Conversation(returned_utterances, self.metadata)
 
-    @property
-    def until_next(self):
-        if len(self.utterances) != 2:
-            raise ValueError("Conversation must have 2 utterances")
-        return self.utterances[0].until(self.utterances[1])
+    def _time_to_next(self) -> int:
+        # if len(self.utterances) != 2:
+        #     return None
+        try:
+            return self.utterances[0].until(self.utterances[1])
+        except (TypeError, IndexError):
+            return None
 
-    @property
-    def dyadic(self) -> bool:
+    def _dyadic(self) -> bool:
         participants = [u.participant for u in self.utterances]
         return len(set(participants)) == 2
+
+    CONVERSATION_FUNCTIONS = {
+        "dyadic": _dyadic,
+        "time_to_next": _time_to_next,
+    }
+
+    def apply(self, field, **kwargs):
+        """
+        Apply a function to each utterance in the conversation
+
+        Args:
+            func (function): function to apply to each utterance
+            field (str): field to update
+        """
+        func = self.CONVERSATION_FUNCTIONS[field]
+
+        for index, utterance in enumerate(self.utterances):
+            sub = self.subconversation(index=index, **kwargs)
+            value = func(sub)
+            utterance.__setattr__(field, value)
 
     @staticmethod
     def overlap(begin: int, end: int, time: list):
@@ -133,6 +159,8 @@ class Conversation(Writer):
         # time[0] falls between begin and end
         # time[1] falls between and end
         # time[0] is before begin and time[1] is after end
-        if begin <= time[0] <= end or begin <= time[1] <= end:
+        if time is None:
+            return False
+        elif begin <= time[0] <= end or begin <= time[1] <= end:
             return True
         return time[0] <= begin and time[1] >= end

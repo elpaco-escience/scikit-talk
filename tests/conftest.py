@@ -63,7 +63,7 @@ def convo_utts():
         Utterance(
             utterance="Hello G",
             participant="A",
-            time=[7000, 9500]
+            time=None
         ),
         Utterance(
             utterance="Monde H",

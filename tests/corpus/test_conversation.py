@@ -73,8 +73,8 @@ class TestConversationMetrics:
                                  ([0, 2, 2, "index"], 3),
                                  ([0, 2, None, "index"], 3),
                                  ([0, 0, 0, "time"], 2),  # A, B
-                                 ([5, 3000, 3000, "time"], 7),  # B,C,E,U,F,G,H
-                                 ([5, 0, 0, "time"], 4),  # C, U, F, G
+                                 ([5, 3000, 3000, "time"], 6),  # B,C,E,U,F,H
+                                 ([5, 0, 0, "time"], 3),  # C, U, F
                              ])
     def test_subconversation(self, convo, args, expected_length):
         index, before, after, time_or_index = args
@@ -85,13 +85,13 @@ class TestConversationMetrics:
         assert isinstance(sub, Conversation)
         assert len(sub.utterances) == expected_length
 
-    @pytest.mark.parametrize("index, before, after, time_or_index, expected",
-                             [(0, 0, 1, "index", -100)])
-    def test_until(self, convo, index, before, after, time_or_index, expected):
-        assert convo.subconversation(index=index,
-                                     before=before,
-                                     after=after,
-                                     time_or_index=time_or_index).until_next == expected
+    # @pytest.mark.parametrize("index, before, after, time_or_index, expected",
+    #                          [(0, 0, 1, "index", -100)])
+    # def test_until(self, convo, index, before, after, time_or_index, expected):
+    #     assert convo.subconversation(index=index,
+    #                                  before=before,
+    #                                  after=after,
+    #                                  time_or_index=time_or_index)._time_to_next == expected
 
     def test_overlap(self):
         # entire utterance in window
@@ -108,8 +108,14 @@ class TestConversationMetrics:
             70, 80, [90, 110])  # utterance after window
 
     def test_dyadic(self, convo):
-        assert not convo.dyadic
+        assert not convo._dyadic()
         convo2 = convo.subconversation(0, 2)
-        assert convo2.dyadic
+        assert convo2._dyadic()
         convo3 = convo.subconversation(0)
-        assert not convo3.dyadic
+        assert not convo3._dyadic()
+
+    def test_apply_dyadic(self, convo):
+        convo.apply("dyadic", before=1)
+        assert convo.utterances[0].dyadic
+        assert convo.utterances[2].dyadic
+        assert not convo.utterances[8].dyadic

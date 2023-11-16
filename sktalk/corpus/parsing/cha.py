@@ -30,7 +30,10 @@ class ChaFile(InputFile):
             utterance=str(chat_utterance.tiers),
         )
         utterance.utterance = ChaFile._clean_utterance(utterance.utterance)
-        utterance.time = list(utterance.time)
+        try:
+            utterance.time = list(utterance.time)
+        except TypeError:
+            utterance.time = None
         return utterance
 
     def _extract_metadata(self):
