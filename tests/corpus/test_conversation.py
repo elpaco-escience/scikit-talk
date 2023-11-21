@@ -61,10 +61,10 @@ class TestConversationMetrics:
     def test_subconversation_errors(self, convo, args, error):
         index, before, after, time_or_index = args
         with error:
-            convo.subconversation(index=index,
-                                  before=before,
-                                  after=after,
-                                  time_or_index=time_or_index)
+            convo._subconversation(index=index,
+                                   before=before,
+                                   after=after,
+                                   time_or_index=time_or_index)
 
     @pytest.mark.parametrize("args, expected_length",
                              [
@@ -78,20 +78,12 @@ class TestConversationMetrics:
                              ])
     def test_subconversation(self, convo, args, expected_length):
         index, before, after, time_or_index = args
-        sub = convo.subconversation(index=index,
-                                    before=before,
-                                    after=after,
-                                    time_or_index=time_or_index)
+        sub = convo._subconversation(index=index,
+                                     before=before,
+                                     after=after,
+                                     time_or_index=time_or_index)
         assert isinstance(sub, Conversation)
         assert len(sub.utterances) == expected_length
-
-    # @pytest.mark.parametrize("index, before, after, time_or_index, expected",
-    #                          [(0, 0, 1, "index", -100)])
-    # def test_until(self, convo, index, before, after, time_or_index, expected):
-    #     assert convo.subconversation(index=index,
-    #                                  before=before,
-    #                                  after=after,
-    #                                  time_or_index=time_or_index)._time_to_next == expected
 
     def test_overlap(self):
         # entire utterance in window

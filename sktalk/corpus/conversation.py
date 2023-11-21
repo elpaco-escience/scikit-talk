@@ -70,11 +70,11 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def subconversation(self,
-                        index: int,
-                        before: int = 0,
-                        after: Optional[int] = None,
-                        time_or_index: str = "index") -> "Conversation":
+    def _subconversation(self,
+                         index: int,
+                         before: int = 0,
+                         after: Optional[int] = None,
+                         time_or_index: str = "index") -> "Conversation":
         """Select utterances to provide context as a sub-conversation
 
         Args:
@@ -95,6 +95,7 @@ class Conversation(Writer):
         Returns:
             Conversation: Conversation object containing a reduced set of utterances
         """
+        # TODO consider adding parameter 'strict' that only returns utterances entirely inside the window
         if index < 0 or index >= len(self.utterances):
             raise IndexError("Index out of range")
         if after is None:
@@ -117,6 +118,7 @@ class Conversation(Writer):
         else:
             raise ValueError(
                 "`time_or_index` must be either 'time' or 'index'")
+        return Conversation(utterances=returned_utterances)
 
         # TODO should metadata be part of this?
         return Conversation(returned_utterances, self.metadata)
