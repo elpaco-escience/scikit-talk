@@ -61,7 +61,7 @@ class TestConversationMetrics:
     def test_subconversation_errors(self, convo, args, error):
         index, before, after, time_or_index = args
         with error:
-            convo._subconversation(index=index,            # noqa protected-access
+            convo._subconversation(index=index,            # noqa W0212
                                    before=before,
                                    after=after,
                                    time_or_index=time_or_index)
@@ -101,7 +101,7 @@ class TestConversationMetrics:
 
     def test_count_participants(self, convo):
         assert convo.count_participants() == 3
-        convo2 = convo._subconversation(index=0, before=2)  #noqa protected-access
+        convo2 = convo._subconversation(index=0, before=2)  # noqa W0212
         assert convo2.count_participants() == 2
-        convo3 = convo._subconversation(index=0)            #noqa protected-access
+        convo3 = convo._subconversation(index=0)            # noqa W0212
         assert convo3.count_participants() == 1
