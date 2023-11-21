@@ -99,15 +99,9 @@ class TestConversationMetrics:
         assert not Conversation.overlap(
             70, 80, [90, 110])  # utterance after window
 
-    def test_dyadic(self, convo):
-        assert not convo._dyadic()
-        convo2 = convo.subconversation(0, 2)
-        assert convo2._dyadic()
-        convo3 = convo.subconversation(0)
-        assert not convo3._dyadic()
-
-    def test_apply_dyadic(self, convo):
-        convo.apply("dyadic", before=1)
-        assert convo.utterances[0].dyadic
-        assert convo.utterances[2].dyadic
-        assert not convo.utterances[8].dyadic
+    def test_count_participants(self, convo):
+        assert convo._count_participants() == 3
+        convo2 = convo._subconversation(index=0, before=2)
+        assert convo2._count_participants() == 2
+        convo3 = convo._subconversation(index=0)
+        assert convo3._count_participants() == 1

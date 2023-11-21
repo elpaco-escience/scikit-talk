@@ -120,25 +120,17 @@ class Conversation(Writer):
                 "`time_or_index` must be either 'time' or 'index'")
         return Conversation(utterances=returned_utterances)
 
-        # TODO should metadata be part of this?
-        return Conversation(returned_utterances, self.metadata)
+    def _count_participants(self) -> int:
+        """Count the number of participants in a conversation
 
-    def _time_to_next(self) -> int:
-        # if len(self.utterances) != 2:
-        #     return None
-        try:
-            return self.utterances[0].until(self.utterances[1])
-        except (TypeError, IndexError):
-            return None
+        Importantly: if one of the utterances has no participant, it is counted
+        as a separate participant (None).
 
-    def _dyadic(self) -> bool:
+        Returns:
+            int: number of participants
+        """
         participants = [u.participant for u in self.utterances]
-        return len(set(participants)) == 2
-
-    CONVERSATION_FUNCTIONS = {
-        "dyadic": _dyadic,
-        "time_to_next": _time_to_next,
-    }
+        return len(set(participants))
 
     def apply(self, field, **kwargs):
         """
