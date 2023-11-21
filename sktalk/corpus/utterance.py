@@ -20,7 +20,7 @@ class Utterance:
         return asdict(self)
 
     @classmethod
-    def fromdict(cls, fields):
+    def _fromdict(cls, fields):
         return Utterance(**fields)
 
     # TODO function: that prints summary of data, shows it to user

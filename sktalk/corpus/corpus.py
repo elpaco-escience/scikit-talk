@@ -70,13 +70,15 @@ class Corpus(Writer):
         """
         with open(path, encoding='utf-8') as f:
             json_in = json.load(f)
-        conversations_lst = []
-        for con in json_in["Conversations"]:
-            utterances = [Utterance(**u) for u in con["Utterances"]]
-            del con["Utterances"]
-            conversations_lst.append(Conversation(utterances, metadata=con))
-        return Corpus(conversations=conversations_lst)
+        return cls._fromdict(json_in)
+        
+    @classmethod
+    def _fromdict(cls, fields):
+        conversations = [Conversation._fromdict(c) for c in fields["Conversations"]] 
+        del fields["Conversations"]
+        return Corpus(conversations, metadata=fields)
 
     @classmethod
     def from_xml(cls, path):
         return XmlFile(path).parse()
+    

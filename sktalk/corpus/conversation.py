@@ -60,9 +60,13 @@ class Conversation(Writer):
         """
         with open(path, encoding='utf-8') as f:
             json_in = json.load(f)      
-        utterances = [Utterance.fromdict(u) for u in json_in["Utterances"]]
-        del json_in["Utterances"]
-        return Conversation(utterances, metadata=json_in)
+        return cls._fromdict(json_in)
+        
+    @classmethod
+    def _fromdict(cls, fields):
+        utterances = [Utterance._fromdict(u) for u in fields["Utterances"]]
+        del fields["Utterances"]
+        return Conversation(utterances, metadata=fields)
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError
