@@ -118,7 +118,7 @@ class Conversation(Writer):
         else:
             raise ValueError(
                 "`time_or_index` must be either 'time' or 'index'")
-        return Conversation(utterances=returned_utterances)
+        return Conversation(utterances=returned_utterances) #TODO suppress warning about empty utterances
 
     def count_participants(self) -> int:
         """Count the number of participants in a conversation
@@ -146,10 +146,11 @@ class Conversation(Writer):
         if len(values) != len(self.utterances):
             raise ValueError(
                 "The number of values must match the number of utterances")
+        metadata = {field: kwargs}
         try:
-            self._metadata["Calculations"].update(field=kwargs)
+            self._metadata["Calculations"].update(metadata)
         except KeyError:
-            self._metadata = {"Calculations": {field: kwargs}}
+            self._metadata = {"Calculations": metadata}
         for index, utterance in enumerate(self.utterances):
             setattr(utterance, field, values[index])
 
