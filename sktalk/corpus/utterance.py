@@ -59,6 +59,27 @@ class Utterance:
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
 
+    def _relevant_for_fto(self, prior_utt, planning_buffer: int):
+        """Assess whether an utterance is potentially relevant to calculate FTO
+
+        An utterance is potentially relevant for fto calculation if:
+        - the utterance `prior_utt` must be by another speaker
+        - the utterance `prior_utt` must have started before the utterance itself, more than `planning_buffer` ms before.
+
+        The planning buffer is the minimum time between a relevant preceding utterance and the utterance itself
+
+        Args:
+            prior_utt (Utterance): utterance to assess
+            planning_buffer (int): buffer time (in ms)
+
+        Returns:
+            bool: whether the utterance `prior_utt` meets the criteria and is potentially relevant for FTO calculation
+        """
+        return (
+            self.participant != prior_utt.participant
+            and self.time[0] - planning_buffer >= prior_utt.time[0]
+        )
+
     def _split_time(self):
         try:
             begin, end = self.time

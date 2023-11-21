@@ -132,20 +132,71 @@ class Conversation(Writer):
         participants = [u.participant for u in self.utterances]
         return len(set(participants))
 
-    def apply(self, field, **kwargs):
+    def _update(self, field: str, values: list, **kwargs):
         """
-        Apply a function to each utterance in the conversation
+        Update the all utterances in the conversation with calculated values
+
+        This function also stores relevant arguments in the Conversation metadata.
 
         Args:
-            func (function): function to apply to each utterance
-            field (str): field to update
+            field (str): field of the Utterance to update
+            values (list): list of values to update each utterance with
+            kwargs (dict): information about the calculation to store in the Conversation metadata
         """
-        func = self.CONVERSATION_FUNCTIONS[field]
-
+        if len(values) != len(self.utterances):
+            raise ValueError(
+                "The number of values must match the number of utterances")
+        try:
+            self._metadata["Calculations"].update(field=kwargs)
+        except KeyError:
+            self._metadata = {"Calculations": {field: kwargs}}
         for index, utterance in enumerate(self.utterances):
-            sub = self.subconversation(index=index, **kwargs)
-            value = func(sub)
-            utterance.__setattr__(field, value)
+            utterance.__setattr__(field, values[index])
+
+    def calculate_FTO(self, window: int = 10000, planning_buffer: int = 200, n_participants: int = 2):
+        """Calculate Floor Transfer Offset (FTO) per utterance
+
+        FTO is defined as the difference between the time that a turn starts and the
+        end of the most relevant prior turn by the other participant, which is not
+        necessarily the prior utterance.
+
+        An utterance does not receive an FTO if there are preceding utterances
+        within the window that do not have timing information, or if it lacks
+        timing information itself.
+
+        To be a relevant prior turn, the following conditions must be met, respective to utterance U:
+        - the utterance must be by another speaker than U
+        - the utterance by the other speaker must be the most recent utterance by that speaker
+        - the utterance must have started before utterance U, more than `planning_buffer` ms before.
+        - the utterance must be partly or entirely within the context window (`window` ms prior to the start of utterance U)
+        - within the context window, there must be a maximum of `n_participants` speakers.
+
+        Args:
+            window (int, optional): _description_. Defaults to 10000.
+            planning_buffer (int, optional): _description_. Defaults to 200.
+            n_participants (int, optional): _description_. Defaults to 2.
+        """
+        values = []
+        for index, utterance in enumerate(self.utterances):
+            sub = self._subconversation(
+                index=index,
+                time_or_index="time",
+                before=window,
+                after=0)
+            if not 2 <= sub._count_participants() <= n_participants:
+                values.append(None)
+                continue
+            potentials = [
+                u for u in sub.utterances if utterance._relevant_for_fto(u, planning_buffer)]
+            try:
+                relevant = potentials[-1]
+                values.append(utterance.until(relevant))
+            except IndexError:
+                values.append(None)
+        self._update("FTO", values,
+                     window=window,
+                     planning_buffer=planning_buffer,
+                     n_participants=n_participants)
 
     @staticmethod
     def overlap(begin: int, end: int, time: list):
