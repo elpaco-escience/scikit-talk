@@ -1,7 +1,6 @@
 import json
 from .conversation import Conversation
 from .parsing.xml import XmlFile
-from .utterance import Utterance
 from .write.writer import Writer
 
 
