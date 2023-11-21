@@ -61,7 +61,7 @@ class TestConversationMetrics:
     def test_subconversation_errors(self, convo, args, error):
         index, before, after, time_or_index = args
         with error:
-            convo._subconversation(index=index,
+            convo._subconversation(index=index,            #noqa W0212
                                    before=before,
                                    after=after,
                                    time_or_index=time_or_index)
@@ -78,7 +78,7 @@ class TestConversationMetrics:
                              ])
     def test_subconversation(self, convo, args, expected_length):
         index, before, after, time_or_index = args
-        sub = convo._subconversation(index=index,
+        sub = convo._subconversation(index=index,           #noqa W0212
                                      before=before,
                                      after=after,
                                      time_or_index=time_or_index)
@@ -100,8 +100,8 @@ class TestConversationMetrics:
             70, 80, [90, 110])  # utterance after window
 
     def test_count_participants(self, convo):
-        assert convo._count_participants() == 3
-        convo2 = convo._subconversation(index=0, before=2)
-        assert convo2._count_participants() == 2
-        convo3 = convo._subconversation(index=0)
-        assert convo3._count_participants() == 1
+        assert convo.count_participants() == 3
+        convo2 = convo._subconversation(index=0, before=2)  #noqa W0212
+        assert convo2.count_participants() == 2
+        convo3 = convo._subconversation(index=0)            #noqa W0212
+        assert convo3.count_participants() == 1

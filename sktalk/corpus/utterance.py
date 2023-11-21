@@ -59,7 +59,7 @@ class Utterance:
     def until(self, next_utt):
         return next_utt.time[0] - self.time[1]
 
-    def _relevant_for_fto(self, prior_utt, planning_buffer: int):
+    def relevant_for_fto(self, prior_utt, planning_buffer: int):
         """Assess whether an utterance is potentially relevant to calculate FTO
 
         An utterance is potentially relevant for fto calculation if:

@@ -120,7 +120,7 @@ class Conversation(Writer):
                 "`time_or_index` must be either 'time' or 'index'")
         return Conversation(utterances=returned_utterances)
 
-    def _count_participants(self) -> int:
+    def count_participants(self) -> int:
         """Count the number of participants in a conversation
 
         Importantly: if one of the utterances has no participant, it is counted
@@ -183,11 +183,11 @@ class Conversation(Writer):
                 time_or_index="time",
                 before=window,
                 after=0)
-            if not 2 <= sub._count_participants() <= n_participants:
+            if not 2 <= sub.count_participants() <= n_participants:
                 values.append(None)
                 continue
             potentials = [
-                u for u in sub.utterances if utterance._relevant_for_fto(u, planning_buffer)]
+                u for u in sub.utterances if utterance.relevant_for_fto(u, planning_buffer)]
             try:
                 relevant = potentials[-1]
                 values.append(utterance.until(relevant))
@@ -206,6 +206,6 @@ class Conversation(Writer):
         # time[0] is before begin and time[1] is after end
         if time is None:
             return False
-        elif begin <= time[0] <= end or begin <= time[1] <= end:
+        if begin <= time[0] <= end or begin <= time[1] <= end:
             return True
         return time[0] <= begin and time[1] >= end
