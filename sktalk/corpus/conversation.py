@@ -59,13 +59,17 @@ class Conversation(Writer):
             Conversation: A Conversation object representing the conversation in the file.
         """
         with open(path, encoding='utf-8') as f:
-            json_in = json.load(f)      
+            json_in = json.load(f)
         return cls._fromdict(json_in)
-        
+
     @classmethod
     def _fromdict(cls, fields):
-        utterances = [Utterance._fromdict(u) for u in fields["Utterances"]]
-        del fields["Utterances"]
+        try:
+            utterances = [Utterance._fromdict(u) for u in fields["Utterances"]]
+            del fields["Utterances"]
+        except KeyError as e:
+            raise TypeError(
+                "This object cannot be imported as a Conversation.") from e
         return Conversation(utterances, metadata=fields)
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821

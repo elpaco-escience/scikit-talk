@@ -56,3 +56,5 @@ class TestConversation:
         with pytest.raises(KeyError):
             json_in.metadata["Utterances"]  # noqa pointless-statement
         assert json_in.metadata["Languages"] == ["eng"]
+        with pytest.raises(TypeError, match="cannot be imported as a Conversation"):
+            Conversation.from_json("tests/testdata/dummy_corpus.json")

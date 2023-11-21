@@ -71,14 +71,17 @@ class Corpus(Writer):
         with open(path, encoding='utf-8') as f:
             json_in = json.load(f)
         return cls._fromdict(json_in)
-        
+
     @classmethod
     def _fromdict(cls, fields):
-        conversations = [Conversation._fromdict(c) for c in fields["Conversations"]] 
-        del fields["Conversations"]
+        try:
+            conversations = [Conversation._fromdict(
+                c) for c in fields["Conversations"]]
+            del fields["Conversations"]
+        except KeyError as e:
+            raise TypeError("This file cannot be imported as a Corpus.") from e
         return Corpus(conversations, metadata=fields)
 
     @classmethod
     def from_xml(cls, path):
         return XmlFile(path).parse()
-    
