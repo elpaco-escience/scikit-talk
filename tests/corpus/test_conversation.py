@@ -61,7 +61,7 @@ class TestConversationMetrics:
     def test_subconversation_errors(self, convo, args, error):
         index, before, after, time_or_index = args
         with error:
-            convo._subconversation(index=index,            #noqa protected-access
+            convo._subconversation(index=index,            # noqa protected-access
                                    before=before,
                                    after=after,
                                    time_or_index=time_or_index)
@@ -78,7 +78,7 @@ class TestConversationMetrics:
                              ])
     def test_subconversation(self, convo, args, expected_length):
         index, before, after, time_or_index = args
-        sub = convo._subconversation(index=index,           #noqa protected-access
+        sub = convo._subconversation(index=index,           # noqa W0212
                                      before=before,
                                      after=after,
                                      time_or_index=time_or_index)
