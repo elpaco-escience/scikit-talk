@@ -151,7 +151,7 @@ class Conversation(Writer):
         except KeyError:
             self._metadata = {"Calculations": {field: kwargs}}
         for index, utterance in enumerate(self.utterances):
-            utterance.__setattr__(field, values[index])
+            setattr(utterance, field, values[index])
 
     def calculate_FTO(self, window: int = 10000, planning_buffer: int = 200, n_participants: int = 2):
         """Calculate Floor Transfer Offset (FTO) per utterance
@@ -190,7 +190,7 @@ class Conversation(Writer):
                 u for u in sub.utterances if utterance.relevant_for_fto(u, planning_buffer)]
             try:
                 relevant = potentials[-1]
-                values.append(utterance.until(relevant))
+                values.append(relevant.until(utterance))
             except IndexError:
                 values.append(None)
         self._update("FTO", values,

@@ -20,6 +20,7 @@ class Utterance:
     n_characters: Optional[int] = None
     time_to_next: Optional[int] = None
     dyadic: Optional[bool] = None
+    FTO: Optional[int] = None
 
     def __post_init__(self):
         # clean utterance:
