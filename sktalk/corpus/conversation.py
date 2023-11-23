@@ -2,7 +2,7 @@ import warnings
 from .utterance import Utterance
 from .write.writer import Writer
 import csv
-
+from dataclasses import fields
 
 class Conversation(Writer):
     def __init__(
@@ -72,9 +72,16 @@ class Conversation(Writer):
     
     def write_csv(self, path: str = "./file.csv"):
         headers = self._metadata.keys()
-        with open(path, "w",  newline='', encoding='utf-8') as file:
-            writer = csv.DictWriter(file, fieldnames=headers)
-            writer.writeheader()
-            writer.writerow(self._metadata)
+        self._write_csv(path, headers, self._metadata)
+
+    def write_csv_utt(self, path: str = "./file.csv"):
+        headers = fields(self._utterances[0])
+        rows = [utterance.asdict() for utterance in self._utterances]
+        self._write_csv(path, headers, rows)
+
+
+
+
+         
         
 
