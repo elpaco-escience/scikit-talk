@@ -1,6 +1,7 @@
 import warnings
 from .utterance import Utterance
 from .write.writer import Writer
+import csv
 
 
 class Conversation(Writer):
@@ -68,3 +69,12 @@ class Conversation(Writer):
             dict: dictionary containing Conversation metadata and Utterances
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
+    
+    def write_csv(self, path: str = "./file.csv"):
+        headers = self._metadata.keys()
+        with open(path, "w",  newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=headers)
+            writer.writeheader()
+            writer.writerow(self._metadata)
+        
+
