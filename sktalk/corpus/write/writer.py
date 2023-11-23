@@ -1,6 +1,7 @@
 import abc
 import json
 from pathlib import Path
+import csv
 
 
 class Writer(abc.ABC):
@@ -23,3 +24,18 @@ class Writer(abc.ABC):
 
         with open(_path, "w", encoding='utf-8') as file:
             json.dump(object_dict, file, indent=4)
+
+    def write_csv(self, path: str = "./file.csv"):
+        return NotImplemented
+        
+
+    def _write_csv(self, path: str, headers: list, rows: list):
+        _path = Path(path).with_suffix(".csv")
+
+        with open(_path, "w", encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=headers)
+            writer.writeheader()
+            for row in rows:
+                    writer.writerow(row)
+
+
