@@ -105,3 +105,13 @@ class TestConversationMetrics:
         assert convo2.count_participants() == 2
         convo3 = convo._subconversation(index=0)            # noqa W0212
         assert convo3.count_participants() == 1
+
+    def test_calculate_FTO(self, convo):
+        convo.calculate_FTO()
+        assert convo.metadata["Calculations"]["FTO"] == {
+            "window": 10000, "planning_buffer": 200, "n_participants": 2}
+        convo.calculate_FTO(window=10)
+        assert convo.metadata["Calculations"]["FTO"] == {
+            "window": 10, "planning_buffer": 200, "n_participants": 2}
+        assert convo.utterances[0].FTO is None
+        assert convo.utterances[1].FTO == -100
