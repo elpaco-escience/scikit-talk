@@ -96,7 +96,7 @@ class Conversation(Writer):
             Conversation: Conversation object containing a reduced set of utterances
         """
         # TODO consider adding parameter 'strict' that only returns utterances entirely inside the window
-        if index < 0 or index >= len(self.utterances):
+        if index < 0 or index >= len(self._utterances):
             raise IndexError("Index out of range")
         if after is None:
             after = before
@@ -104,15 +104,15 @@ class Conversation(Writer):
             # if before/after would exceed the bounds of the list, adjust
             if index - before < 0:
                 before = index
-            if index + after + 1 > len(self.utterances):
-                after = len(self.utterances) - index - 1
-            returned_utterances = self.utterances[index-before:index+after+1]
+            if index + after + 1 > len(self._utterances):
+                after = len(self._utterances) - index - 1
+            returned_utterances = self._utterances[index-before:index+after+1]
         elif time_or_index == "time":
             try:
-                begin = self.utterances[index].time[0] - before
-                end = self.utterances[index].time[1] + after
+                begin = self._utterances[index].time[0] - before
+                end = self._utterances[index].time[1] + after
                 returned_utterances = [
-                    u for u in self.utterances if self.overlap(begin, end, u.time)]
+                    u for u in self._utterances if self.overlap(begin, end, u.time)]
             except (TypeError, IndexError):
                 return Conversation([], suppress_warnings=True)
         else:
