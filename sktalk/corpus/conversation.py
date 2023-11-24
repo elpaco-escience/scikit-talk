@@ -120,16 +120,22 @@ class Conversation(Writer):
                 "`time_or_index` must be either 'time' or 'index'")
         return Conversation(utterances=returned_utterances)
 
-    def count_participants(self) -> int:
+    def count_participants(self, except_none: bool = False) -> int:
         """Count the number of participants in a conversation
 
         Importantly: if one of the utterances has no participant, it is counted
-        as a separate participant (None).
+        as a separate participant (None). If you want to exclude these, set
+        `except_none` to True.
+
+        Args:
+            except_none (bool, optional): if `True`, utterances without a participant are not counted. Defaults to `False`.
 
         Returns:
             int: number of participants
         """
         participants = [u.participant for u in self.utterances]
+        if except_none:
+            participants = [p for p in participants if p is not None]
         return len(set(participants))
 
     def _update(self, field: str, values: list, **kwargs):
