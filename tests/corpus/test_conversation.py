@@ -100,7 +100,8 @@ class TestConversationMetrics:
             70, 80, [90, 110])  # utterance after window
 
     def test_count_participants(self, convo):
-        assert convo.count_participants() == 3
+        assert convo.count_participants() == 4
+        assert convo.count_participants(except_none=True) == 3
         convo2 = convo._subconversation(index=0, before=2)  # noqa W0212
         assert convo2.count_participants() == 2
         convo3 = convo._subconversation(index=0)            # noqa W0212
@@ -115,3 +116,6 @@ class TestConversationMetrics:
             "window": 10, "planning_buffer": 200, "n_participants": 2}
         assert convo.utterances[0].FTO is None
         assert convo.utterances[1].FTO == -100
+        assert convo.utterances[2].FTO == None
+        convo.calculate_FTO(planning_buffer=0)
+        assert convo.utterances[2].FTO == -2499

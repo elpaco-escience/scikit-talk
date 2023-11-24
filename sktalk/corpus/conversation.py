@@ -74,6 +74,7 @@ class Conversation(Writer):
                          index: int,
                          before: int = 0,
                          after: Optional[int] = None,
+                         exclude_utterance_overlap: bool = False,
                          time_or_index: str = "index") -> "Conversation":
         """Select utterances to provide context as a sub-conversation
 
@@ -84,6 +85,10 @@ class Conversation(Writer):
             after (int, optional): Either the number of utterances after the indicated utterance,
                                 or the time in ms following the utterance's end. Defaults to None,
                                 which then assumes the same value as `before`.
+            exclude_utterance_overlap (bool, optional): Only used when `time_or_index` is "time",
+                                and either `before` or `after` is 0. If True, the duration of the
+                                utterance itself is not used to identify overlapping utterances, and only
+                                the window before or after the utterance is used. Defaults to False.
             time_or_index (str, optional): Use "time" to select based on time (in ms), or "index"
                                 to select a set number of utterances irrespective of timing.
                                 Defaults to "index".
@@ -108,17 +113,26 @@ class Conversation(Writer):
                 after = len(self._utterances) - index - 1
             returned_utterances = self._utterances[index-before:index+after+1]
         elif time_or_index == "time":
-            try:
-                begin = self._utterances[index].time[0] - before
-                end = self._utterances[index].time[1] + after
-                returned_utterances = [
-                    u for u in self._utterances if self.overlap(begin, end, u.time)]
-            except (TypeError, IndexError):
-                return Conversation([], suppress_warnings=True)
+            returned_utterances = self._subconversation_by_time(
+                index, before, after, exclude_utterance_overlap)
         else:
             raise ValueError(
                 "`time_or_index` must be either 'time' or 'index'")
-        return Conversation(utterances=returned_utterances)
+        return Conversation(utterances=returned_utterances, suppress_warnings=True)
+
+    def _subconversation_by_time(self, index, before, after, exclude_utterance_overlap):
+        try:
+            begin = self._utterances[index].time[0] - before
+            end = self._utterances[index].time[1] + after
+            if exclude_utterance_overlap and before == 0:  # only overlap with window following utterance
+                begin = self._utterances[index].time[1]
+            elif exclude_utterance_overlap and after == 0:  # only overlap with window preceding utterance
+                end = self._utterances[index].time[0]
+            returned_utterances = [
+                u for u in self._utterances if self.overlap(begin, end, u.time) or u == self._utterances[index]]
+        except (TypeError, IndexError):
+            return []
+        return returned_utterances
 
     def count_participants(self, except_none: bool = False) -> int:
         """Count the number of participants in a conversation
@@ -175,13 +189,17 @@ class Conversation(Writer):
         - the utterance must be by another speaker than U
         - the utterance by the other speaker must be the most recent utterance by that speaker
         - the utterance must have started before utterance U, more than `planning_buffer` ms before.
-        - the utterance must be partly or entirely within the context window (`window` ms prior to the start of utterance U)
+        - the utterance must be partly or entirely within the context window (`window` ms prior
+            to the start of utterance U)
         - within the context window, there must be a maximum of `n_participants` speakers.
 
         Args:
-            window (int, optional): _description_. Defaults to 10000.
-            planning_buffer (int, optional): _description_. Defaults to 200.
-            n_participants (int, optional): _description_. Defaults to 2.
+            window (int, optional): the time in ms prior to utterance in which a
+                relevant preceding utterance can be found. Defaults to 10000.
+            planning_buffer (int, optional): minimum speaking time in ms to allow for a response.
+                Defaults to 200.
+            n_participants (int, optional): maximum number of participants overlapping with
+                the utterance and preceding window. Defaults to 2.
         """
         values = []
         for index, utterance in enumerate(self.utterances):
@@ -189,7 +207,8 @@ class Conversation(Writer):
                 index=index,
                 time_or_index="time",
                 before=window,
-                after=0)
+                after=0,
+                exclude_utterance_overlap=True)
             if not 2 <= sub.count_participants() <= n_participants:
                 values.append(None)
                 continue
