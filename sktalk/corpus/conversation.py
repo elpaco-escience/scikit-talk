@@ -6,7 +6,7 @@ from .write.writer import Writer
 
 class Conversation(Writer):
     def __init__(
-        self, utterances: list["Utterance"], metadata: Optional[dict] = None  # noqa: F821
+        self, utterances: list["Utterance"], metadata: Optional[dict] = None, suppress_warnings: bool = False  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -27,7 +27,7 @@ class Conversation(Writer):
             if not isinstance(utterance, Utterance):
                 raise TypeError(errormsg)
         # The list can be empty. This would be weird and the user needs to be warned.
-        if not self._utterances:
+        if not self._utterances and not suppress_warnings:
             warnings.warn(
                 "This conversation appears to be empty: no Utterances are read.")
 
@@ -114,11 +114,11 @@ class Conversation(Writer):
                 returned_utterances = [
                     u for u in self.utterances if self.overlap(begin, end, u.time)]
             except (TypeError, IndexError):
-                return Conversation([], self.metadata)
+                return Conversation([], suppress_warnings=True)
         else:
             raise ValueError(
                 "`time_or_index` must be either 'time' or 'index'")
-        return Conversation(utterances=returned_utterances) #TODO suppress warning about empty utterances
+        return Conversation(utterances=returned_utterances)
 
     def count_participants(self) -> int:
         """Count the number of participants in a conversation
