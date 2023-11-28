@@ -123,6 +123,6 @@ class TestConversationMetrics:
             "window": 10, "planning_buffer": 200, "n_participants": 2}
         assert convo.utterances[0].FTO is None
         assert convo.utterances[1].FTO == -100
-        assert convo.utterances[2].FTO == None
+        assert convo.utterances[2].FTO is None
         convo.calculate_FTO(planning_buffer=0)
         assert convo.utterances[2].FTO == -2499
