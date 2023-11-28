@@ -52,36 +52,43 @@ class TestConversation:
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
                              [
-                                 ([0, 0, 1, "index"], does_not_raise()),
-                                 ([20, 1, 1, "index"], pytest.raises(IndexError)),
-                                 ([0, 50, 50, "index"], does_not_raise()),
-                                 ([0, 0, 0, "neither_time_nor_index"],
-                                     pytest.raises(ValueError))
+                                 ([0, 0, 1], does_not_raise()),
+                                 ([20, 1, 1], pytest.raises(IndexError)),
+                                 ([0, 50, 50], does_not_raise())
                              ])
     def test_subconversation_errors(self, convo, args, error):
-        index, before, after, time_or_index = args
+        index, before, after = args
         with error:
-            convo._subconversation(index=index,            # noqa W0212
+            convo._subconversation_by_index(index=index,            # noqa W0212
                                    before=before,
-                                   after=after,
-                                   time_or_index=time_or_index)
+                                   after=after)
 
     @pytest.mark.parametrize("args, expected_length",
                              [
-                                 ([0, 0, 1, "index"], 2),
-                                 ([5, 2, 0, "index"], 3),
-                                 ([0, 2, 2, "index"], 3),
-                                 ([0, 2, None, "index"], 3),
-                                 ([0, 0, 0, "time"], 2),  # A, B
-                                 ([5, 3000, 3000, "time"], 6),  # B,C,E,U,F,H
-                                 ([5, 0, 0, "time"], 3),  # C, U, F
+                                 ([0, 0, 1], 2),
+                                 ([5, 2, 0], 3),
+                                 ([0, 2, 2], 3),
+                                 ([0, 2, None], 3)
+                             ])
+    def test_subconversation_index(self, convo, args, expected_length):
+        index, before, after = args
+        sub = convo._subconversation_by_index(index=index,           # noqa W0212
+                                     before=before,
+                                     after=after)
+        assert isinstance(sub, Conversation)
+        assert len(sub.utterances) == expected_length
+
+    @pytest.mark.parametrize("args, expected_length",
+                             [
+                                 ([0, 0, 0], 2),  # A, B
+                                 ([5, 3000, 3000], 6),  # B,C,E,U,F,H
+                                 ([5, 0, 0], 3),  # C, U, F
                              ])
     def test_subconversation(self, convo, args, expected_length):
-        index, before, after, time_or_index = args
-        sub = convo._subconversation(index=index,           # noqa W0212
+        index, before, after = args
+        sub = convo._subconversation_by_time(index=index,           # noqa W0212
                                      before=before,
-                                     after=after,
-                                     time_or_index=time_or_index)
+                                     after=after)
         assert isinstance(sub, Conversation)
         assert len(sub.utterances) == expected_length
 
@@ -102,9 +109,9 @@ class TestConversationMetrics:
     def test_count_participants(self, convo):
         assert convo.count_participants() == 4
         assert convo.count_participants(except_none=True) == 3
-        convo2 = convo._subconversation(index=0, before=2)  # noqa W0212
+        convo2 = convo._subconversation_by_index(index=0, before=2)  # noqa W0212
         assert convo2.count_participants() == 2
-        convo3 = convo._subconversation(index=0)            # noqa W0212
+        convo3 = convo._subconversation_by_index(index=0)            # noqa W0212
         assert convo3.count_participants() == 1
 
     def test_calculate_FTO(self, convo):

@@ -70,57 +70,58 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def _subconversation(self,
-                         index: int,
-                         before: int = 0,
-                         after: Optional[int] = None,
-                         exclude_utterance_overlap: bool = False,
-                         time_or_index: str = "index") -> "Conversation":
+    def _subconversation_by_index(self,
+                                  index: int,
+                                  before: int = 0,
+                                  after: Optional[int] = None) -> "Conversation":
         """Select utterances to provide context as a sub-conversation
 
         Args:
             index (int): The index of the utterance for which to provide context
-            before (int, optional): Either the number of utterances prior to indicated utterance,
-                                or the time in ms preceding the utterance's begin. Defaults to 0.
-            after (int, optional): Either the number of utterances after the indicated utterance,
-                                or the time in ms following the utterance's end. Defaults to None,
-                                which then assumes the same value as `before`.
-            exclude_utterance_overlap (bool, optional): Only used when `time_or_index` is "time",
-                                and either `before` or `after` is 0. If True, the duration of the
-                                utterance itself is not used to identify overlapping utterances, and only
-                                the window before or after the utterance is used. Defaults to False.
-            time_or_index (str, optional): Use "time" to select based on time (in ms), or "index"
-                                to select a set number of utterances irrespective of timing.
-                                Defaults to "index".
+            before (int, optional): The number of utterances prior to indicated utterance. Defaults to 0.
+            after (int, optional): The number of utterances after the indicated utterance. Defaults to None,
+                which then assumes the same value as `before`.
 
         Raises:
             IndexError: Index provided must be within range of utterances
-            ValueError: time_or_index must be either "time" or "index"
 
         Returns:
-            Conversation: Conversation object containing a reduced set of utterances
+            Conversation: Conversation object without metadata, containing a reduced set of utterances
         """
-        # TODO consider adding parameter 'strict' that only returns utterances entirely inside the window
         if index < 0 or index >= len(self._utterances):
             raise IndexError("Index out of range")
         if after is None:
             after = before
-        if time_or_index == "index":
-            # if before/after would exceed the bounds of the list, adjust
-            if index - before < 0:
-                before = index
-            if index + after + 1 > len(self._utterances):
-                after = len(self._utterances) - index - 1
-            returned_utterances = self._utterances[index-before:index+after+1]
-        elif time_or_index == "time":
-            returned_utterances = self._subconversation_by_time(
-                index, before, after, exclude_utterance_overlap)
-        else:
-            raise ValueError(
-                "`time_or_index` must be either 'time' or 'index'")
+        if index - before < 0:
+            before = index
+        if index + after + 1 > len(self._utterances):
+            after = len(self._utterances) - index - 1
+        returned_utterances = self._utterances[index-before:index+after+1]
         return Conversation(utterances=returned_utterances, suppress_warnings=True)
 
-    def _subconversation_by_time(self, index, before, after, exclude_utterance_overlap):
+    def _subconversation_by_time(self,
+                                 index: int,
+                                 before: int = 0,
+                                 after: Optional[int] = None,
+                                 exclude_utterance_overlap: bool = False) -> "Conversation":
+        """Select utterances to provide context as a sub-conversation
+
+        Args:
+            index (int): The index of the utterance for which to provide context
+            before (int, optional): The time in ms preceding the utterance's begin. Defaults to 0.
+            after (int, optional): The time in ms following the utterance's end. Defaults to None,
+                which then assumes the same value as `before`.
+            exclude_utterance_overlap (bool, optional): If True, the duration of the
+                utterance itself is not used to identify overlapping utterances, and only
+                the window before or after the utterance is used. Defaults to False.
+
+        Returns:
+            Conversation: Conversation object without metadata, containing a reduced set of utterances
+        """
+        if index < 0 or index >= len(self._utterances):
+            raise IndexError("Index out of range")
+        if after is None:
+            after = before
         try:
             begin = self._utterances[index].time[0] - before
             end = self._utterances[index].time[1] + after
@@ -131,8 +132,8 @@ class Conversation(Writer):
             returned_utterances = [
                 u for u in self._utterances if self.overlap(begin, end, u.time) or u == self._utterances[index]]
         except (TypeError, IndexError):
-            return []
-        return returned_utterances
+            returned_utterances = []
+        return Conversation(utterances=returned_utterances, suppress_warnings=True)
 
     def count_participants(self, except_none: bool = False) -> int:
         """Count the number of participants in a conversation
@@ -203,9 +204,8 @@ class Conversation(Writer):
         """
         values = []
         for index, utterance in enumerate(self.utterances):
-            sub = self._subconversation(
+            sub = self._subconversation_by_time(
                 index=index,
-                time_or_index="time",
                 before=window,
                 after=0,
                 exclude_utterance_overlap=True)
