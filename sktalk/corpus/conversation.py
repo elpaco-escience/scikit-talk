@@ -1,9 +1,10 @@
 import warnings
+from .analyze.audio import Audio
 from .utterance import Utterance
 from .write.writer import Writer
 
 
-class Conversation(Writer):
+class Conversation(Writer, Audio):
     def __init__(
         self, utterances: list["Utterance"], metadata: dict = None  # noqa: F821
     ) -> None:

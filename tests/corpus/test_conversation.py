@@ -46,3 +46,8 @@ class TestConversation:
             my_convo_read = json.load(f)
             assert isinstance(my_convo_read, dict)
             assert my_convo_read == my_convo.asdict()
+
+    def test_add_audio(self, my_convo):
+        my_convo.add_audio("tests/testdata/audio.wav")
+        assert my_convo.audio is not None
+        assert isinstance(my_convo.sample_rate, int)
