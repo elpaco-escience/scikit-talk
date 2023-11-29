@@ -228,8 +228,4 @@ class Conversation(Writer):
         # time[0] falls between begin and end
         # time[1] falls between and end
         # time[0] is before begin and time[1] is after end
-        if time is None:
-            return False
-        if begin <= time[0] <= end or begin <= time[1] <= end:
-            return True
-        return time[0] <= begin and time[1] >= end
+        return bool(time) and end >= time[0] and begin <= time[1]
