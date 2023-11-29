@@ -130,6 +130,9 @@ class Conversation(Writer):
             returned_utterances = [
                 u for u in self._utterances if self.overlap(begin, end, u.time) or u == self._utterances[index]]
         except (TypeError, IndexError):
+            # if the utterance's timing is None, a TypeError is raised
+            # if the utterance has no time[0] or time[1], an IndexError is raised
+            # In both cases, there is missing timing information, so no data can be returned.
             returned_utterances = []
         return Conversation(utterances=returned_utterances, suppress_warnings=True)
 
