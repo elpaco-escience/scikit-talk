@@ -92,11 +92,9 @@ class Conversation(Writer):
             raise IndexError("Index out of range")
         if after is None:
             after = before
-        if index - before < 0:
-            before = index
-        if index + after + 1 > len(self._utterances):
-            after = len(self._utterances) - index - 1
-        returned_utterances = self._utterances[index-before:index+after+1]
+        left_bound = max(index-before, 0)
+        right_bound = min(index + after + 1, len(self._utterances))
+        returned_utterances = self._utterances[left_bound:right_bound]
         return Conversation(utterances=returned_utterances, suppress_warnings=True)
 
     def _subconversation_by_time(self,
