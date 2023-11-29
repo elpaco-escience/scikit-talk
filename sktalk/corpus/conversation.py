@@ -215,11 +215,7 @@ class Conversation(Writer):
                 continue
             potentials = [
                 u for u in sub.utterances if utterance.relevant_for_fto(u, planning_buffer)]
-            try:
-                relevant = potentials[-1]
-                values.append(relevant.until(utterance))
-            except IndexError:
-                values.append(None)
+            values.append(potentials[-1].until(utterance) if potentials else None)
         self._update("FTO", values,
                      window=window,
                      planning_buffer=planning_buffer,
