@@ -37,5 +37,5 @@ class Writer(abc.ABC):
             for row in rows:
                     writer.writerow(row)
 
-    def _specify_path(self, _path: Path, specifier: str):
-        return _path.with_name(_path.stem+"_"+specifier+_path.suffix)
+    def _specify_path(self, path: Path, specifier: str):
+        return path.with_name(path.stem+"_"+specifier+path.suffix)

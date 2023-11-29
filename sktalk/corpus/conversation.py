@@ -2,6 +2,7 @@ import warnings
 from .utterance import Utterance
 from .write.writer import Writer
 from pathlib import Path
+import uuid
 
 class Conversation(Writer):
     def __init__(
@@ -69,24 +70,29 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def write_csv(self, path: str = "./file.csv"):
+    def write_csv(self, path: str = "./file.csv", id: str = None):
+        if id is None:
+            unique_id = str(uuid.uuid4())
+        else:
+            unique_id = id
+
         _path = Path(path).with_suffix(".csv")
         path_metadata = self._specify_path(_path,"metadata")
         path_participants = self._specify_path(_path,"participants")
         path_utterances = self._specify_path(_path,"utterances")
-        self._write_csv_metadata(path_metadata)
-        self._write_csv_participants(path_participants)
-        self._write_csv_utterances(path_utterances)
+        self._write_csv_metadata(path_metadata, unique_id)
+        self._write_csv_participants(path_participants, unique_id)
+        self._write_csv_utterances(path_utterances, unique_id)
 
+    def _write_csv_metadata(self, path, unique_id):
+        headers = ["unique_id"]+[*self._metadata]
+        rows = self._metadata | {"unique_id": unique_id}
+        self._write_csv(path, headers, [rows])
 
-    def _write_csv_metadata(self, path: str):
-        headers = self._metadata.keys()
-        self._write_csv(path, headers, [self._metadata])
-
-    def _write_csv_utterances(self, path: str):
-        rows = [utterance.asdict() for utterance in self._utterances]
-        headers = rows[0].keys()
+    def _write_csv_utterances(self, path, unique_id):
+        rows = [utterance.asdict() | {"unique_id": unique_id} for utterance in self._utterances]
+        headers = ["unique_id"]+[*rows[0]]
         self._write_csv(path, headers, rows)
 
-    def _write_csv_participants(self, path: str):
+    def _write_csv_participants(self, path, unique_id):
         return NotImplemented
