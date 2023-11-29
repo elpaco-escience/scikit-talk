@@ -1,8 +1,7 @@
 import warnings
 from .utterance import Utterance
 from .write.writer import Writer
-import csv
-from dataclasses import fields
+from pathlib import Path
 
 class Conversation(Writer):
     def __init__(
@@ -69,19 +68,25 @@ class Conversation(Writer):
             dict: dictionary containing Conversation metadata and Utterances
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
-    
-    def write_csv(self, path: str = "./file.csv"):
-        headers = self._metadata.keys()
-        self._write_csv(path, headers, self._metadata)
 
-    def write_csv_utt(self, path: str = "./file.csv"):
-        headers = fields(self._utterances[0])
+    def write_csv(self, path: str = "./file.csv"):
+        _path = Path(path).with_suffix(".csv")
+        path_metadata = self._specify_path(_path,"metadata")
+        path_participants = self._specify_path(_path,"participants")
+        path_utterances = self._specify_path(_path,"utterances")
+        self._write_csv_metadata(path_metadata)
+        self._write_csv_participants(path_participants)
+        self._write_csv_utterances(path_utterances)
+
+
+    def _write_csv_metadata(self, path: str):
+        headers = self._metadata.keys()
+        self._write_csv(path, headers, [self._metadata])
+
+    def _write_csv_utterances(self, path: str):
         rows = [utterance.asdict() for utterance in self._utterances]
+        headers = rows[0].keys()
         self._write_csv(path, headers, rows)
 
-
-
-
-         
-        
-
+    def _write_csv_participants(self, path: str):
+        return NotImplemented

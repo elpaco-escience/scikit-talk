@@ -27,7 +27,6 @@ class Writer(abc.ABC):
 
     def write_csv(self, path: str = "./file.csv"):
         return NotImplemented
-        
 
     def _write_csv(self, path: str, headers: list, rows: list):
         _path = Path(path).with_suffix(".csv")
@@ -38,4 +37,5 @@ class Writer(abc.ABC):
             for row in rows:
                     writer.writerow(row)
 
-
+    def _specify_path(self, _path: Path, specifier: str):
+        return _path.with_name(_path.stem+"_"+specifier+_path.suffix)
