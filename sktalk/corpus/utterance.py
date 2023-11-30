@@ -61,9 +61,9 @@ class Utterance:
         return other.time[0] - self.time[1]
 
     def overlap(self, other):
-        return self._overlap(other.time)
+        return self.window_overlap(other.time)
 
-    def _overlap(self, time):
+    def window_overlap(self, time):
         if not self.time or not time:
             return False
         return self.time[1] >= time[0] and self.time[0] <= time[1]

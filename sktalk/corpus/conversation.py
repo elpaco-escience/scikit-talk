@@ -133,7 +133,7 @@ class Conversation(Writer):
                 end = self._utterances[index].time[0]
                 right_bound = index + 1
             indices = [i for i, u in enumerate(
-                self._utterances) if u._overlap([begin, end])]
+                self._utterances) if u.window_overlap([begin, end])]
             left_bound = left_bound if bool(left_bound) else min(indices)
             right_bound = right_bound if bool(
                 right_bound) else max(indices) + 1
