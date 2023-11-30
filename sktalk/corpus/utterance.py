@@ -57,29 +57,24 @@ class Utterance:
         # remove numbers that are surrounded by spaces
         self.utterance_clean = re.sub(r'\s\d+\s', ' ', self.utterance_clean)
 
-    def until(self, next_utt):
-        return next_utt.time[0] - self.time[1]
+    def until(self, other):
+        return other.time[0] - self.time[1]
 
-    def relevant_for_fto(self, prior_utt, planning_buffer: int):
-        """Assess whether an utterance is potentially relevant to calculate FTO
+    def overlap(self, other):
+        return self._overlap(other.time)
 
-        An utterance is potentially relevant for fto calculation if:
-        - the utterance `prior_utt` must be by another speaker
-        - the utterance `prior_utt` must have started before the utterance itself, more than `planning_buffer` ms before.
+    def _overlap(self, time):
+        if not self.time or not time:
+            return False
+        return self.time[1] >= time[0] and self.time[0] <= time[1]
 
-        The planning buffer is the minimum time between a relevant preceding utterance and the utterance itself
+    def same_speaker(self, other):
+        return self.participant == other.participant
 
-        Args:
-            prior_utt (Utterance): utterance to assess
-            planning_buffer (int): buffer time (in ms)
-
-        Returns:
-            bool: whether the utterance `prior_utt` meets the criteria and is potentially relevant for FTO calculation
-        """
-        return (
-            self.participant != prior_utt.participant
-            and self.time[0] - planning_buffer >= prior_utt.time[0]
-        )
+    def precede_with_buffer(self, other, planning_buffer=200):
+        if not bool(self.time) or not bool(other.time):
+            return None
+        return self.time[0] - planning_buffer >= other.time[0]
 
     def _split_time(self):
         try:

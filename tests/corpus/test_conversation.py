@@ -80,31 +80,25 @@ class TestConversationMetrics:
 
     @pytest.mark.parametrize("args, expected_length",
                              [
-                                 ([0, 0, 0], 2),  # A, B
-                                 ([5, 3000, 3000], 6),  # B,C,E,U,F,H
-                                 ([5, 0, 0], 3),  # C, U, F
+                                 ([0, 0, 0, False], 2),  # A, B
+                                 ([5, 3000, 3000, False], 8),  # B-H
+                                 ([5, 0, 0, False], 5),  # C-F
+                                 # no time window, only return U
+                                 ([5, 0, 0, True], 1),
+                                 # 7 has no timing
+                                 ([7, 1000, 1000, False], 0),
+                                 ([5, 0, 1500, True], 4),  # U-H
+                                 ([5, 1000, 0, True], 4),  # C-U
                              ])
-    def test_subconversation(self, convo, args, expected_length):
-        index, before, after = args
+    def test_subconversation_time(self, convo, args, expected_length):
+        index, before, after, exclude = args
         sub = convo._subconversation_by_time(index=index,           # noqa W0212
                                      before=before,
-                                     after=after)
+                                     after=after,
+                                     exclude_utterance_overlap=exclude
+                                     )
         assert isinstance(sub, Conversation)
         assert len(sub.utterances) == expected_length
-
-    def test_overlap(self):
-        # entire utterance in window
-        assert Conversation.overlap(80, 120, [90, 110])
-        # beginning of utterance in window
-        assert Conversation.overlap(80, 100, [90, 110])
-        # end of utterance in window
-        assert Conversation.overlap(100, 120, [90, 110])
-        # utterance covers window entirely
-        assert Conversation.overlap(95, 105, [90, 110])
-        assert not Conversation.overlap(
-            120, 140, [90, 110])  # utterance before window
-        assert not Conversation.overlap(
-            70, 80, [90, 110])  # utterance after window
 
     def test_count_participants(self, convo):
         assert convo.count_participants() == 4

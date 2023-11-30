@@ -89,46 +89,55 @@ class Conversation(Writer):
             Conversation: Conversation object without metadata, containing a reduced set of utterances
         """
         if index < 0 or index >= len(self._utterances):
-            raise IndexError("Index out of range")
+            raise IndexError("Utterance index out of range")
         if after is None:
             after = before
         left_bound = max(index-before, 0)
         right_bound = min(index + after + 1, len(self._utterances))
-        returned_utterances = self._utterances[left_bound:right_bound]
-        return Conversation(utterances=returned_utterances, suppress_warnings=True)
+        return Conversation(utterances=self._utterances[left_bound:right_bound],
+                            suppress_warnings=True)
 
     def _subconversation_by_time(self,
                                  index: int,
                                  before: int = 0,
-                                 after: Optional[int] = None,
+                                 after: int = 0,
                                  exclude_utterance_overlap: bool = False) -> "Conversation":
         """Select utterances to provide context as a sub-conversation
 
         Args:
             index (int): The index of the utterance for which to provide context
             before (int, optional): The time in ms preceding the utterance's begin. Defaults to 0.
-            after (int, optional): The time in ms following the utterance's end. Defaults to None,
-                which then assumes the same value as `before`.
+            after (int, optional): The time in ms following the utterance's end. Defaults to 0
             exclude_utterance_overlap (bool, optional): If True, the duration of the
                 utterance itself is not used to identify overlapping utterances, and only
                 the window before or after the utterance is used. Defaults to False.
+                If True, only one of `before` or `after` can be more than 0, as the window
+                for overlap will be limited to the window preceding or following the utterance.
 
         Returns:
             Conversation: Conversation object without metadata, containing a reduced set of utterances
         """
         if index < 0 or index >= len(self._utterances):
-            raise IndexError("Index out of range")
-        if after is None:
-            after = before
+            raise IndexError("Utterance index out of range")
+        if exclude_utterance_overlap and before > 0 and after > 0:
+            raise ValueError(
+                "When utterance is excluded from overlap window, only one of before or after can be more than 0")
         try:
             begin = self._utterances[index].time[0] - before
             end = self._utterances[index].time[1] + after
+            left_bound, right_bound = None, None
             if exclude_utterance_overlap and before == 0:  # only overlap with window following utterance
                 begin = self._utterances[index].time[1]
+                left_bound = index
             elif exclude_utterance_overlap and after == 0:  # only overlap with window preceding utterance
                 end = self._utterances[index].time[0]
-            returned_utterances = [
-                u for u in self._utterances if self.overlap(begin, end, u.time) or u == self._utterances[index]]
+                right_bound = index + 1
+            indices = [i for i, u in enumerate(
+                self._utterances) if u._overlap([begin, end])]
+            left_bound = left_bound if bool(left_bound) else min(indices)
+            right_bound = right_bound if bool(
+                right_bound) else max(indices) + 1
+            returned_utterances = self._utterances[left_bound:right_bound]
         except (TypeError, IndexError):
             # if the utterance's timing is None, a TypeError is raised
             # if the utterance has no time[0] or time[1], an IndexError is raised
@@ -187,14 +196,6 @@ class Conversation(Writer):
         within the window that do not have timing information, or if it lacks
         timing information itself.
 
-        To be a relevant prior turn, the following conditions must be met, respective to utterance U:
-        - the utterance must be by another speaker than U
-        - the utterance by the other speaker must be the most recent utterance by that speaker
-        - the utterance must have started before utterance U, more than `planning_buffer` ms before.
-        - the utterance must be partly or entirely within the context window (`window` ms prior
-            to the start of utterance U)
-        - within the context window, there must be a maximum of `n_participants` speakers.
-
         Args:
             window (int, optional): the time in ms prior to utterance in which a
                 relevant preceding utterance can be found. Defaults to 10000.
@@ -205,26 +206,63 @@ class Conversation(Writer):
         """
         values = []
         for index, utterance in enumerate(self.utterances):
-            sub = self._subconversation_by_time(
-                index=index,
-                before=window,
-                after=0,
-                exclude_utterance_overlap=True)
-            if not 2 <= sub.count_participants() <= n_participants:
-                values.append(None)
-                continue
-            potentials = [
-                u for u in sub.utterances if utterance.relevant_for_fto(u, planning_buffer)]
-            values.append(potentials[-1].until(utterance) if potentials else None)
+            relevant = self.relevant_prior_utterance(
+                index, window, planning_buffer, n_participants)
+            values.append(relevant.until(utterance)
+                          if bool(relevant) else None)
         self._update("FTO", values,
                      window=window,
                      planning_buffer=planning_buffer,
                      n_participants=n_participants)
 
-    @staticmethod
-    def overlap(begin: int, end: int, time: list):
-        # there is overlap if:
-        # time[0] falls between begin and end
-        # time[1] falls between and end
-        # time[0] is before begin and time[1] is after end
-        return bool(time) and end >= time[0] and begin <= time[1]
+    def relevant_prior_utterance(self,
+                                 index,
+                                 window=10000,
+                                 planning_buffer=200,
+                                 n_participants=2):
+        """Determine the most relevant prior utterance for a given utterance
+
+        To be a relevant prior turn, the following conditions must be met, respective to utterance U:
+        - the utterance must be by another speaker than U
+        - the utterance by the other speaker must be the most recent utterance by that speaker
+        - the utterance must have started before utterance U, more than `planning_buffer` ms before.
+        - the utterance must be partly or entirely within the context window (`window` ms prior
+            to the start of utterance U)
+        - within the context window, there must be a maximum of `n_participants` speakers.
+
+        Args:
+            index (int): index of the utterance to assess
+            window (int, optional): the time in ms prior to utterance in which a
+                relevant preceding utterance can be found. Defaults to 10000.
+            planning_buffer (int, optional): minimum speaking time in ms to allow for a response.
+                Defaults to 200.
+            n_participants (int, optional): maximum number of participants overlapping with
+                the utterance and preceding window. Defaults to 2.
+
+        Returns:
+            Utterance: the most relevant prior utterance, or None, if no relevant prior utterance can be identified
+        """
+        sub = self._subconversation_by_time(
+            index=index,
+            before=window,
+            after=0,
+            exclude_utterance_overlap=True)
+        if not 2 <= sub.count_participants() <= n_participants:
+            return None
+        must_overlap = []
+        for prior in sub.utterances[::-1]:
+            # if timing information is missing, stop looking for relevant utterances
+            if not bool(prior.time):
+                break
+            # if the utterance is by the same speaker, it is not relevant,
+            # but must overlap with potential relevant utterance
+            if self._utterances[index].same_speaker(prior):
+                must_overlap.append(prior)
+                continue
+            # the relevant utterance must precede utterance U more than planning buffer
+            if not self._utterances[index].precede_with_buffer(prior, planning_buffer):
+                continue
+            # verify that all utterances in must_overlap do so
+            if all(prior.overlap(utt) for utt in must_overlap):
+                return prior
+        return None

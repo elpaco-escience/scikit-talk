@@ -38,7 +38,7 @@ def convo_utts():
         Utterance(
             utterance="2 utterance C",
             participant="A",
-            time=[1001, 12000]
+            time=[1001, 8500]
         ),
         Utterance(
             utterance="3 utterance D",
