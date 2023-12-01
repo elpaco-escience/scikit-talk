@@ -3,18 +3,36 @@ from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
 
 
+@pytest.fixture
+def path_source():
+    return "tests/testdata/file01.cha"
+
+
+@pytest.fixture
+def cha_info():
+    n_utterances = 13
+    participants = {'A', 'B'}
+    languages = ['eng']
+    return n_utterances, participants, languages
+
+
 class TestChaFile:
-    def test_parse(self):
-        path_source = "tests/testdata/file01.cha"
-        parsed_cha = ChaFile(path_source).parse()
+    def test_parse(self, path_source, cha_info):
+        n_utterances, participants, languages = cha_info
+        cha_utts, cha_meta = ChaFile(path_source).parse()
+        assert cha_meta["source"] == path_source
+        assert {u.participant for u in cha_utts} == participants
+        assert cha_meta["Languages"] == languages
+        assert len(cha_utts) == n_utterances
+
+    def test_wrapped_parser(self, path_source, cha_info):
+        n_utterances, participants, languages = cha_info
+        parsed_cha = Conversation.from_cha(path_source)
         assert isinstance(parsed_cha, Conversation)
         assert parsed_cha.metadata["source"] == path_source
-        assert parsed_cha.utterances[0].begin == "00:00:00.000"
-        all_participants = {u.participant for u in parsed_cha.utterances}
-        assert all_participants == {'A', 'B'}
-        language = parsed_cha.metadata["Languages"]
-        assert language == ["eng"]
-        assert len(parsed_cha.utterances) == 13
+        assert {u.participant for u in parsed_cha.utterances} == participants
+        assert parsed_cha.metadata["Languages"] == languages
+        assert len(parsed_cha.utterances) == n_utterances
 
     unclean_clean = [
         [

@@ -1,14 +1,10 @@
 import re
 import pylangacq
-from ..conversation import Conversation
 from ..utterance import Utterance
 from .parser import InputFile
 
 
 class ChaFile(InputFile):
-    def _pla_reader(self) -> pylangacq.Reader:
-        return pylangacq.read_chat(self._path)
-
     def parse(self):
         """Parse conversation file in Chat format
 
@@ -20,7 +16,13 @@ class ChaFile(InputFile):
         utterances = [ChaFile._to_utterance(
             chat_utterance) for chat_utterance in chat_utterances]
 
-        return Conversation(utterances, self.metadata)
+        return utterances, self.metadata
+
+    def _pla_reader(self) -> pylangacq.Reader:
+        return pylangacq.read_chat(self._path)
+
+    def _extract_metadata(self):
+        return self._pla_reader().headers()[0]
 
     @staticmethod
     def _to_utterance(chat_utterance) -> Utterance:
@@ -32,10 +34,8 @@ class ChaFile(InputFile):
         utterance.utterance = ChaFile._clean_utterance(utterance.utterance)
         utterance.time = list(utterance.time) if isinstance(
             utterance.time, (list, tuple)) else None
+        # first create all objects, then initialize Utterance
         return utterance
-
-    def _extract_metadata(self):
-        return self._pla_reader().headers()[0]
 
     @staticmethod
     def _clean_utterance(utterance):

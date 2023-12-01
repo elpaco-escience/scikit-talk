@@ -1,5 +1,4 @@
 import abc
-from ..conversation import Conversation
 
 
 class InputFile(abc.ABC):
@@ -10,7 +9,7 @@ class InputFile(abc.ABC):
         self._metadata = {"source": path}
 
     @abc.abstractmethod
-    def parse(self) -> Conversation:
+    def parse(self) -> "Conversation":
         return NotImplemented
 
     @property
