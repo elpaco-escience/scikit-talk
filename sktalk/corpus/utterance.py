@@ -68,8 +68,21 @@ class Utterance:
             return False
         return self.time[1] >= time[0] and self.time[0] <= time[1]
 
+    def overlap_percentage(self, other):
+        return self.window_overlap_percentage(other.time)
+
+    def window_overlap_percentage(self, time):
+        if not self.time or not time:
+            return None
+        overlap = self.window_overlap(time)
+        if not overlap:
+            return 0
+        overlap_duration = min(
+            self.time[1], time[1]) - max(self.time[0], time[0])
+        return overlap_duration / (self.time[1] - self.time[0]) * 100
+
     def same_speaker(self, other):
-        return self.participant == other.participant
+        return self.participant == other.participant if bool(self.participant) and bool(other.participant) else None
 
     def precede_with_buffer(self, other, planning_buffer=200):
         if not bool(self.time) or not bool(other.time):

@@ -108,15 +108,43 @@ class TestConversationMetrics:
         convo3 = convo._subconversation_by_index(index=0)            # noqa W0212
         assert convo3.count_participants() == 1
 
-    def test_calculate_FTO(self, convo):
-        convo.calculate_FTO()
-        assert convo.metadata["Calculations"]["FTO"] == {
-            "window": 10000, "planning_buffer": 200, "n_participants": 2}
-        convo.calculate_FTO(window=10)
-        assert convo.metadata["Calculations"]["FTO"] == {
-            "window": 10, "planning_buffer": 200, "n_participants": 2}
-        assert convo.utterances[0].FTO is None
-        assert convo.utterances[1].FTO == -100
-        assert convo.utterances[2].FTO is None
-        convo.calculate_FTO(planning_buffer=0)
-        assert convo.utterances[2].FTO == -2499
+    @pytest.mark.parametrize("args, index, expected_fto",
+                             [
+                                 ([10000, 200, 2], 0, None),
+                                 ([10000, 200, 2], 1, -800),  # from 1 to 0
+                                 # no FTO possible in 1 person convo
+                                 ([10000, 200, 1], 1, None),
+                                 ([10000, 200, 2], 2, -600),  # from 2 to 0
+                                 ([10000, 200, 2], 3, -400),  # from 3 to 0
+                                 ([1, 200, 2], 3, -400),  # 0 still overlaps
+                                 ([10000, 200, 2], 4, 100),  # from 4 to 0
+                                 # 0 does not fit in window
+                                 ([1, 200, 2], 4, None),
+                                 # timing info missing
+                                 ([10000, 200, 2], 5, None),
+                                 # timing info on previous missing
+                                 ([10000, 200, 2], 6, None),
+                                 # utterance starts <200ms after prior
+                                 ([10000, 200, 2], 7, None),
+                                 # planning buffer adjusted
+                                 ([10000, 100, 2], 7, -350),
+                                 # missing participant
+                                 ([10000, 200, 2], 8, None),
+                                 # missing participant in previous
+                                 ([10000, 200, 2], 9, None),
+                                 ([100, 200, 2], 10, -100),  # fom 10 to 9
+                                 # previous only has partial overlap
+                                 ([400, 200, 2], 11, None)
+                             ])
+    def test_calculate_FTO(self, convo_fto, args, index, expected_fto):
+        window, planning_buffer, n_participants = args
+        convo_fto.calculate_FTO(window, planning_buffer, n_participants)
+
+        # metadata is updated
+        assert convo_fto.metadata["Calculations"]["FTO"] == {
+            "window": window,
+            "planning_buffer": planning_buffer,
+            "n_participants": n_participants}
+
+        # utterance fto is calculated correctly
+        assert convo_fto.utterances[index].FTO == expected_fto

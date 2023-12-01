@@ -35,6 +35,31 @@ class TestUtterance():
         utt1, utt2 = convo_utts[:2]
         assert utt1.until(utt2) == -100
 
+    @pytest.mark.parametrize("indices, expected", [
+        ([0, 1], False),
+        ([0, 2], True),
+        ([0, 7], None),
+        ([1, 7], None),
+        ([7, 7], None)
+    ])
+    def test_same_speaker(self, convo_utts, indices, expected):
+        utt1, utt2 = [convo_utts[i] for i in indices]
+        assert utt1.same_speaker(utt2) == expected
+
+    @pytest.mark.parametrize("utterance_time, window, expected_percentage", [
+        ([100, 200], [100, 200], 100),
+        ([100, 200], [150, 250], 50),
+        ([100, 200], [0, 400], 100),
+        ([0, 400], [100, 200], 25),
+        (None, [0, 300], None),
+        ([100, 200], None, None),
+        ([100, 200], [400, 500], 0)
+    ])
+    def test_window_overlap_percentage(self, utterance_time, window, expected_percentage):
+        utterance = Utterance(utterance="text", time=utterance_time)
+        assert utterance.window_overlap_percentage(
+            window) == expected_percentage
+
     milliseconds_timestamp = [
         ["0", "00:00:00.000"],
         ["1706326", "00:28:26.326"],

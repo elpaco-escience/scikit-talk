@@ -242,6 +242,9 @@ class Conversation(Writer):
         Returns:
             Utterance: the most relevant prior utterance, or None, if no relevant prior utterance can be identified
         """
+        utterance_u = self._utterances[index]
+        if not bool(utterance_u.time) or not bool(utterance_u.participant):
+            return None
         sub = self._subconversation_by_time(
             index=index,
             before=window,
@@ -251,18 +254,20 @@ class Conversation(Writer):
             return None
         must_overlap = []
         for prior in sub.utterances[::-1]:
-            # if timing information is missing, stop looking for relevant utterances
-            if not bool(prior.time):
+            # if timing or participant information is missing, stop looking for relevant utterances
+            if not bool(prior.time) or not bool(prior.participant):
                 break
+            if prior == utterance_u:
+                continue
             # if the utterance is by the same speaker, it is not relevant,
             # but must overlap with potential relevant utterance
-            if self._utterances[index].same_speaker(prior):
+            if utterance_u.same_speaker(prior):
                 must_overlap.append(prior)
                 continue
             # the relevant utterance must precede utterance U more than planning buffer
-            if not self._utterances[index].precede_with_buffer(prior, planning_buffer):
+            if not utterance_u.precede_with_buffer(prior, planning_buffer):
                 continue
             # verify that all utterances in must_overlap do so
-            if all(prior.overlap(utt) for utt in must_overlap):
+            if all(utt.overlap_percentage(prior) == 100 for utt in must_overlap):
                 return prior
         return None

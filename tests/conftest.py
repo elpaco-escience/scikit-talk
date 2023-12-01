@@ -84,6 +84,77 @@ def convo(convo_utts, convo_meta):
 
 
 @pytest.fixture
+def utterances_for_fto():
+    return [
+        Utterance(
+            utterance="utt 0 - A",
+            participant="A",
+            time=[0, 1000]
+        ),
+        Utterance(
+            utterance="utt 1 - B",
+            participant="B",
+            time=[200, 300]
+        ),
+        Utterance(
+            utterance="utt 2 - B",
+            participant="B",
+            time=[400, 500]
+        ),
+        Utterance(
+            utterance="utt 3 - B",
+            participant="B",
+            time=[600, 900]
+        ),
+        Utterance(
+            utterance="utt 4 - B",
+            participant="B",
+            time=[1100, 1500]
+        ),
+        Utterance(
+            utterance="utt 5 - A",
+            participant="A",
+            time=None
+        ),
+        Utterance(
+            utterance="utt 6 - A",
+            participant="A",
+            time=[1300, 1800]
+        ),
+        Utterance(
+            utterance="utt 7 - B",
+            participant="B",
+            time=[1450, 1800]
+        ),
+        Utterance(
+            utterance="utt 8 - None",
+            participant=None,
+            time=[1850, 1900]
+        ),
+        Utterance(
+            utterance="utt 9 - A",
+            participant="A",
+            time=[1900, 2300]
+        ),
+        Utterance(
+            utterance="utt 10 - B",
+            participant="B",
+            time=[2200, 2400]
+        ),
+        Utterance(
+            utterance="utt 11 - B",
+            participant="B",
+            time=[2450, 2600]
+        ),
+    ]
+
+
+@pytest.fixture
+def convo_fto(utterances_for_fto, convo_meta):
+    return Conversation(utterances_for_fto, convo_meta)
+
+
+@pytest.fixture
 def my_corpus():
     return Corpus(language="French",
                   importer="John Doe",
