@@ -64,22 +64,28 @@ class Utterance:
         return self.window_overlap(other.time)
 
     def window_overlap(self, time):
-        if not self.time or not time:
-            return False
+        if not bool(self.time) or not bool(time):
+            return None
         return self.time[1] >= time[0] and self.time[0] <= time[1]
+
+    def overlap_duration(self, other):
+        return self.window_overlap_duration(other.time)
+
+    def window_overlap_duration(self, time):
+        overlap = self.window_overlap(time)
+        if not bool(overlap):
+            return overlap if overlap is None else int(overlap)
+        return min(self.time[1], time[1]) - max(self.time[0], time[0])
 
     def overlap_percentage(self, other):
         return self.window_overlap_percentage(other.time)
 
     def window_overlap_percentage(self, time):
-        if not self.time or not time:
-            return None
-        overlap = self.window_overlap(time)
-        if not overlap:
-            return 0
-        overlap_duration = min(
-            self.time[1], time[1]) - max(self.time[0], time[0])
-        return overlap_duration / (self.time[1] - self.time[0]) * 100
+        overlap_duration = self.window_overlap_duration(time)
+        if not bool(overlap_duration):
+            return overlap_duration
+        utterance_duration = self.time[1] - self.time[0]
+        return overlap_duration / utterance_duration * 100
 
     def same_speaker(self, other):
         return self.participant == other.participant if bool(self.participant) and bool(other.participant) else None
