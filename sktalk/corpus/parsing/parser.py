@@ -9,9 +9,8 @@ class InputFile(abc.ABC):
         self._metadata = {"source": path}
         self._utterances = []
 
-    @abc.abstractmethod
     def parse(self):
-        return NotImplemented
+        return self.utterances, self.metadata
 
     @property
     def metadata(self):
@@ -22,10 +21,14 @@ class InputFile(abc.ABC):
 
     @property
     def utterances(self):
+        self._utterances = self._extract_utterances()
         return self._utterances
 
     def _extract_metadata(self):
         return {}
+
+    def _extract_utterances(self):
+        return []
 
     @classmethod
     def download(cls, url):              # noqa: W0613

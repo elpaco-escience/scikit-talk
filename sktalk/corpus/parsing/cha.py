@@ -5,17 +5,6 @@ from .parser import InputFile
 
 
 class ChaFile(InputFile):
-    def parse(self):
-        """Parse conversation file in Chat format
-
-        Returns:
-            utterances, metadata
-        """
-        self._reader = self._extract_utterances()
-        self._utterances = [self._to_utterance(u) for u in self._reader]
-
-        return self.utterances, self.metadata
-
     def _pla_reader(self) -> pylangacq.Reader:
         return pylangacq.read_chat(self._path)
 
@@ -23,7 +12,8 @@ class ChaFile(InputFile):
         return self._pla_reader().headers()[0]
 
     def _extract_utterances(self):
-        return self._pla_reader().utterances(by_files=False)
+        reader = self._pla_reader().utterances(by_files=False)
+        return [self._to_utterance(u) for u in reader]
 
     @classmethod
     def _to_utterance(cls, reader) -> Utterance:
