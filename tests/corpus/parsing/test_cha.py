@@ -2,28 +2,8 @@ import os
 import tempfile
 import pytest
 import requests
-import sktalk
+from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
-from sktalk.corpus.parsing.parser import InputFile
-
-
-class TestParser:
-    milliseconds_timestamp = [
-        ["0", "00:00:00.000"],
-        ["1706326", "00:28:26.326"],
-        ["222222", "00:03:42.222"],
-        ["None", None]
-    ]
-
-    @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
-    def test_to_timestamp(self, milliseconds, timestamp):
-        assert InputFile._to_timestamp(milliseconds) == timestamp   # noqa: W0212
-
-        with pytest.raises(ValueError, match="exceeds 24h"):
-            InputFile._to_timestamp("987654321")                    # noqa: W0212
-
-        with pytest.raises(ValueError, match="negative"):
-            InputFile._to_timestamp("-1")                           # noqa: W0212
 
 
 class TestChaFile:
@@ -52,7 +32,7 @@ class TestChaFile:
     @pytest.mark.parametrize("download_file", urls, indirect=True)
     def test_parse(self, download_file):
         parsed_cha = ChaFile(download_file).parse()
-        assert isinstance(parsed_cha, sktalk.corpus.conversation.Conversation)
+        assert isinstance(parsed_cha, Conversation)
         source = parsed_cha.metadata["source"]
         assert os.path.splitext(source)[1] == ".cha"
         assert parsed_cha.utterances[0].begin == "00:00:00.000"
@@ -61,15 +41,6 @@ class TestChaFile:
         language = parsed_cha.metadata["Languages"]
         assert language == ["eng"]
         # TODO assert that there are no empty utterances
-
-    def test_split_time(self):
-        time = "(1748070, 1751978)"
-        begin_end = ("00:29:08.070", "00:29:11.978")
-        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
-
-        time = None
-        begin_end = (None, None)
-        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
 
     unclean_clean = [
         [
