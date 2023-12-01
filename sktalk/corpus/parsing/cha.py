@@ -9,14 +9,12 @@ class ChaFile(InputFile):
         """Parse conversation file in Chat format
 
         Returns:
-            Conversation: A Conversation object representing the conversation in the file.
+            utterances, metadata
         """
-        chat_utterances = self._pla_reader().utterances(by_files=False)
+        self._reader = self._extract_utterances()
+        self._utterances = [self._to_utterance(u) for u in self._reader]
 
-        utterances = [ChaFile._to_utterance(
-            chat_utterance) for chat_utterance in chat_utterances]
-
-        return utterances, self.metadata
+        return self.utterances, self.metadata
 
     def _pla_reader(self) -> pylangacq.Reader:
         return pylangacq.read_chat(self._path)
@@ -24,21 +22,25 @@ class ChaFile(InputFile):
     def _extract_metadata(self):
         return self._pla_reader().headers()[0]
 
-    @staticmethod
-    def _to_utterance(chat_utterance) -> Utterance:
-        utterance = Utterance(
-            participant=chat_utterance.participant,
-            time=chat_utterance.time_marks,
-            utterance=str(chat_utterance.tiers),
-        )
-        utterance.utterance = ChaFile._clean_utterance(utterance.utterance)
-        utterance.time = list(utterance.time) if isinstance(
-            utterance.time, (list, tuple)) else None
-        # first create all objects, then initialize Utterance
-        return utterance
+    def _extract_utterances(self):
+        return self._pla_reader().utterances(by_files=False)
 
-    @staticmethod
-    def _clean_utterance(utterance):
+    @classmethod
+    def _to_utterance(cls, reader) -> Utterance:
+        """Convert pylangacq Utterance to sktalk Utterance"""
+        participant = reader.participant
+        time = reader.time_marks
+        time = list(time) if isinstance(time, (list, tuple)) else None
+        text = str(reader.tiers)
+        text = cls._clean_utterance(text)
+        return Utterance(
+            participant=participant,
+            time=time,
+            utterance=text,
+        )
+
+    @classmethod
+    def _clean_utterance(cls, utterance):
         utterance = str(utterance)
         utterance = re.sub(r"^([^:]+):", "", utterance)
         utterance = re.sub(r"^\s+", "", utterance)
