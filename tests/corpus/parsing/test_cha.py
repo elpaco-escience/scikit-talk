@@ -1,46 +1,20 @@
-import os
-import tempfile
 import pytest
-import requests
 from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
 
 
 class TestChaFile:
-    urls = [
-        "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/03.cha"
-    ]
-
-    @pytest.fixture(params=urls)
-    def download_file(self, request):
-        remote = request.param
-        response = requests.get(remote, timeout=5)
-        response.raise_for_status()
-
-        ext = os.path.splitext(remote)[1]
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
-            temp_file.write(response.content)
-            temp_file_path = temp_file.name
-
-        yield temp_file_path
-
-        os.remove(temp_file_path)
-
-    @pytest.mark.parametrize("download_file", urls, indirect=True)
-    def test_parse(self, download_file):
-        parsed_cha = ChaFile(download_file).parse()
+    def test_parse(self):
+        path_source = "tests/testdata/file01.cha"
+        parsed_cha = ChaFile(path_source).parse()
         assert isinstance(parsed_cha, Conversation)
-        source = parsed_cha.metadata["source"]
-        assert os.path.splitext(source)[1] == ".cha"
+        assert parsed_cha.metadata["source"] == path_source
         assert parsed_cha.utterances[0].begin == "00:00:00.000"
-        participant = parsed_cha.utterances[0].participant
-        assert participant in ["A", "B", "S"]
+        all_participants = {u.participant for u in parsed_cha.utterances}
+        assert all_participants == {'A', 'B'}
         language = parsed_cha.metadata["Languages"]
         assert language == ["eng"]
-        # TODO assert that there are no empty utterances
+        assert len(parsed_cha.utterances) == 13
 
     unclean_clean = [
         [
