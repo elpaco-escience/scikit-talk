@@ -47,6 +47,16 @@ class TestConversation:
             convo_read = json.load(f)
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
+    
+    def test_write_csv(self, convo, tmp_path):
+        tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
+        convo.write_csv(tmp_file)
+        tmp_output_metadata = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
+        assert os.path.exists(tmp_output_metadata)
+        #tmp_output_participants = f"{str(tmp_path)}{os.sep}tmp_participants.csv"
+        #teassert os.path.exists(tmp_output_participants)
+        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+        assert os.path.exists(tmp_output_utterances)
 
 
 class TestConversationMetrics:
