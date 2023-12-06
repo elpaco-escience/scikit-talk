@@ -87,18 +87,17 @@ class Conversation(Writer):
         self._write_csv_utterances(path_utterances, self._id)
 
     def _write_csv_metadata(self, path, unique_id):
-        headers = ["unique_id"]+[*self._metadata]
-        rows = self._metadata | {"unique_id": unique_id}
+        headers = ["conversation_ID"]+[*self._metadata]
+        rows = self._metadata | {"conversation_ID": unique_id}
         self._write_csv(path, headers, [rows])
 
     def _write_csv_utterances(self, path, unique_id):
-        rows = [utterance.asdict() | {"unique_id": unique_id}
-                for utterance in self._utterances]
-        headers = ["unique_id"]+[*rows[0]] if rows else ["unique_id"]
-        self._write_csv(path, headers, rows)
-
-    def _write_csv_participants(self):
-        return NotImplemented
+        if rows := [
+            {"conversation_ID": unique_id} | utterance.asdict()
+            for utterance in self._utterances
+        ]:
+            headers = [*rows[0]]
+            self._write_csv(path, headers, rows)
 
     def _subconversation_by_index(self,
                                   index: int,

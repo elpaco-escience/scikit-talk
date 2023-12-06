@@ -66,24 +66,25 @@ class TestConversation:
         # check that no curly bracket info survives in metadata
         pass
 
-    @pytest.mark.parametrize("conversation", [
-        ("convo"),
-        ("empty_convo")
+    @pytest.mark.parametrize("conversation, error", [
+        ("convo", does_not_raise()),
+        ("empty_convo", pytest.raises(FileNotFoundError))
     ])
-    def test_write_csv_utterances(self, conversation, tmp_path, request):
+    def test_write_csv_utterances(self, conversation, error, tmp_path, request):
         conversation = request.getfixturevalue(conversation)
 
         tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
         conversation.write_csv(tmp_file)
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
 
-        with open(tmp_output_utterances, 'r') as file:
-            reader = csv.reader(file)
-            csv_out = list(reader)
+        with error:
+            with open(tmp_output_utterances, 'r') as file:
+                reader = csv.reader(file)
+                csv_out = list(reader)
 
-        assert len(csv_out) == len(conversation.utterances)+1
-        # no duplication of items in header
-        assert len(set(csv_out[0])) == len(csv_out[0])
+            assert len(csv_out) == len(conversation.utterances)+1
+            assert len(set(csv_out[0])) == len(csv_out[0])
+            assert csv_out[0][0] == "conversation_ID"
 
 
 class TestConversationMetrics:
