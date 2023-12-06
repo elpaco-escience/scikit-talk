@@ -31,7 +31,7 @@ class Writer(abc.ABC):
     def _write_csv(self, path: str, headers: list, rows: list):
         _path = Path(path).with_suffix(".csv")
 
-        with open(_path, "w", encoding='utf-8') as file:
+        with open(_path, "w", encoding='utf-8', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=headers)
             writer.writeheader()
             for row in rows:
