@@ -72,11 +72,11 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def write_csv(self, path: str = "./file.csv", id: str = None):
-        if id is None:
+    def write_csv(self, path: str = "./file.csv", conv_id: str = None):
+        if conv_id is None:
             unique_id = str(uuid.uuid4())
         else:
-            unique_id = id
+            unique_id = conv_id
 
         _path = Path(path).with_suffix(".csv")
         path_metadata = self._specify_path(_path, "metadata")
