@@ -1,7 +1,7 @@
 import abc
+import csv
 import json
 from pathlib import Path
-import csv
 
 
 class Writer(abc.ABC):
@@ -35,7 +35,7 @@ class Writer(abc.ABC):
             writer = csv.DictWriter(file, fieldnames=headers)
             writer.writeheader()
             for row in rows:
-                    writer.writerow(row)
+                writer.writerow(row)
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(path.stem+"_"+specifier+path.suffix)

@@ -46,8 +46,6 @@ class Utterance:
 
     def asdict(self):
         return asdict(self)
-    
-    
 
     def _clean_utterance(self):
         # remove leading and trailing whitespace

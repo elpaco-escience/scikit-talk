@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 from contextlib import nullcontext as does_not_raise
@@ -57,8 +58,16 @@ class TestConversation:
         #teassert os.path.exists(tmp_output_participants)
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(tmp_output_utterances)
-
-
+        #count the number of row in csv file header + 10 utterances
+        def count_lines_in_csv(file_path):
+            with open(file_path, 'r') as file:
+                reader = csv.reader(file)
+                line_count = sum(1 for row in reader)
+            return line_count
+        line_count_csv = count_lines_in_csv(tmp_output_utterances)        
+        assert line_count_csv == len(convo.utterances)+1
+        
+        
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
                              [

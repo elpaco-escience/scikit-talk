@@ -1,9 +1,10 @@
+import uuid
 import warnings
+from pathlib import Path
 from typing import Optional
 from .utterance import Utterance
 from .write.writer import Writer
-from pathlib import Path
-import uuid
+
 
 class Conversation(Writer):
     def __init__(
@@ -78,9 +79,9 @@ class Conversation(Writer):
             unique_id = id
 
         _path = Path(path).with_suffix(".csv")
-        path_metadata = self._specify_path(_path,"metadata")
-        path_participants = self._specify_path(_path,"participants")
-        path_utterances = self._specify_path(_path,"utterances")
+        path_metadata = self._specify_path(_path, "metadata")
+        path_participants = self._specify_path(_path, "participants")
+        path_utterances = self._specify_path(_path, "utterances")
         self._write_csv_metadata(path_metadata, unique_id)
         self._write_csv_participants(path_participants, unique_id)
         self._write_csv_utterances(path_utterances, unique_id)
@@ -91,7 +92,8 @@ class Conversation(Writer):
         self._write_csv(path, headers, [rows])
 
     def _write_csv_utterances(self, path, unique_id):
-        rows = [utterance.asdict() | {"unique_id": unique_id} for utterance in self._utterances]
+        rows = [utterance.asdict() | {"unique_id": unique_id}
+                for utterance in self._utterances]
         headers = ["unique_id"]+[*rows[0]]
         self._write_csv(path, headers, rows)
 
