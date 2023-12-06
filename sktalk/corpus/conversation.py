@@ -96,7 +96,7 @@ class Conversation(Writer):
     def _write_csv_utterances(self, path, unique_id):
         rows = [utterance.asdict() | {"unique_id": unique_id}
                 for utterance in self._utterances]
-        headers = ["unique_id"]+[*rows[0]]
+        headers = ["unique_id"]+[*rows[0]] if rows else ["unique_id"]
         self._write_csv(path, headers, rows)
 
     def _write_csv_participants(self, path, unique_id):
