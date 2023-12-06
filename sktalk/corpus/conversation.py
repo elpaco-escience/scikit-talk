@@ -82,10 +82,8 @@ class Conversation(Writer):
 
         _path = Path(path).with_suffix(".csv")
         path_metadata = self._specify_path(_path, "metadata")
-        path_participants = self._specify_path(_path, "participants")
         path_utterances = self._specify_path(_path, "utterances")
         self._write_csv_metadata(path_metadata, self._id)
-        self._write_csv_participants(path_participants, self._id)
         self._write_csv_utterances(path_utterances, self._id)
 
     def _write_csv_metadata(self, path, unique_id):
