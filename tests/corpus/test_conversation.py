@@ -40,11 +40,11 @@ class TestConversation:
         ("tmp_convo", "tmp_convo.json")
     ])
     def test_write_json(self, convo, tmp_path, user_path, expected_path):
-        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
-        convo.write_json(tmp_file)
-        tmp_file_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
-        assert os.path.exists(tmp_file_exp)
-        with open(tmp_file_exp, encoding='utf-8') as f:
+        filename = f"{str(tmp_path)}{os.sep}{user_path}"
+        convo.write_json(filename)
+        filename_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
+        assert os.path.exists(filename_exp)
+        with open(filename_exp, encoding='utf-8') as f:
             convo_read = json.load(f)
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
@@ -54,17 +54,21 @@ class TestConversation:
         ("tmp.json"),
         ("tmp")
     ])
-    def test_write_csv(self, convo, tmp_path, user_path):
-        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
-        convo.write_csv(tmp_file)
-        tmp_output_metadata = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
-        assert os.path.exists(tmp_output_metadata)
+    def test_write_csv(self, user_path, convo, tmp_path):
+        filename = f"{str(tmp_path)}{os.sep}{user_path}"
+        convo.write_csv(filename)
+        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
+        assert os.path.exists(metadatapath)
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(tmp_output_utterances)
 
     def test_write_csv_metadata(self, convo, tmp_path):
-        # check that no curly bracket info survives in metadata
-        pass
+        filename = f"{str(tmp_path)}{os.sep}tmp.csv"
+        convo.write_csv(filename)
+        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
+        with open(metadatapath, 'r', encoding="utf-8") as file:
+            reader = csv.reader(file)
+            csv_out = list(reader)
 
     @pytest.mark.parametrize("conversation, error", [
         ("convo", does_not_raise()),
@@ -73,19 +77,18 @@ class TestConversation:
     def test_write_csv_utterances(self, conversation, error, tmp_path, request):
         conversation = request.getfixturevalue(conversation)
 
-        tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
-        conversation.write_csv(tmp_file)
-        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+        filename = f"{str(tmp_path)}{os.sep}tmp.csv"
+        conversation.write_csv(filename)
+        utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
 
         with error:
-            with open(tmp_output_utterances, 'r') as file:
+            with open(utterancepath, 'r', encoding="utf-8") as file:
                 reader = csv.reader(file)
                 csv_out = list(reader)
 
             assert len(csv_out) == len(conversation.utterances)+1
             assert len(set(csv_out[0])) == len(csv_out[0])
             assert csv_out[0][0] == "conversation_ID"
-
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
