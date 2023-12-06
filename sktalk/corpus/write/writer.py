@@ -25,7 +25,7 @@ class Writer(abc.ABC):
         with open(_path, "w", encoding='utf-8') as file:
             json.dump(object_dict, file, indent=4)
 
-    def write_csv(self, path: str = "./file.csv"):
+    def write_csv(self):
         return NotImplemented
 
     def _write_csv(self, path: str, headers: list, rows: list):
@@ -38,4 +38,4 @@ class Writer(abc.ABC):
                 writer.writerow(row)
 
     def _specify_path(self, path: Path, specifier: str):
-        return path.with_name(path.stem+"_"+specifier+path.suffix)
+        return path.with_name(f"{path.stem}_{specifier}{path.suffix}")

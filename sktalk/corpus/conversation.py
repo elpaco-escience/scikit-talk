@@ -99,7 +99,7 @@ class Conversation(Writer):
         headers = ["unique_id"]+[*rows[0]] if rows else ["unique_id"]
         self._write_csv(path, headers, rows)
 
-    def _write_csv_participants(self, path, unique_id):
+    def _write_csv_participants(self):
         return NotImplemented
 
     def _subconversation_by_index(self,
