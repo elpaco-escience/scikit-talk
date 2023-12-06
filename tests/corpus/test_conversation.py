@@ -49,15 +49,15 @@ class TestConversation:
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
 
-    @pytest.mark.parametrize("user_path, expected_path_metadata", [
-        ("tmp.csv", "tmp_metadata.csv"),
-        ("tmp.json", "tmp_metadata.csv"),
-        ("tmp", "tmp_metadata.csv")
+    @pytest.mark.parametrize("user_path", [
+        ("tmp.csv"),
+        ("tmp.json"),
+        ("tmp")
     ])
-    def test_write_csv(self, convo, tmp_path, user_path, expected_path_metadata):
+    def test_write_csv(self, convo, tmp_path, user_path):
         tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
         convo.write_csv(tmp_file)
-        tmp_output_metadata = f"{str(tmp_path)}{os.sep}{expected_path_metadata}"
+        tmp_output_metadata = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
         assert os.path.exists(tmp_output_metadata)
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(tmp_output_utterances)
@@ -66,23 +66,24 @@ class TestConversation:
         # check that no curly bracket info survives in metadata
         pass
 
-    def test_write_csv_utterances(self, convo, empty_convo, tmp_path):
-        tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
-        convo.write_csv(tmp_file)
-        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
-        assert os.path.exists(tmp_output_utterances)
-        def count_lines_in_csv(file_path):
-            with open(file_path, 'r') as file:
-                reader = csv.reader(file)
-                line_count = sum(1 for row in reader)
-            return line_count
-        assert count_lines_in_csv(tmp_output_utterances) == len(convo.utterances)+1
+    @pytest.mark.parametrize("conversation", [
+        ("convo"),
+        ("empty_convo")
+    ])
+    def test_write_csv_utterances(self, conversation, tmp_path, request):
+        conversation = request.getfixturevalue(conversation)
 
-        # empty conversation
-        tmp_file = f"{str(tmp_path)}{os.sep}empty.csv"
-        empty_convo.write_csv(tmp_file)
-        empty_utterances = f"{str(tmp_path)}{os.sep}empty_utterances.csv"
-        assert count_lines_in_csv(empty_utterances) == 1
+        tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
+        conversation.write_csv(tmp_file)
+        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+
+        with open(tmp_output_utterances, 'r') as file:
+            reader = csv.reader(file)
+            csv_out = list(reader)
+
+        assert len(csv_out) == len(conversation.utterances)+1
+        # no duplication of items in header
+        assert len(set(csv_out[0])) == len(csv_out[0])
 
 
 class TestConversationMetrics:

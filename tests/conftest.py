@@ -82,9 +82,10 @@ def convo_utts():
 def convo(convo_utts, convo_meta):
     return Conversation(convo_utts, convo_meta)
 
+
 @pytest.fixture
 def empty_convo(convo_meta):
-    return Conversation([], convo_meta, conversation_id = "empty", suppress_warnings=True)
+    return Conversation([], convo_meta, conversation_id="empty", suppress_warnings=True)
 
 
 @pytest.fixture
