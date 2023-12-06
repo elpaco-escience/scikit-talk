@@ -20,7 +20,9 @@ class Conversation(Writer):
             utterances (list[Utterance]): A list of Utterance objects representing the utterances in the conversation.
             metadata (dict, optional): Additional metadata associated with the conversation. Defaults to None.
         """
+        self._id = conversation_id or str(uuid.uuid4())
         self._metadata = metadata or {}
+
         self._utterances = utterances
         # Input utterances should be a list of type Utterance
         errormsg = "All utterances in a conversation should be of type Utterance"
@@ -36,8 +38,6 @@ class Conversation(Writer):
         if not self._utterances and not suppress_warnings:
             warnings.warn(
                 "This conversation appears to be empty: no Utterances are read.")
-
-        self._id = conversation_id or str(uuid.uuid4())
 
     @property
     def utterances(self):
@@ -83,17 +83,51 @@ class Conversation(Writer):
         _path = Path(path).with_suffix(".csv")
         path_metadata = self._specify_path(_path, "metadata")
         path_utterances = self._specify_path(_path, "utterances")
-        self._write_csv_metadata(path_metadata, self._id)
+        self._write_csv_metadata(path_metadata)
         self._write_csv_utterances(path_utterances, self._id)
 
-    def _write_csv_metadata(self, path, unique_id):
-        headers = ["conversation_ID"]+[*self._metadata]
-        rows = self._metadata | {"conversation_ID": unique_id}
+    def _write_csv_metadata(self, path):
+        headers = ["conversation_ID"] + [*self._metadata]
+        rows = self._metadata | {"conversation_ID": self._id}
+
+        # dictionaries should get their own output file
+        for key, value in rows.items():
+            if isinstance(value, dict):
+                newfile = self._specify_path(path, key)
+                self._write_csv_dict(newfile, value)
+                rows[key] = newfile
+
+        # lists should be joined and comma-separated
+        for key, value in rows.items():
+            if isinstance(value, list):
+                rows[key] = ', '.join(value)
+
         self._write_csv(path, headers, [rows])
 
-    def _write_csv_utterances(self, path, unique_id):
+    def _write_csv_dict(self, path, dx):
+        """_summary_
+
+        Args:
+            path (str): name and location of the new csv file
+            dx (dict): nested dictionary to write to the file
+        """
+        # verify that the dictionary is a nested dictionary
+        if not any(isinstance(value, dict) for value in dx.values()):
+            raise ValueError("The dictionary is not nested")
+        rows = [{'conversation_ID': self._id, 'Item': key} | dx[key]
+                for key in dx.keys()]
+        allheaders = []
+        for row in rows:
+            allheaders += [*row]
+        headers = list(set(allheaders))
+        headers.remove('conversation_ID')
+        headers.remove('Item')
+        headers = ['conversation_ID', 'Item'] + headers
+        self._write_csv(path, headers, rows)
+
+    def _write_csv_utterances(self, path, conversation_id):
         if rows := [
-            {"conversation_ID": unique_id} | utterance.asdict()
+            {"conversation_ID": conversation_id} | utterance.asdict()
             for utterance in self._utterances
         ]:
             headers = [*rows[0]]

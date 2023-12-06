@@ -62,13 +62,18 @@ class TestConversation:
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(tmp_output_utterances)
 
-    def test_write_csv_metadata(self, convo, tmp_path):
+    def test_write_csv_metadata(self, convo, convo_meta, tmp_path):
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
+        # metadata should not be updated with this method
+        assert convo.metadata == convo_meta
         metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
         with open(metadatapath, 'r', encoding="utf-8") as file:
             reader = csv.reader(file)
             csv_out = list(reader)
+        assert "Participants" in csv_out[0]
+        assert "source" in csv_out[0]
+        assert all("{" not in item for item in csv_out[1])
 
     @pytest.mark.parametrize("conversation, error", [
         ("convo", does_not_raise()),
@@ -89,6 +94,7 @@ class TestConversation:
             assert len(csv_out) == len(conversation.utterances)+1
             assert len(set(csv_out[0])) == len(csv_out[0])
             assert csv_out[0][0] == "conversation_ID"
+
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
