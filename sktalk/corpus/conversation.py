@@ -8,7 +8,11 @@ from .write.writer import Writer
 
 class Conversation(Writer):
     def __init__(
-        self, utterances: list["Utterance"], metadata: Optional[dict] = None, suppress_warnings: bool = False  # noqa: F821
+        self,
+        utterances: list["Utterance"],
+        metadata: Optional[dict] = None,
+        conversation_id: Optional[str] = None,
+        suppress_warnings: bool = False  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -32,6 +36,8 @@ class Conversation(Writer):
         if not self._utterances and not suppress_warnings:
             warnings.warn(
                 "This conversation appears to be empty: no Utterances are read.")
+
+        self._id = conversation_id or str(uuid.uuid4())
 
     @property
     def utterances(self):
@@ -72,19 +78,15 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def write_csv(self, path: str = "./file.csv", conv_id: str = None):
-        if conv_id is None:
-            unique_id = str(uuid.uuid4())
-        else:
-            unique_id = conv_id
+    def write_csv(self, path: str = "./file.csv"):
 
         _path = Path(path).with_suffix(".csv")
         path_metadata = self._specify_path(_path, "metadata")
         path_participants = self._specify_path(_path, "participants")
         path_utterances = self._specify_path(_path, "utterances")
-        self._write_csv_metadata(path_metadata, unique_id)
-        self._write_csv_participants(path_participants, unique_id)
-        self._write_csv_utterances(path_utterances, unique_id)
+        self._write_csv_metadata(path_metadata, self._id)
+        self._write_csv_participants(path_participants, self._id)
+        self._write_csv_utterances(path_utterances, self._id)
 
     def _write_csv_metadata(self, path, unique_id):
         headers = ["unique_id"]+[*self._metadata]
