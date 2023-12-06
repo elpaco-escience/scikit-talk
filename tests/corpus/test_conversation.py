@@ -49,11 +49,26 @@ class TestConversation:
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
 
-    def test_write_csv(self, convo, empty_convo, tmp_path):
+    @pytest.mark.parametrize("user_path, expected_path_metadata", [
+        ("tmp.csv", "tmp_metadata.csv"),
+        ("tmp.json", "tmp_metadata.csv"),
+        ("tmp", "tmp_metadata.csv")
+    ])
+    def test_write_csv(self, convo, tmp_path, user_path, expected_path_metadata):
+        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
+        convo.write_csv(tmp_file)
+        tmp_output_metadata = f"{str(tmp_path)}{os.sep}{expected_path_metadata}"
+        assert os.path.exists(tmp_output_metadata)
+        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+        assert os.path.exists(tmp_output_utterances)
+
+    def test_write_csv_metadata(self, convo, tmp_path):
+        # check that no curly bracket info survives in metadata
+        pass
+
+    def test_write_csv_utterances(self, convo, empty_convo, tmp_path):
         tmp_file = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(tmp_file)
-        tmp_output_metadata = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
-        assert os.path.exists(tmp_output_metadata)
         tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(tmp_output_utterances)
         def count_lines_in_csv(file_path):
