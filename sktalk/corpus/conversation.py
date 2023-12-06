@@ -210,7 +210,7 @@ class Conversation(Writer):
         try:
             self._metadata["Calculations"].update(metadata)
         except KeyError:
-            self._metadata = {"Calculations": metadata}
+            self._metadata = self._metadata | {"Calculations": metadata}
         for index, utterance in enumerate(self.utterances):
             setattr(utterance, field, values[index])
 
