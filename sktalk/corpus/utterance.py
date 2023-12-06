@@ -13,14 +13,18 @@ class Utterance:
     time: Optional[list] = None
     begin: Optional[str] = None
     end: Optional[str] = None
-    metadata: Optional[dict[str, Any]] = None
     utterance_clean: Optional[str] = None
     utterance_list: Optional[list[str]] = None
     n_words: Optional[int] = None
     n_characters: Optional[int] = None
-    time_to_next: Optional[int] = None
-    dyadic: Optional[bool] = None
     FTO: Optional[int] = None
+    relevant_utterance_index: Optional[int] = None
+    prior_utterance_by: Optional[str] = None
+    time_to_next: Optional[int] = None
+    overlap_start: Optional[int] = None
+    overlapped_end: Optional[int] = None
+    overlap_percentage_total: Optional[int] = None
+    metadata: Optional[dict[str, Any]] = None
 
     def __post_init__(self):
         # clean utterance:
