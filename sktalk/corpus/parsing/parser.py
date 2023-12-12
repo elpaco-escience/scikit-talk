@@ -7,9 +7,8 @@ class InputFile(abc.ABC):
     def __init__(self, path: str) -> None:
         self._path = path
         self._metadata = {"source": path}
-        self._utterances = []
 
-    def parse(self) -> tuple["Utterance", dict]:
+    def parse(self) -> tuple[list["Utterance"], dict]:
         return self.utterances, self.metadata
 
     @property
