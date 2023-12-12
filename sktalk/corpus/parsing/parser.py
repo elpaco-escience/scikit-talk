@@ -9,7 +9,7 @@ class InputFile(abc.ABC):
         self._metadata = {"source": path}
         self._utterances = []
 
-    def parse(self):
+    def parse(self) -> tuple["Utterance", dict]:
         return self.utterances, self.metadata
 
     @property
