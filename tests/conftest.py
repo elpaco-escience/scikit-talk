@@ -21,6 +21,42 @@ def convo_meta():
         }
     }
 
+@pytest.fixture
+def expected_csv_metadata():
+    return [
+        ["source", "Languages", "Participants"],
+        ["file.cha", "eng, fra", "A, B"]
+    ]
+
+@pytest.fixture
+def expected_csv_participants():
+    return [
+        ["Participant", "name", "age", "sex"],
+        ["A", "Aone", "37", "M"],
+        ["B", "Btwo", "22", "M"]
+    ]
+
+@pytest.fixture
+def convo_meta_nested():
+    return {
+        'source': 'file.cha',
+        'Languages': ['eng', 'fra'],
+        'Participants': {
+            'A': {
+                'name': 'Aone',
+                'age': '37',
+                'sex': 'M',
+                'family': {
+                    'spouse': 'Cthree',
+                    'children': ['Dfour', 'Efive']}
+            },
+            'B': {
+                'name': 'Btwo',
+                'age': '22',
+                'sex': 'M'}
+        }
+    }
+
 
 @pytest.fixture
 def convo_utts():
@@ -85,7 +121,7 @@ def convo(convo_utts, convo_meta):
 
 @pytest.fixture
 def empty_convo(convo_meta):
-    return Conversation([], convo_meta, conversation_id="empty", suppress_warnings=True)
+    return Conversation([], convo_meta, suppress_warnings=True)
 
 
 @pytest.fixture

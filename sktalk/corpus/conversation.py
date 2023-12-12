@@ -13,7 +13,6 @@ class Conversation(Writer):
         self,
         utterances: list["Utterance"],
         metadata: Optional[dict] = None,
-        conversation_id: Optional[str] = None,
         suppress_warnings: bool = False  # noqa: F821
     ) -> None:
         """Representation of a transcribed conversation
@@ -22,7 +21,6 @@ class Conversation(Writer):
             utterances (list[Utterance]): A list of Utterance objects representing the utterances in the conversation.
             metadata (dict, optional): Additional metadata associated with the conversation. Defaults to None.
         """
-        self._id = conversation_id or str(uuid.uuid4())
         self._metadata = metadata or {}
 
         self._utterances = utterances
@@ -112,18 +110,18 @@ class Conversation(Writer):
         path_metadata = self._specify_path(_path, "metadata")
         path_utterances = self._specify_path(_path, "utterances")
         self._write_csv_metadata(path_metadata)
-        self._write_csv_utterances(path_utterances, self._id)
+        self._write_csv_utterances(path_utterances)
 
     def _write_csv_metadata(self, path):
-        headers = ["conversation_ID"] + [*self._metadata]
-        rows = self._metadata | {"conversation_ID": self._id}
+        headers = [*self._metadata]
+        rows = self._metadata
 
         # dictionaries should get their own output file
         for key, value in rows.items():
             if isinstance(value, dict):
                 newfile = self._specify_path(path, key)
                 self._write_csv_dict(newfile, value)
-                rows[key] = newfile
+                rows[key] = ', '.join(value.keys())
 
         # lists should be joined and comma-separated
         for key, value in rows.items():
@@ -142,20 +140,20 @@ class Conversation(Writer):
         # verify that the dictionary is a nested dictionary
         if not any(isinstance(value, dict) for value in dx.values()):
             raise ValueError("The dictionary is not nested")
-        rows = [{'conversation_ID': self._id, 'Item': key} | dx[key]
+        rows = [{'source': self.metadata["source"], 'Item': key} | dx[key]
                 for key in dx.keys()]
         allheaders = []
         for row in rows:
             allheaders += [*row]
         headers = list(set(allheaders))
-        headers.remove('conversation_ID')
+        headers.remove('source')
         headers.remove('Item')
-        headers = ['conversation_ID', 'Item'] + headers
+        headers = ['source', 'Item'] + headers
         self._write_csv(path, headers, rows)
 
-    def _write_csv_utterances(self, path, conversation_id):
+    def _write_csv_utterances(self, path):
         if rows := [
-            {"conversation_ID": conversation_id} | utterance.asdict()
+            {"source": self.metadata['source']} | utterance.asdict()
             for utterance in self._utterances
         ]:
             headers = [*rows[0]]

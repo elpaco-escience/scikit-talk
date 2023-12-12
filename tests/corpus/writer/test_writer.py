@@ -40,7 +40,7 @@ class TestWriteJson:
 
 
 class TestWriteCSV:
-    def test_write_csv_metadata(self, convo, convo_meta, tmp_path):
+    def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, tmp_path):
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
         # metadata should not be updated with this method
@@ -49,9 +49,13 @@ class TestWriteCSV:
         with open(metadatapath, 'r', encoding="utf-8") as file:
             reader = csv.reader(file)
             csv_out = list(reader)
-        assert "Participants" in csv_out[0]
-        assert "source" in csv_out[0]
-        assert all("{" not in item for item in csv_out[1])
+        assert csv_out == expected_csv_metadata
+        # assert "Participants" in csv_out[0]
+        # assert "source" in csv_out[0]
+        # assert all("{" not in item for item in csv_out[1])
+
+    # def test_write_csv_nested(self):
+    #     pass
 
     @pytest.mark.parametrize("conversation, error", [
         ("convo", does_not_raise()),
@@ -71,4 +75,4 @@ class TestWriteCSV:
 
             assert len(csv_out) == len(conversation.utterances)+1
             assert len(set(csv_out[0])) == len(csv_out[0])
-            assert csv_out[0][0] == "conversation_ID"
+            assert csv_out[0][0] == "source"
