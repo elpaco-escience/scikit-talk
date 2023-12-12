@@ -8,7 +8,7 @@ class InputFile(abc.ABC):
         self._path = path
         self._metadata = {"source": path}
 
-    def parse(self) -> tuple[list["Utterance"], dict]:
+    def parse(self) -> tuple[list["Utterance"], dict]:  # noqa: F821
         return self.utterances, self.metadata
 
     @property

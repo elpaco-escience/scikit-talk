@@ -14,6 +14,7 @@ def cha_info():
     participants = {'A', 'B'}
     return n_utterances, participants
 
+
 @pytest.fixture
 def expected_metadata():
     return {'source': 'tests/testdata/file01.cha',
