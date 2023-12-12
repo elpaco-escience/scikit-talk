@@ -1,5 +1,4 @@
 import abc
-from ..conversation import Conversation
 
 
 class InputFile(abc.ABC):
@@ -9,9 +8,8 @@ class InputFile(abc.ABC):
         self._path = path
         self._metadata = {"source": path}
 
-    @abc.abstractmethod
-    def parse(self) -> Conversation:
-        return NotImplemented
+    def parse(self) -> tuple[list["Utterance"], dict]:  # noqa: F821
+        return self.utterances, self.metadata
 
     @property
     def metadata(self):
@@ -20,8 +18,16 @@ class InputFile(abc.ABC):
             return self._metadata | metadata
         raise ValueError("Duplicate key in the metadata")
 
+    @property
+    def utterances(self):
+        self._utterances = self._extract_utterances()
+        return self._utterances
+
     def _extract_metadata(self):
         return {}
+
+    def _extract_utterances(self):
+        return []
 
     @classmethod
     def download(cls, url):              # noqa: W0613

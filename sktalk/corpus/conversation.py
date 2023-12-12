@@ -1,6 +1,7 @@
 import json
 import warnings
 from typing import Optional
+from .parsing.cha import ChaFile
 from .utterance import Utterance
 from .write.writer import Writer
 
@@ -51,6 +52,11 @@ class Conversation(Writer):
             dict: Additional metadata associated with the conversation.
         """
         return self._metadata
+
+    @classmethod
+    def from_cha(cls, path):
+        utterances, metadata = ChaFile(path).parse()
+        return cls(utterances, metadata)
 
     @classmethod
     def from_json(cls, path):
