@@ -13,15 +13,15 @@ class ChaFile(InputFile):
 
     def _extract_utterances(self):
         reader = self._pla_reader().utterances(by_files=False)
-        return [self._to_utterance(u) for u in reader]
+        return [self._to_utterance(read_utterance) for read_utterance in reader]
 
     @classmethod
-    def _to_utterance(cls, reader) -> Utterance:
+    def _to_utterance(cls, read_utterance) -> Utterance:
         """Convert pylangacq Utterance to sktalk Utterance"""
-        participant = reader.participant
-        time = reader.time_marks
+        participant = read_utterance.participant
+        time = read_utterance.time_marks
         time = list(time) if isinstance(time, (list, tuple)) else None
-        text = str(reader.tiers)
+        text = str(read_utterance.tiers)
         text = cls._clean_utterance(text)
         return Utterance(
             participant=participant,
