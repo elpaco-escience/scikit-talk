@@ -47,6 +47,10 @@ class Utterance:
     def asdict(self):
         return asdict(self)
 
+    @classmethod
+    def _fromdict(cls, fields):
+        return Utterance(**fields)
+
     def _clean_utterance(self):
         # remove leading and trailing whitespace
         self.utterance_clean = self.utterance.strip()

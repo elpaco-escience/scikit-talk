@@ -1,5 +1,5 @@
+import json
 from .conversation import Conversation
-from .parsing.json import JsonFile
 from .parsing.xml import XmlFile
 from .write.writer import Writer
 
@@ -62,7 +62,24 @@ class Corpus(Writer):
 
     @classmethod
     def from_json(cls, path):
-        return JsonFile(path).parse()
+        """Parse corpus file in JSON format
+
+        Returns:
+            Corpus: A Corpus object representing the corpus in the file.
+        """
+        with open(path, encoding='utf-8') as f:
+            json_in = json.load(f)
+        return cls._fromdict(json_in)
+
+    @classmethod
+    def _fromdict(cls, fields):
+        try:
+            conversations = [Conversation._fromdict(
+                c) for c in fields["Conversations"]]
+            del fields["Conversations"]
+        except KeyError as e:
+            raise TypeError("This file cannot be imported as a Corpus.") from e
+        return Corpus(conversations, metadata=fields)
 
     @classmethod
     def from_xml(cls, path):

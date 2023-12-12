@@ -1,0 +1,59 @@
+{
+    "source": "test.file",
+    "UTF8": "",
+    "PID": "abc",
+    "Languages": [
+        "eng"
+    ],
+    "Participants": {
+        "A": {
+            "name": "Anna",
+            "language": "eng",
+            "corpus": "testcorpus",
+            "age": "",
+            "sex": ""
+        },
+        "B": {
+            "name": "Bert",
+            "language": "eng",
+            "corpus": "testcorpus",
+            "age": "",
+            "sex": ""
+        }
+    },
+    "Utterances": [
+        {
+            "utterance": "Hello world",
+            "participant": "A",
+            "time": [
+                0,
+                1500
+            ],
+            "begin": "00:00:00.000",
+            "end": "00:00:01.500",
+            "metadata": null
+        },
+        {
+            "utterance": "Hello world",
+            "participant": "B",
+            "time": [
+                1500,
+                2775
+            ],
+            "begin": "00:00:01.500",
+            "end": "00:00:02.775",
+            "metadata": null
+        },
+        {
+            "utterance": "Lorem ipsum",
+            "participant": "A",
+            "time": [
+                2500,
+                4000
+            ],
+            "begin": "00:00:02.500",
+            "end": "00:00:04.000",
+            "metadata": null
+        }
+    ]
+}
