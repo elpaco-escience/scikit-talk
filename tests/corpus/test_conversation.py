@@ -49,6 +49,18 @@ class TestConversation:
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
 
+    def test_from_jsonfile(self):
+        json_in = Conversation.from_json(
+            "tests/testdata/dummy_conversation.json")
+        assert isinstance(json_in, Conversation)
+        assert len(json_in.utterances) == 3
+        assert json_in.utterances[0].utterance == "Hello world"
+        with pytest.raises(KeyError):
+            json_in.metadata["Utterances"]  # noqa pointless-statement
+        assert json_in.metadata["Languages"] == ["eng"]
+        with pytest.raises(TypeError, match="cannot be imported as a Conversation"):
+            Conversation.from_json("tests/testdata/dummy_corpus.json")
+
     @pytest.mark.parametrize("user_path", [
         ("tmp.csv"),
         ("tmp.json"),
@@ -94,7 +106,6 @@ class TestConversation:
             assert len(csv_out) == len(conversation.utterances)+1
             assert len(set(csv_out[0])) == len(csv_out[0])
             assert csv_out[0][0] == "conversation_ID"
-
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",

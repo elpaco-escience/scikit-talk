@@ -1,46 +1,68 @@
-import os
-import tempfile
 import pytest
-import requests
 from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
 
 
+@pytest.fixture
+def path_source():
+    return "tests/testdata/file01.cha"
+
+
+@pytest.fixture
+def cha_info():
+    n_utterances = 13
+    participants = {'A', 'B'}
+    return n_utterances, participants
+
+
+@pytest.fixture
+def expected_metadata():
+    return {'source': 'tests/testdata/file01.cha',
+            'UTF8': '',
+            'PID': 'idsequence',
+            'Languages': ['eng'],
+            'Participants': {
+                'A': {
+                    'name': 'Ann',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''},
+                'B': {
+                    'name': 'Bert',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''}},
+            'Options': 'CA',
+            'Media': '01, audio'}
+
+
 class TestChaFile:
-    urls = [
-        "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/03.cha"
-    ]
+    def test_parse(self, path_source, cha_info, expected_metadata):
+        n_utterances, participants = cha_info
+        cha_utts, cha_meta = ChaFile(path_source).parse()
+        assert cha_meta == expected_metadata
+        assert {u.participant for u in cha_utts} == participants
+        assert len(cha_utts) == n_utterances
 
-    @pytest.fixture(params=urls)
-    def download_file(self, request):
-        remote = request.param
-        response = requests.get(remote, timeout=5)
-        response.raise_for_status()
-
-        ext = os.path.splitext(remote)[1]
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
-            temp_file.write(response.content)
-            temp_file_path = temp_file.name
-
-        yield temp_file_path
-
-        os.remove(temp_file_path)
-
-    @pytest.mark.parametrize("download_file", urls, indirect=True)
-    def test_parse(self, download_file):
-        parsed_cha = ChaFile(download_file).parse()
+    def test_wrapped_parser(self, path_source, cha_info, expected_metadata):
+        n_utterances, participants = cha_info
+        parsed_cha = Conversation.from_cha(path_source)
         assert isinstance(parsed_cha, Conversation)
-        source = parsed_cha.metadata["source"]
-        assert os.path.splitext(source)[1] == ".cha"
-        assert parsed_cha.utterances[0].begin == "00:00:00.000"
-        participant = parsed_cha.utterances[0].participant
-        assert participant in ["A", "B", "S"]
-        language = parsed_cha.metadata["Languages"]
-        assert language == ["eng"]
-        # TODO assert that there are no empty utterances
+        assert parsed_cha.metadata == expected_metadata
+        assert {u.participant for u in parsed_cha.utterances} == participants
+        assert len(parsed_cha.utterances) == n_utterances
 
     unclean_clean = [
         [

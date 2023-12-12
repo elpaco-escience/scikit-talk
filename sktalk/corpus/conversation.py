@@ -1,7 +1,9 @@
+import json
 import uuid
 import warnings
 from pathlib import Path
 from typing import Optional
+from .parsing.cha import ChaFile
 from .utterance import Utterance
 from .write.writer import Writer
 
@@ -58,6 +60,32 @@ class Conversation(Writer):
             dict: Additional metadata associated with the conversation.
         """
         return self._metadata
+
+    @classmethod
+    def from_cha(cls, path):
+        utterances, metadata = ChaFile(path).parse()
+        return cls(utterances, metadata)
+
+    @classmethod
+    def from_json(cls, path):
+        """Parse conversation file in JSON format
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
+        with open(path, encoding='utf-8') as f:
+            json_in = json.load(f)
+        return cls._fromdict(json_in)
+
+    @classmethod
+    def _fromdict(cls, fields):
+        try:
+            utterances = [Utterance._fromdict(u) for u in fields["Utterances"]]
+            del fields["Utterances"]
+        except KeyError as e:
+            raise TypeError(
+                "This object cannot be imported as a Conversation.") from e
+        return Conversation(utterances, metadata=fields)
 
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError
