@@ -12,26 +12,55 @@ def path_source():
 def cha_info():
     n_utterances = 13
     participants = {'A', 'B'}
-    languages = ['eng']
-    return n_utterances, participants, languages
+    return n_utterances, participants
+
+@pytest.fixture
+def expected_metadata():
+    return {'source': 'tests/testdata/file01.cha',
+            'UTF8': '',
+            'PID': 'idsequence',
+            'Languages': ['eng'],
+            'Participants': {
+                'A': {
+                    'name': 'Ann',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''},
+                'B': {
+                    'name': 'Bert',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''}},
+            'Options': 'CA',
+            'Media': '01, audio'}
 
 
 class TestChaFile:
-    def test_parse(self, path_source, cha_info):
-        n_utterances, participants, languages = cha_info
+    def test_parse(self, path_source, cha_info, expected_metadata):
+        n_utterances, participants = cha_info
         cha_utts, cha_meta = ChaFile(path_source).parse()
-        assert cha_meta["source"] == path_source
+        assert cha_meta == expected_metadata
         assert {u.participant for u in cha_utts} == participants
-        assert cha_meta["Languages"] == languages
         assert len(cha_utts) == n_utterances
 
-    def test_wrapped_parser(self, path_source, cha_info):
-        n_utterances, participants, languages = cha_info
+    def test_wrapped_parser(self, path_source, cha_info, expected_metadata):
+        n_utterances, participants = cha_info
         parsed_cha = Conversation.from_cha(path_source)
         assert isinstance(parsed_cha, Conversation)
-        assert parsed_cha.metadata["source"] == path_source
+        assert parsed_cha.metadata == expected_metadata
         assert {u.participant for u in parsed_cha.utterances} == participants
-        assert parsed_cha.metadata["Languages"] == languages
         assert len(parsed_cha.utterances) == n_utterances
 
     unclean_clean = [
