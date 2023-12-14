@@ -83,6 +83,20 @@ def convo_utts():
         )
     ]
 
+@pytest.fixture
+def expected_csv_utterances():
+    return [
+["","source","utterance","participant","time"],
+["0","file.cha","0 utterance A","A","[0, 1000]"],
+["1","file.cha","1 utterance B","B","[900, 3500]"],
+["2","file.cha","2 utterance C","A","[1001, 8500]"],
+["3","file.cha","3 utterance D","B","[1200, 1999]"],
+["4","file.cha","4 utterance E","A","[3500, 4500]"],
+["5","file.cha","5 utterance U","B","[5000, 8000]"],
+["6","file.cha","6 utterance F","C","[5500, 7500]"],
+["7","file.cha","7 utterance G","",""],
+["8","file.cha","8 utterance H","B","[9000, 12500]"],
+["9","file.cha","9 utterance I","C","[12000, 13000]"]]
 
 @pytest.fixture
 def convo(convo_utts, convo_meta):
