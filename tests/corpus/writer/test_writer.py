@@ -42,17 +42,18 @@ class TestWriteCSV:
         utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(utterancepath)
 
-    @pytest.mark.parametrize("conversation, flag_metadata, flag_utterances, error_writing, presence_utterances", [
-        ("convo", True, True, does_not_raise(), True),
-        ("empty_convo", True, True, pytest.warns(
-            match="csv is not written"), False),
-        ("convo", True, False, does_not_raise(), False),
-        ("convo", False, False, does_not_raise(), False),
-        ("convo", False, True, does_not_raise(), True),
+    @pytest.mark.parametrize("conversation, flags, error_writing", [
+        ("convo", (True, True, True), does_not_raise()),
+        ("empty_convo", (True, True, False), pytest.warns(
+            match="csv is not written")),
+        ("convo", (True, False, False), does_not_raise()),
+        ("convo", (False, False, False), does_not_raise()),
+        ("convo", (False, True, True), does_not_raise()),
     ])
-    def test_write_metadata_utterances_optionally(self, conversation, flag_metadata, flag_utterances, error_writing, presence_utterances, tmp_path, request):
+    def test_write_metadata_utterances_optionally(self, conversation, flags, error_writing, tmp_path, request):
         """Confirm error handling and optional writing of metadata and utterances."""
         conversation = request.getfixturevalue(conversation)
+        flag_metadata, flag_utterances, presence_utterances = flags
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         with error_writing:
             conversation.write_csv(
@@ -69,7 +70,7 @@ class TestWriteCSV:
             csv_out = list(reader)
         return csv_out
 
-    def test_write_csv_correctly(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path):
+    def test_write_csv_correctly(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path): # noqa too-many-arguments
         """Assess the content of the metadata and utterance output csvs"""
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
