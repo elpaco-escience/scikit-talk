@@ -24,62 +24,9 @@ def convo_meta():
 @pytest.fixture
 def expected_csv_metadata():
     return [
-        ["", "source", "Languages", "Participants_A_name", "Participants_A_age", "Participants_A_sex", "Participants_B_name", "Participants_B_age", "Participants_B_sex"],
-        ["0", "file.cha", "eng, fra", "Aone", "37", "M", "Btwo", "22", "M"]
+        ["source", "Languages", "Participants_A_name", "Participants_A_age", "Participants_A_sex", "Participants_B_name", "Participants_B_age", "Participants_B_sex"],
+        ["file.cha", "eng, fra", "Aone", "37", "M", "Btwo", "22", "M"]
     ]
-
-@pytest.fixture
-def expected_csv_participants():
-    return [
-        ["source", "Item", "age", "sex", "name"],
-        ["file.cha", "A", "37", "M", "Aone"],
-        ["file.cha", "B", "22", "M", "Btwo"]
-    ]
-
-@pytest.fixture
-def convo_meta_nested():
-    return {
-        'source': 'file.cha',
-        'Languages': ['eng', 'fra'],
-        'Participants': {
-            'A': {
-                'name': 'Aone',
-                'age': '37',
-                'sex': 'M',
-                'family': {
-                    'spouse': 'Cthree',
-                    'children': ['Dfour', 'Efive']}
-            },
-            'B': {
-                'name': 'Btwo',
-                'age': '22',
-                'sex': 'M'}
-        },
-        'Recording equipment': {
-            'microphone': 'FancyMicrophone',
-            'recorder': 'FancyRecorder',
-            'software': {
-                'name': 'RecordingSoftware',
-                'version': '1.0.0'
-            }
-        }
-    }
-
-@pytest.fixture
-def expected_csv_metadata_nested():
-    return [
-        ["source", "Languages", "Participants", "Recording equipment.microphone", "Recording equipment.recorder", "Recording equipment.software"],
-        ["file.cha", "eng, fra", "A, B", "FancyMicrophone", "FancyRecorder", "RecordingSoftware"]
-    ]
-
-@pytest.fixture
-def expected_csv_participants_nested():
-    return [
-        ["source", "Item", "age", "sex", "name"],
-        ["file.cha", "A", "37", "M", "Aone"],
-        ["file.cha", "B", "22", "M", "Btwo"]
-    ]
-
 
 @pytest.fixture
 def convo_utts():

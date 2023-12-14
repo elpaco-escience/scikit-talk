@@ -47,7 +47,7 @@ class TestWriteCSV:
             csv_out = list(reader)
         return csv_out
 
-    def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, expected_csv_participants, tmp_path):
+    def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, tmp_path):
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
         # metadata should not be updated with this method
@@ -56,11 +56,6 @@ class TestWriteCSV:
         csv_metadata = self.open_csv("tmp_metadata.csv", tmp_path)
         assert csv_metadata == expected_csv_metadata
 
-        # csv_participants = self.open_csv("tmp_metadata_Participants.csv", tmp_path)
-        # assert csv_participants == expected_csv_participants
-
-    # def test_write_csv_nested(self):
-    #     pass
 
     @pytest.mark.parametrize("conversation, error", [
         ("convo", does_not_raise()),

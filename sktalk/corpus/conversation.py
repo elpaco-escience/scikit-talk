@@ -1,5 +1,4 @@
 import json
-import uuid
 import warnings
 from pathlib import Path
 from typing import Optional
@@ -126,46 +125,7 @@ class Conversation(Writer):
 
     def _write_csv_metadata(self, path):
         _, mddf = self.asdf()
-        mddf.to_csv(path)
-
-        # headers = [*self._metadata]
-        # rows = self._metadata
-        #
-        # # dictionaries should get their own output file
-        # # keys should be listed, comma-separated
-        # for key, value in rows.items():
-        #     if isinstance(value, dict):
-        #         newfile = self._specify_path(path, key)
-        #         self._write_csv_dict(newfile, value)
-        #         rows[key] = ', '.join(value.keys())
-
-        # # lists should be joined and comma-separated
-        # for key, value in rows.items():
-        #     if isinstance(value, list):
-        #         rows[key] = ', '.join(value)
-
-        # self._write_csv(path, headers, [rows])
-
-    def _write_csv_dict(self, path, dx):
-        """_summary_
-
-        Args:
-            path (str): name and location of the new csv file
-            dx (dict): nested dictionary to write to the file
-        """
-        # verify that the dictionary is a nested dictionary
-        if not any(isinstance(value, dict) for value in dx.values()):
-            raise ValueError("The dictionary is not nested")
-        rows = [{'source': self.metadata["source"], 'Item': key} | dx[key]
-                for key in dx.keys()]
-        allheaders = []
-        for row in rows:
-            allheaders += [*row]
-        headers = list(set(allheaders))
-        headers.remove('source')
-        headers.remove('Item')
-        headers = ['source', 'Item'] + headers
-        self._write_csv(path, headers, rows)
+        mddf.to_csv(path, index = False)
 
     def _write_csv_utterances(self, path):
         if rows := [
