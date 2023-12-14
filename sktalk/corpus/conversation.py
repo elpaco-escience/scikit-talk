@@ -2,10 +2,10 @@ import json
 import warnings
 from pathlib import Path
 from typing import Optional
+import pandas as pd
 from .parsing.cha import ChaFile
 from .utterance import Utterance
 from .write.writer import Writer
-import pandas as pd
 
 
 class Conversation(Writer):
@@ -116,18 +116,18 @@ class Conversation(Writer):
         """Return the conversation utterances as a pandas dataframe."""
         if not hasattr(self, "_utterancedf"):
             self._utterancedf = pd.DataFrame(self._utterances)
-            self._utterancedf.insert(loc = 0,
-                                     column = "source",
-                                     value = self._metadata["source"])
+            self._utterancedf.insert(loc=0,
+                                     column="source",
+                                     value=self._metadata["source"])
         return self._utterancedf
 
-    def write_csv(self, path: str = "./file.csv", metadata = True, utterances = True):
+    def write_csv(self, path: str = "./file.csv", metadata=True, utterances=True):
         _path = Path(path).with_suffix(".csv")
 
         if metadata:
             path_metadata = self._specify_path(_path, "metadata")
             mddf = self.metadata_df
-            mddf.to_csv(path_metadata, index = False)
+            mddf.to_csv(path_metadata, index=False)
 
         if utterances:
             if len(self._utterances) == 0:
@@ -137,7 +137,6 @@ class Conversation(Writer):
                 path_utterances = self._specify_path(_path, "utterances")
                 utdf = self.utterance_df
                 utdf.to_csv(path_utterances)
-
 
     def _subconversation_by_index(self,
                                   index: int,

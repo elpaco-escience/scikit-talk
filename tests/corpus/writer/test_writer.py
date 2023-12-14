@@ -1,8 +1,9 @@
-import os
-import json
 import csv
-import pytest
+import json
+import os
 from contextlib import nullcontext as does_not_raise
+import pytest
+
 
 class TestWriteJson:
     def test_asdict(self, convo):
@@ -43,7 +44,8 @@ class TestWriteCSV:
 
     @pytest.mark.parametrize("conversation, flag_metadata, flag_utterances, error_writing, presence_utterances", [
         ("convo", True, True, does_not_raise(), True),
-        ("empty_convo", True, True, pytest.warns(match="csv is not written"), False),
+        ("empty_convo", True, True, pytest.warns(
+            match="csv is not written"), False),
         ("convo", True, False, does_not_raise(), False),
         ("convo", False, False, does_not_raise(), False),
         ("convo", False, True, does_not_raise(), True),
@@ -53,7 +55,8 @@ class TestWriteCSV:
         conversation = request.getfixturevalue(conversation)
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         with error_writing:
-            conversation.write_csv(filename, metadata = flag_metadata, utterances = flag_utterances)
+            conversation.write_csv(
+                filename, metadata=flag_metadata, utterances=flag_utterances)
         metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
         assert os.path.exists(metadatapath) == flag_metadata
         utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
