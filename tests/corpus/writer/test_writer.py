@@ -50,7 +50,7 @@ class TestWriteCSV:
         ("convo", (False, False, False), does_not_raise()),
         ("convo", (False, True, True), does_not_raise()),
     ])
-    def test_write_metadata_utterances_optionally(self, conversation, flags, error_writing, tmp_path, request):
+    def test_write_metadata_utterances_optionally(self, conversation, flags, error_writing, tmp_path, request):  # noqa: too-many-arguments
         """Confirm error handling and optional writing of metadata and utterances."""
         conversation = request.getfixturevalue(conversation)
         flag_metadata, flag_utterances, presence_utterances = flags
