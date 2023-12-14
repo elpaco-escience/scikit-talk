@@ -21,7 +21,7 @@ class Conversation(Writer):
             utterances (list[Utterance]): A list of Utterance objects representing the utterances in the conversation.
             metadata (dict, optional): Additional metadata associated with the conversation. Defaults to None.
         """
-        self._metadata = metadata or {}
+        self._metadata = metadata or {"source": "unknown"}
 
         self._utterances = utterances
         # Input utterances should be a list of type Utterance

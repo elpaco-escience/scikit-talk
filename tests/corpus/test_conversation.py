@@ -16,7 +16,7 @@ class TestConversation:
             Conversation()  # noqa no-value-for-parameter
         # A conversation without metadata still has metadata property
         new_convo = Conversation(utterances=convo_utts)
-        assert new_convo.metadata == {}
+        assert new_convo.metadata == {"source": "unknown"}
         # A Conversation can't be instantiated with utterances not of Utterance class
         with pytest.raises(TypeError, match="type Utterance"):
             Conversation(utterances="Not an Utterance")
