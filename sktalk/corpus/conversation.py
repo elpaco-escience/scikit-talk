@@ -5,6 +5,7 @@ from typing import Optional
 from .parsing.cha import ChaFile
 from .utterance import Utterance
 from .write.writer import Writer
+import pandas as pd
 
 
 class Conversation(Writer):
@@ -103,37 +104,40 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
-    def asdf(self):
-        """Return the conversation as pandas dataframes
+    @property
+    def metadata_df(self):
+        """Return the conversation metadata as a pandas dataframe."""
+        if not hasattr(self, "_metadatadf"):
+            self._metadatadf = self._metadata_to_df(self._metadata)
+        return self._metadatadf
 
-        Returns:
-            tuple:
-                - pandas dataframe containing utterance data
-                - pandas dataframe containing metadata
-        """
-        self._metadatadf = self._metadata_to_df(self._metadata)
-        self._utterancedf = None
-        return self._utterancedf, self._metadatadf
+    @property
+    def utterance_df(self):
+        """Return the conversation utterances as a pandas dataframe."""
+        if not hasattr(self, "_utterancedf"):
+            self._utterancedf = pd.DataFrame(self._utterances)
+            self._utterancedf.insert(loc = 0,
+                                     column = "source",
+                                     value = self._metadata["source"])
+        return self._utterancedf
 
-    def write_csv(self, path: str = "./file.csv"):
-
+    def write_csv(self, path: str = "./file.csv", metadata = True, utterances = True):
         _path = Path(path).with_suffix(".csv")
-        path_metadata = self._specify_path(_path, "metadata")
-        path_utterances = self._specify_path(_path, "utterances")
-        self._write_csv_metadata(path_metadata)
-        self._write_csv_utterances(path_utterances)
 
-    def _write_csv_metadata(self, path):
-        _, mddf = self.asdf()
-        mddf.to_csv(path, index = False)
+        if metadata:
+            path_metadata = self._specify_path(_path, "metadata")
+            mddf = self.metadata_df
+            mddf.to_csv(path_metadata, index = False)
 
-    def _write_csv_utterances(self, path):
-        if rows := [
-            {"source": self.metadata['source']} | utterance.asdict()
-            for utterance in self._utterances
-        ]:
-            headers = [*rows[0]]
-            self._write_csv(path, headers, rows)
+        if utterances:
+            if len(self._utterances) == 0:
+                warnings.warn(
+                    "This conversation appears to be empty. Utterance csv is not written.")
+            else:
+                path_utterances = self._specify_path(_path, "utterances")
+                utdf = self.utterance_df
+                utdf.to_csv(path_utterances)
+
 
     def _subconversation_by_index(self,
                                   index: int,

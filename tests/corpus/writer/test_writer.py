@@ -25,19 +25,6 @@ class TestWriteJson:
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
 
-    @pytest.mark.parametrize("user_path", [
-        ("tmp.csv"),
-        ("tmp.json"),
-        ("tmp")
-    ])
-    def test_write_csv(self, user_path, convo, tmp_path):
-        filename = f"{str(tmp_path)}{os.sep}{user_path}"
-        convo.write_csv(filename)
-        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
-        assert os.path.exists(metadatapath)
-        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
-        assert os.path.exists(tmp_output_utterances)
-
 
 class TestWriteCSV:
     def open_csv(self, filename, tmp_path):
@@ -46,6 +33,20 @@ class TestWriteCSV:
             reader = csv.reader(file)
             csv_out = list(reader)
         return csv_out
+
+    @pytest.mark.parametrize("user_path", [
+        ("tmp.csv"),
+        ("tmp.json"),
+        ("tmp")
+    ])
+    def test_write_csv(self, user_path, convo, tmp_path):
+        """Confirm that output paths are set up correctly."""
+        filename = f"{str(tmp_path)}{os.sep}{user_path}"
+        convo.write_csv(filename)
+        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
+        assert os.path.exists(metadatapath)
+        tmp_output_utterances = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+        assert os.path.exists(tmp_output_utterances)
 
     def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, tmp_path):
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
@@ -75,4 +76,4 @@ class TestWriteCSV:
 
             assert len(csv_out) == len(conversation.utterances)+1
             assert len(set(csv_out[0])) == len(csv_out[0])
-            assert csv_out[0][0] == "source"
+            assert csv_out[0][1] == "source"
