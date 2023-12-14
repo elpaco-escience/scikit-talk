@@ -2,6 +2,8 @@ import abc
 import csv
 import json
 from pathlib import Path
+import pandas as pd
+import numpy as np
 
 
 class Writer(abc.ABC):
@@ -39,3 +41,10 @@ class Writer(abc.ABC):
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(f"{path.stem}_{specifier}{path.suffix}")
+
+    @classmethod
+    def _metadata_to_df(cls, metadata: dict):
+        norm = pd.json_normalize(data=metadata, sep="_")
+        df = pd.DataFrame(norm)
+        df[:] = np.vectorize(lambda x: ', '.join(x) if isinstance(x, list) else x)(df)
+        return df

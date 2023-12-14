@@ -104,6 +104,18 @@ class Conversation(Writer):
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
 
+    def asdf(self):
+        """Return the conversation as pandas dataframes
+
+        Returns:
+            tuple:
+                - pandas dataframe containing utterance data
+                - pandas dataframe containing metadata
+        """
+        self._metadatadf = self._metadata_to_df(self._metadata)
+        self._utterancedf = None
+        return self._utterancedf, self._metadatadf
+
     def write_csv(self, path: str = "./file.csv"):
 
         _path = Path(path).with_suffix(".csv")
@@ -113,22 +125,26 @@ class Conversation(Writer):
         self._write_csv_utterances(path_utterances)
 
     def _write_csv_metadata(self, path):
-        headers = [*self._metadata]
-        rows = self._metadata
+        _, mddf = self.asdf()
+        mddf.to_csv(path)
 
-        # dictionaries should get their own output file
-        for key, value in rows.items():
-            if isinstance(value, dict):
-                newfile = self._specify_path(path, key)
-                self._write_csv_dict(newfile, value)
-                rows[key] = ', '.join(value.keys())
+        # headers = [*self._metadata]
+        # rows = self._metadata
+        #
+        # # dictionaries should get their own output file
+        # # keys should be listed, comma-separated
+        # for key, value in rows.items():
+        #     if isinstance(value, dict):
+        #         newfile = self._specify_path(path, key)
+        #         self._write_csv_dict(newfile, value)
+        #         rows[key] = ', '.join(value.keys())
 
-        # lists should be joined and comma-separated
-        for key, value in rows.items():
-            if isinstance(value, list):
-                rows[key] = ', '.join(value)
+        # # lists should be joined and comma-separated
+        # for key, value in rows.items():
+        #     if isinstance(value, list):
+        #         rows[key] = ', '.join(value)
 
-        self._write_csv(path, headers, [rows])
+        # self._write_csv(path, headers, [rows])
 
     def _write_csv_dict(self, path, dx):
         """_summary_

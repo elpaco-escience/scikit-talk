@@ -40,19 +40,24 @@ class TestWriteJson:
 
 
 class TestWriteCSV:
-    def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, tmp_path):
+    def open_csv(self, filename, tmp_path):
+        path = f"{str(tmp_path)}{os.sep}{filename}"
+        with open(path, 'r', encoding="utf-8") as file:
+            reader = csv.reader(file)
+            csv_out = list(reader)
+        return csv_out
+
+    def test_write_csv_metadata(self, convo, convo_meta, expected_csv_metadata, expected_csv_participants, tmp_path):
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
         # metadata should not be updated with this method
         assert convo.metadata == convo_meta
-        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
-        with open(metadatapath, 'r', encoding="utf-8") as file:
-            reader = csv.reader(file)
-            csv_out = list(reader)
-        assert csv_out == expected_csv_metadata
-        # assert "Participants" in csv_out[0]
-        # assert "source" in csv_out[0]
-        # assert all("{" not in item for item in csv_out[1])
+
+        csv_metadata = self.open_csv("tmp_metadata.csv", tmp_path)
+        assert csv_metadata == expected_csv_metadata
+
+        # csv_participants = self.open_csv("tmp_metadata_Participants.csv", tmp_path)
+        # assert csv_participants == expected_csv_participants
 
     # def test_write_csv_nested(self):
     #     pass
