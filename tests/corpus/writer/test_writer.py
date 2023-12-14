@@ -70,7 +70,7 @@ class TestWriteCSV:
             csv_out = list(reader)
         return csv_out
 
-    def test_write_csv_correctly(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path): # noqa too-many-arguments
+    def test_write_csv_correctly(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path): # noqa: too-many-arguments
         """Assess the content of the metadata and utterance output csvs"""
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
