@@ -42,27 +42,6 @@ class TestWriteCSV:
         utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
         assert os.path.exists(utterancepath)
 
-    @pytest.mark.parametrize("conversation, flags, error_writing", [
-        ("convo", (True, True, True), does_not_raise()),
-        ("empty_convo", (True, True, False), pytest.warns(
-            match="csv is not written")),
-        ("convo", (True, False, False), does_not_raise()),
-        ("convo", (False, False, False), does_not_raise()),
-        ("convo", (False, True, True), does_not_raise()),
-    ])
-    def test_write_metadata_utterances_optionally(self, conversation, flags, error_writing, tmp_path, request):  # noqa: too-many-arguments
-        """Confirm error handling and optional writing of metadata and utterances."""
-        conversation = request.getfixturevalue(conversation)
-        flag_metadata, flag_utterances, presence_utterances = flags
-        filename = f"{str(tmp_path)}{os.sep}tmp.csv"
-        with error_writing:
-            conversation.write_csv(
-                filename, metadata=flag_metadata, utterances=flag_utterances)
-        metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
-        assert os.path.exists(metadatapath) == flag_metadata
-        utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
-        assert os.path.exists(utterancepath) == presence_utterances
-
     def open_csv(self, filename, tmp_path):
         path = f"{str(tmp_path)}{os.sep}{filename}"
         with open(path, 'r', encoding="utf-8") as file:
@@ -70,16 +49,30 @@ class TestWriteCSV:
             csv_out = list(reader)
         return csv_out
 
-    def test_write_csv_correctly(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path): # noqa: too-many-arguments
+    def test_write_csv_from_conversation(self, convo, convo_meta, expected_csv_metadata, expected_csv_utterances, tmp_path):  # noqa: too-many-arguments
         """Assess the content of the metadata and utterance output csvs"""
         filename = f"{str(tmp_path)}{os.sep}tmp.csv"
         convo.write_csv(filename)
         # metadata should not be updated with this method
         assert convo.metadata == convo_meta
 
-        csv_metadata = self.open_csv("tmp_metadata.csv", tmp_path)
-        assert csv_metadata == expected_csv_metadata
+        assert self.open_csv("tmp_metadata.csv",
+                             tmp_path) == expected_csv_metadata
 
         csv_utterances = self.open_csv("tmp_utterances.csv", tmp_path)
-        csv_utterances = [row[:5] for row in csv_utterances] # utterance creation makes additional columns, precise testing is difficult
+        # utterance creation makes additional columns, precise testing is difficult
+        csv_utterances = [row[:5] for row in csv_utterances]
         assert csv_utterances == expected_csv_utterances
+
+    def test_write_csv_from_corpus(self, my_corpus_with_convo, expected_csv_metadata_corpus, expected_csv_utterances_corpus, tmp_path):
+        """Test writing a corpus to csv"""
+        filename = f"{str(tmp_path)}{os.sep}tmp.csv"
+        my_corpus_with_convo.write_csv(filename)
+
+        assert self.open_csv("tmp_metadata.csv",
+                             tmp_path) == expected_csv_metadata_corpus
+
+        csv_utterances = self.open_csv("tmp_utterances.csv", tmp_path)
+        # utterance creation makes additional columns, precise testing is difficult
+        csv_utterances = [row[:5] for row in csv_utterances]
+        assert csv_utterances == expected_csv_utterances_corpus

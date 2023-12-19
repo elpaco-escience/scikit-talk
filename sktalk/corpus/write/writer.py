@@ -15,9 +15,7 @@ class Writer(abc.ABC):
         Write an object to a JSON file.
 
         Args:
-            name (str): The file name
-            directory (str): The path to the directory where the .json
-            file will be saved.
+            path (str): The path to the output file.
         """
         _path = Path(path).with_suffix(".json")
 
@@ -26,8 +24,22 @@ class Writer(abc.ABC):
         with open(_path, "w", encoding='utf-8') as file:
             json.dump(object_dict, file, indent=4)
 
-    def write_csv(self):
-        return NotImplemented
+    def write_csv(self, path: str = "./file.csv"):
+        """Write the object to CSV files.
+
+        Multiple csv files are created: one for the metadata (corpus and conversation level) and one for the utterances.
+        The filenames are based on the provided path, with the following suffixes:
+        - file_metadata.csv
+        - file_utterances.csv
+
+        Args:
+            path (str, optional): Base name of csv output files. Defaults to "./file.csv".
+        """
+        _path = Path(path).with_suffix(".csv")
+
+        self.metadata_df.to_csv(self._specify_path(
+            _path, "metadata"), index=False)
+        self.utterance_df.to_csv(self._specify_path(_path, "utterances"))
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(f"{path.stem}_{specifier}{path.suffix}")
@@ -39,3 +51,11 @@ class Writer(abc.ABC):
         df[:] = np.vectorize(lambda x: ', '.join(
             x) if isinstance(x, list) else x)(df)
         return df
+
+    @property
+    def metadata_df(self):
+        return NotImplemented
+
+    @property
+    def utterance_df(self):
+        return NotImplemented

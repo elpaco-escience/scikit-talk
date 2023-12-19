@@ -107,51 +107,19 @@ class Conversation(Writer):
     @property
     def metadata_df(self):
         """Return the conversation metadata as a pandas dataframe."""
-        if not hasattr(self, "_metadatadf"):
-            self._metadatadf = self._metadata_to_df(self._metadata)
-        return self._metadatadf
+        if not hasattr(self, "_metadata_df"):
+            self._metadata_df = self._metadata_to_df(self._metadata)
+        return self._metadata_df
 
     @property
     def utterance_df(self):
         """Return the conversation utterances as a pandas dataframe."""
-        if not hasattr(self, "_utterancedf"):
-            self._utterancedf = pd.DataFrame(self._utterances)
-            self._utterancedf.insert(loc=0,
-                                     column="source",
-                                     value=self._metadata["source"])
-        return self._utterancedf
-
-    def write_csv(self, path: str = "./file.csv", metadata=True, utterances=True):
-        """Write the Conversation to csv file(s).
-
-        Multiple csv files are created: one for the metadata and one for the utterances.
-        The filenames are based on the provided path, with the following suffixes:
-        - file_metadata.csv
-        - file_utterances.csv
-
-        It is possible to write only one of the two csv files by setting the corresponding
-        argument to False.
-
-        Args:
-            path (str, optional): Base name of csv output files. Defaults to "./file.csv".
-            metadata (bool, optional): Whether to write metadata to csv. Defaults to True.
-            utterances (bool, optional): Whether to write utterances to csv. Defaults to True.
-        """
-        _path = Path(path).with_suffix(".csv")
-
-        if metadata:
-            path_metadata = self._specify_path(_path, "metadata")
-            mddf = self.metadata_df
-            mddf.to_csv(path_metadata, index=False)
-
-        if utterances:
-            if len(self._utterances) == 0:
-                warnings.warn(
-                    "This conversation appears to be empty. Utterance csv is not written.")
-            else:
-                path_utterances = self._specify_path(_path, "utterances")
-                utdf = self.utterance_df
-                utdf.to_csv(path_utterances)
+        if not hasattr(self, "_utterance_df"):
+            self._utterance_df = pd.DataFrame(self._utterances)
+            self._utterance_df.insert(loc=0,
+                                      column="source",
+                                      value=self._metadata["source"])
+        return self._utterance_df
 
     def _subconversation_by_index(self,
                                   index: int,

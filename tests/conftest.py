@@ -189,3 +189,49 @@ def my_corpus():
     return Corpus(language="French",
                   importer="John Doe",
                   collections=["IADV", "Callosum"])
+
+
+@pytest.fixture
+def my_corpus_with_convo(my_corpus, convo):
+    c = my_corpus
+    c.append(convo)
+    c.append(convo)
+    return c
+
+
+@pytest.fixture
+def expected_csv_metadata_corpus():
+    return [
+        ["language", "importer", "collections", "source", "Languages", "Participants_A_name", "Participants_A_age", "Participants_A_sex",
+            "Participants_B_name", "Participants_B_age", "Participants_B_sex"],
+        ["French", "John Doe", "IADV, Callosum", "file.cha",
+            "eng, fra", "Aone", "37", "M", "Btwo", "22", "M"],
+        ["French", "John Doe", "IADV, Callosum", "file.cha",
+            "eng, fra", "Aone", "37", "M", "Btwo", "22", "M"]
+    ]
+
+
+@pytest.fixture
+def expected_csv_utterances_corpus():
+    return [
+        ["", "source", "utterance", "participant", "time"],
+        ["0", "file.cha", "0 utterance A", "A", "[0, 1000]"],
+        ["1", "file.cha", "1 utterance B", "B", "[900, 3500]"],
+        ["2", "file.cha", "2 utterance C", "A", "[1001, 8500]"],
+        ["3", "file.cha", "3 utterance D", "B", "[1200, 1999]"],
+        ["4", "file.cha", "4 utterance E", "A", "[3500, 4500]"],
+        ["5", "file.cha", "5 utterance U", "B", "[5000, 8000]"],
+        ["6", "file.cha", "6 utterance F", "C", "[5500, 7500]"],
+        ["7", "file.cha", "7 utterance G", "", ""],
+        ["8", "file.cha", "8 utterance H", "B", "[9000, 12500]"],
+        ["9", "file.cha", "9 utterance I", "C", "[12000, 13000]"],
+        ["10", "file.cha", "0 utterance A", "A", "[0, 1000]"],
+        ["11", "file.cha", "1 utterance B", "B", "[900, 3500]"],
+        ["12", "file.cha", "2 utterance C", "A", "[1001, 8500]"],
+        ["13", "file.cha", "3 utterance D", "B", "[1200, 1999]"],
+        ["14", "file.cha", "4 utterance E", "A", "[3500, 4500]"],
+        ["15", "file.cha", "5 utterance U", "B", "[5000, 8000]"],
+        ["16", "file.cha", "6 utterance F", "C", "[5500, 7500]"],
+        ["17", "file.cha", "7 utterance G", "", ""],
+        ["18", "file.cha", "8 utterance H", "B", "[9000, 12500]"],
+        ["19", "file.cha", "9 utterance I", "C", "[12000, 13000]"]]
