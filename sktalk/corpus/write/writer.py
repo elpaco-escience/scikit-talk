@@ -1,5 +1,4 @@
 import abc
-import csv
 import json
 from pathlib import Path
 import numpy as np
@@ -29,15 +28,6 @@ class Writer(abc.ABC):
 
     def write_csv(self):
         return NotImplemented
-
-    def _write_csv(self, path: str, headers: list, rows: list):
-        _path = Path(path).with_suffix(".csv")
-
-        with open(_path, "w", encoding='utf-8', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=headers)
-            writer.writeheader()
-            for row in rows:
-                writer.writerow(row)
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(f"{path.stem}_{specifier}{path.suffix}")

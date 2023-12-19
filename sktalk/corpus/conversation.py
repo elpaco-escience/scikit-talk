@@ -122,6 +122,21 @@ class Conversation(Writer):
         return self._utterancedf
 
     def write_csv(self, path: str = "./file.csv", metadata=True, utterances=True):
+        """Write the Conversation to csv file(s).
+
+        Multiple csv files are created: one for the metadata and one for the utterances.
+        The filenames are based on the provided path, with the following suffixes:
+        - file_metadata.csv
+        - file_utterances.csv
+
+        It is possible to write only one of the two csv files by setting the corresponding
+        argument to False.
+
+        Args:
+            path (str, optional): Base name of csv output files. Defaults to "./file.csv".
+            metadata (bool, optional): Whether to write metadata to csv. Defaults to True.
+            utterances (bool, optional): Whether to write utterances to csv. Defaults to True.
+        """
         _path = Path(path).with_suffix(".csv")
 
         if metadata:

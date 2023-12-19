@@ -81,5 +81,5 @@ class TestWriteCSV:
         assert csv_metadata == expected_csv_metadata
 
         csv_utterances = self.open_csv("tmp_utterances.csv", tmp_path)
-        csv_utterances = [row[:5] for row in csv_utterances]
+        csv_utterances = [row[:5] for row in csv_utterances] # utterance creation makes additional columns, precise testing is difficult
         assert csv_utterances == expected_csv_utterances
