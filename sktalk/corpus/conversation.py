@@ -1,6 +1,5 @@
 import json
 import warnings
-from pathlib import Path
 from typing import Optional
 import pandas as pd
 from .parsing.cha import ChaFile
