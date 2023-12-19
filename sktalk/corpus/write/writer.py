@@ -23,6 +23,7 @@ class Writer(abc.ABC):
 
         with open(_path, "w", encoding='utf-8') as file:
             json.dump(object_dict, file, indent=4)
+        print("Object saved to", _path)
 
     def write_csv(self, path: str = "./file.csv"):
         """Write the object to CSV files.
@@ -39,7 +40,9 @@ class Writer(abc.ABC):
 
         self.metadata_df.to_csv(self._specify_path(
             _path, "metadata"), index=False)
+        print("Metadata saved to", self._specify_path(_path, "metadata"))
         self.utterance_df.to_csv(self._specify_path(_path, "utterances"))
+        print("Utterances saved to", self._specify_path(_path, "utterances"))
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(f"{path.stem}_{specifier}{path.suffix}")
