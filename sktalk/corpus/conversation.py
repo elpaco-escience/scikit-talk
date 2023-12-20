@@ -1,6 +1,7 @@
 import json
 import warnings
 from typing import Optional
+import pandas as pd
 from .parsing.cha import ChaFile
 from .utterance import Utterance
 from .write.writer import Writer
@@ -8,7 +9,10 @@ from .write.writer import Writer
 
 class Conversation(Writer):
     def __init__(
-        self, utterances: list["Utterance"], metadata: Optional[dict] = None, suppress_warnings: bool = False  # noqa: F821
+        self,
+        utterances: list["Utterance"],
+        metadata: Optional[dict] = None,
+        suppress_warnings: bool = False
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -16,7 +20,8 @@ class Conversation(Writer):
             utterances (list[Utterance]): A list of Utterance objects representing the utterances in the conversation.
             metadata (dict, optional): Additional metadata associated with the conversation. Defaults to None.
         """
-        self._metadata = metadata or {}
+        self._metadata = metadata or {"source": "unknown"}
+
         self._utterances = utterances
         # Input utterances should be a list of type Utterance
         errormsg = "All utterances in a conversation should be of type Utterance"
@@ -32,6 +37,9 @@ class Conversation(Writer):
         if not self._utterances and not suppress_warnings:
             warnings.warn(
                 "This conversation appears to be empty: no Utterances are read.")
+
+        self._metadata_df = None
+        self._utterance_df = None
 
     @property
     def utterances(self):
@@ -97,6 +105,23 @@ class Conversation(Writer):
             dict: dictionary containing Conversation metadata and Utterances
         """
         return self._metadata | {"Utterances": [u.asdict() for u in self._utterances]}
+
+    @property
+    def metadata_df(self):
+        """Return the conversation metadata as a pandas dataframe."""
+        if self._metadata_df is None:
+            self._metadata_df = self._metadata_to_df(self._metadata)
+        return self._metadata_df
+
+    @property
+    def utterance_df(self):
+        """Return the conversation utterances as a pandas dataframe."""
+        if self._utterance_df is None:
+            self._utterance_df = pd.DataFrame(self._utterances)
+            self._utterance_df.insert(loc=0,
+                                      column="source",
+                                      value=self._metadata["source"])
+        return self._utterance_df
 
     def _subconversation_by_index(self,
                                   index: int,
@@ -209,7 +234,7 @@ class Conversation(Writer):
         try:
             self._metadata["Calculations"].update(metadata)
         except KeyError:
-            self._metadata = {"Calculations": metadata}
+            self._metadata = self._metadata | {"Calculations": metadata}
         for index, utterance in enumerate(self.utterances):
             setattr(utterance, field, values[index])
 

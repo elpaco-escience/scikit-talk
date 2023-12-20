@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from .conversation import Conversation
 from .parsing.xml import XmlFile
 from .write.writer import Writer
@@ -14,6 +15,9 @@ class Corpus(Writer):
                 raise TypeError(
                     "All conversations should be of type Conversation")
         self._metadata = metadata
+
+        self._metadata_df = None
+        self._utterance_df = None
 
     def __add__(self, other: "Corpus") -> "Corpus":
         pass
@@ -84,3 +88,22 @@ class Corpus(Writer):
     @classmethod
     def from_xml(cls, path):
         return XmlFile(path).parse()
+
+    @property
+    def metadata_df(self):
+        """Return the corpus metadata as a pandas dataframe."""
+        if self._metadata_df is None:
+            metadata_df = self._metadata_to_df(self._metadata)
+            metadata_df_conversations = pd.concat(
+                [c.metadata_df for c in self._conversations])
+            self._metadata_df = metadata_df.merge(
+                metadata_df_conversations, how="cross")
+        return self._metadata_df
+
+    @property
+    def utterance_df(self):
+        """Return the corpus utterances as a pandas dataframe."""
+        if self._utterance_df is None:
+            self._utterance_df = pd.concat(
+                [c.utterance_df for c in self._conversations], ignore_index=True)
+        return self._utterance_df

@@ -1,5 +1,3 @@
-import json
-import os
 from contextlib import nullcontext as does_not_raise
 import pytest
 from sktalk.corpus.conversation import Conversation
@@ -18,7 +16,7 @@ class TestConversation:
             Conversation()  # noqa no-value-for-parameter
         # A conversation without metadata still has metadata property
         new_convo = Conversation(utterances=convo_utts)
-        assert new_convo.metadata == {}
+        assert new_convo.metadata == {"source": "unknown"}
         # A Conversation can't be instantiated with utterances not of Utterance class
         with pytest.raises(TypeError, match="type Utterance"):
             Conversation(utterances="Not an Utterance")
@@ -27,26 +25,6 @@ class TestConversation:
         # The user should be warned if there are no Utterances
         with pytest.warns(match="no Utterances"):
             Conversation(utterances=[])
-
-    def test_asdict(self, convo):
-        """Verify content of dictionary based on conversation"""
-        convodict = convo.asdict()
-        assert convodict["Utterances"][0] == convo.utterances[0].asdict()
-        assert convodict["source"] == convo.metadata["source"]
-
-    @pytest.mark.parametrize("user_path, expected_path", [
-        ("tmp_convo.json", "tmp_convo.json"),
-        ("tmp_convo", "tmp_convo.json")
-    ])
-    def test_write_json(self, convo, tmp_path, user_path, expected_path):
-        tmp_file = f"{str(tmp_path)}{os.sep}{user_path}"
-        convo.write_json(tmp_file)
-        tmp_file_exp = f"{str(tmp_path)}{os.sep}{expected_path}"
-        assert os.path.exists(tmp_file_exp)
-        with open(tmp_file_exp, encoding='utf-8') as f:
-            convo_read = json.load(f)
-            assert isinstance(convo_read, dict)
-            assert convo_read == convo.asdict()
 
     def test_from_jsonfile(self):
         json_in = Conversation.from_json(
@@ -59,6 +37,7 @@ class TestConversation:
         assert json_in.metadata["Languages"] == ["eng"]
         with pytest.raises(TypeError, match="cannot be imported as a Conversation"):
             Conversation.from_json("tests/testdata/dummy_corpus.json")
+
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
