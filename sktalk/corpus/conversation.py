@@ -12,7 +12,7 @@ class Conversation(Writer):
         self,
         utterances: list["Utterance"],
         metadata: Optional[dict] = None,
-        suppress_warnings: bool = False  # noqa: F821
+        suppress_warnings: bool = False
     ) -> None:
         """Representation of a transcribed conversation
 
@@ -37,6 +37,9 @@ class Conversation(Writer):
         if not self._utterances and not suppress_warnings:
             warnings.warn(
                 "This conversation appears to be empty: no Utterances are read.")
+
+        self._metadata_df = None
+        self._utterance_df = None
 
     @property
     def utterances(self):
@@ -106,14 +109,14 @@ class Conversation(Writer):
     @property
     def metadata_df(self):
         """Return the conversation metadata as a pandas dataframe."""
-        if not hasattr(self, "_metadata_df"):
+        if self._metadata_df is None:
             self._metadata_df = self._metadata_to_df(self._metadata)
         return self._metadata_df
 
     @property
     def utterance_df(self):
         """Return the conversation utterances as a pandas dataframe."""
-        if not hasattr(self, "_utterance_df"):
+        if self._utterance_df is None:
             self._utterance_df = pd.DataFrame(self._utterances)
             self._utterance_df.insert(loc=0,
                                       column="source",
