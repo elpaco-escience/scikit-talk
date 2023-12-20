@@ -28,21 +28,21 @@ class Writer(abc.ABC):
     def write_csv(self, path: str = "./file.csv"):
         """Write the object to CSV files.
 
-        Multiple csv files are created: one for the metadata (corpus and conversation level) and one for the utterances.
-        The filenames are based on the provided path, with the following suffixes:
-        - file_metadata.csv
-        - file_utterances.csv
+        Multiple csv files are created: one for the the utterances, and one for the collected metadata.
+        The filename is used for the utterance csv file. The metadata csv file is named with the same filename, but with "_metadata" appended; thus:
+        - file.csv (contains utterances)
+        - file_metadata.csv (contains all metadata)
 
         Args:
             path (str, optional): Base name of csv output files. Defaults to "./file.csv".
         """
         _path = Path(path).with_suffix(".csv")
 
+        self.utterance_df.to_csv(_path)
+        print("Utterances saved to", _path)
         self.metadata_df.to_csv(self._specify_path(
             _path, "metadata"), index=False)
         print("Metadata saved to", self._specify_path(_path, "metadata"))
-        self.utterance_df.to_csv(self._specify_path(_path, "utterances"))
-        print("Utterances saved to", self._specify_path(_path, "utterances"))
 
     def _specify_path(self, path: Path, specifier: str):
         return path.with_name(f"{path.stem}_{specifier}{path.suffix}")

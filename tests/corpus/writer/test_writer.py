@@ -4,7 +4,7 @@ import os
 import pytest
 
 
-class TestWriteJson:
+class TestWriter:
     def test_asdict(self, convo):
         """Verify content of dictionary based on conversation"""
         convodict = convo.asdict()
@@ -25,8 +25,6 @@ class TestWriteJson:
             assert isinstance(convo_read, dict)
             assert convo_read == convo.asdict()
 
-
-class TestWriteCSV:
     @pytest.mark.parametrize("user_path", [
         ("tmp.csv"),
         ("tmp.json"),
@@ -38,7 +36,7 @@ class TestWriteCSV:
         convo.write_csv(filename)
         metadatapath = f"{str(tmp_path)}{os.sep}tmp_metadata.csv"
         assert os.path.exists(metadatapath)
-        utterancepath = f"{str(tmp_path)}{os.sep}tmp_utterances.csv"
+        utterancepath = f"{str(tmp_path)}{os.sep}tmp.csv"
         assert os.path.exists(utterancepath)
 
     def open_csv(self, filename, tmp_path):
@@ -58,7 +56,7 @@ class TestWriteCSV:
         assert self.open_csv("tmp_metadata.csv",
                              tmp_path) == expected_csv_metadata
 
-        csv_utterances = self.open_csv("tmp_utterances.csv", tmp_path)
+        csv_utterances = self.open_csv("tmp.csv", tmp_path)
         # utterance creation makes additional columns, precise testing is difficult
         csv_utterances = [row[:5] for row in csv_utterances]
         assert csv_utterances == expected_csv_utterances
@@ -71,7 +69,7 @@ class TestWriteCSV:
         assert self.open_csv("tmp_metadata.csv",
                              tmp_path) == expected_csv_metadata_corpus
 
-        csv_utterances = self.open_csv("tmp_utterances.csv", tmp_path)
+        csv_utterances = self.open_csv("tmp.csv", tmp_path)
         # utterance creation makes additional columns, precise testing is difficult
         csv_utterances = [row[:5] for row in csv_utterances]
         assert csv_utterances == expected_csv_utterances_corpus
