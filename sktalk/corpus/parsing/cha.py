@@ -12,17 +12,18 @@ class ChaFile(InputFile):
         return self._pla_reader().headers()[0]
 
     def _extract_utterances(self):
-        with open(self._path) as f:
+        with open(self._path, encoding="utf-8") as f:
             lines = f.read().splitlines()
-        utterance_info = [self._extract_info(line) for line in lines if not line.startswith("@")]
+        utterance_info = [self._extract_info(
+            line) for line in lines if not line.startswith("@")]
 
         # collect all utterance info in a terrible, terrible loop
         collection = []
         timing, participant, utterance = None, None, None
         for info in utterance_info:
             if info["utterance"] is not None:
-               timing = info["time"]
-               utterance = info["utterance"]
+                timing = info["time"]
+                utterance = info["utterance"]
             else:
                 continue
             if info["participant"] is not None:
@@ -34,15 +35,14 @@ class ChaFile(InputFile):
             collection.append(complete_utterance)
         return collection
 
-
     @classmethod
     def _extract_info(cls, line):
-        participant=cls._extract_participant(line)
-        time=cls._extract_timing(line)
-        utterance=cls._extract_utterance(line)
-        return({"participant": participant,
+        participant = cls._extract_participant(line)
+        time = cls._extract_timing(line)
+        utterance = cls._extract_utterance(line)
+        return ({"participant": participant,
                 "time": time,
-                "utterance": utterance})
+                 "utterance": utterance})
 
     @classmethod
     def _clean_utterance(cls, utterance):
