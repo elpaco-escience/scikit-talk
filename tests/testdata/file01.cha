@@ -18,7 +18,8 @@
 	randomtext (0.2) randomtext fo:r 9487_12888
 *B:	randomtext- 12888_14050
 *B:	no: randomtext 14050_17014
-*A:	+â‰‹ ah: randomtext itÊ” 17014_18611
+	randomtext (0.2) randomtext fo:r 17014_17800
+*A:	+â‰‹ ah: randomtext itÊ” 17700_18611
 *B:	+â‰‹ randomtext sâŒˆame randomtext book 18611_21090
 *A:	                 âŒŠrandomtextr xxxâŒ‹ 19011_20132
 *B:	nrandomtext 21090_23087
