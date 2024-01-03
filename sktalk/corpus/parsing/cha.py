@@ -26,18 +26,16 @@ class ChaFile(InputFile):
 
         # collect all utterance info in a terrible, terrible loop
         collection = []
-        timing, participant, utterance = None, None, None
+        participant = None
         for info in utterance_info:
             if info["utterance"] is None:
                 continue
-            timing = info["time"]
-            utterance = info["utterance"]
             if info["participant"] is not None:
                 participant = info["participant"]
             complete_utterance = Utterance(
                 participant=participant,
-                time=timing,
-                utterance=utterance)
+                time=info["time"],
+                utterance=info["utterance"])
             collection.append(complete_utterance)
         return collection
 
