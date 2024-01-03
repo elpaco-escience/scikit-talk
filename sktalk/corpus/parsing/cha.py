@@ -6,7 +6,8 @@ from .parser import InputFile
 
 class ChaFile(InputFile):
     TIMING_REGEX = r"\D(?P<timing>\d{1,9}_\d{1,9})\D"
-    PARTICIPANT_REGEX = r"(^\*(?P<participant>[^:*]+)\:){0,1}" # participant may not be repeated on each line
+    # participant may not be repeated on each line
+    PARTICIPANT_REGEX = r"(^\*(?P<participant>[^:*]+)\:){0,1}"
     UTTERANCE_REGEX = r"\s+(?P<utterance>.*)\s+"
     LINE_REGEX = PARTICIPANT_REGEX + UTTERANCE_REGEX + TIMING_REGEX
 
@@ -58,7 +59,7 @@ class ChaFile(InputFile):
                 "participant": extract_re["participant"],
                 "time": timing,
                 "utterance": utterance
-                })
+            })
         return default_return
 
     @staticmethod
