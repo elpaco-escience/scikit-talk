@@ -1,75 +1,93 @@
-import os
-import tempfile
 import pytest
-import requests
-import sktalk
+from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.cha import ChaFile
-from sktalk.corpus.parsing.parser import InputFile
 
 
-class TestParser:
-    milliseconds_timestamp = [
-        ["0", "00:00:00.000"],
-        ["1706326", "00:28:26.326"],
-        ["222222", "00:03:42.222"],
-        ["None", None]
-    ]
+@pytest.fixture
+def path_source():
+    return "tests/testdata/file01.cha"
 
-    @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
-    def test_to_timestamp(self, milliseconds, timestamp):
-        assert InputFile._to_timestamp(milliseconds) == timestamp   # noqa: W0212
 
-        with pytest.raises(ValueError, match="exceeds 24h"):
-            InputFile._to_timestamp("987654321")                    # noqa: W0212
+@pytest.fixture
+def cha_info():
+    n_utterances = 15
+    utterance_first = "first line of utterance"
+    utterance_last = "spaced (.) with multiple (2.4) spacers"
+    participants = {'MS. A', 'BertramKIBBEL'}
+    timing = [[0, 1500],
+              [1500, 2775],
+              [2775, 3773],
+              [4052, 5515],
+              [4052, 5817],
+              [6140, 9487],
+              [9487, 12888],
+              [12888, 14050],
+              [14050, 17014],
+              [17014, 17800],
+              [17700, 18611],
+              [18611, 21090],
+              [19011, 20132],
+              [21090, 23087],
+              [24457, 25746]]
+    return n_utterances, utterance_first, utterance_last, participants, timing
 
-        with pytest.raises(ValueError, match="negative"):
-            InputFile._to_timestamp("-1")                           # noqa: W0212
+
+@pytest.fixture
+def expected_metadata():
+    return {'source': 'tests/testdata/file01.cha',
+            'UTF8': '',
+            'PID': 'idsequence',
+            'Languages': ['eng'],
+            'Participants': {
+                'A': {
+                    'name': 'Ann',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''},
+                'B': {
+                    'name': 'Bert',
+                    'language': 'eng',
+                    'corpus': 'test',
+                    'age': '',
+                    'sex': '',
+                    'group': '',
+                    'ses': '',
+                    'role': 'Adult',
+                    'education': '',
+                    'custom': ''}},
+            'Options': 'CA',
+            'Media': '01, audio'}
 
 
 class TestChaFile:
-    urls = [
-        "https://ca.talkbank.org/data-orig/GCSAusE/01.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/02.cha",
-        "https://ca.talkbank.org/data-orig/GCSAusE/03.cha"
-    ]
+    def test_parse(self, path_source, cha_info, expected_metadata):
+        expected_n_utterances, expected_first, expected_last, expected_participants, expected_timing = cha_info
+        cha_utts, cha_meta = ChaFile(path_source).parse()
+        assert cha_meta == expected_metadata
+        assert cha_utts[0].utterance == expected_first
+        assert cha_utts[-1].utterance == expected_last
+        assert {u.participant for u in cha_utts} == expected_participants
+        assert len(cha_utts) == expected_n_utterances
+        parsed_timing = [utt.time for utt in cha_utts]
+        assert parsed_timing == expected_timing
 
-    @pytest.fixture(params=urls)
-    def download_file(self, request):
-        remote = request.param
-        response = requests.get(remote, timeout=5)
-        response.raise_for_status()
-
-        ext = os.path.splitext(remote)[1]
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
-            temp_file.write(response.content)
-            temp_file_path = temp_file.name
-
-        yield temp_file_path
-
-        os.remove(temp_file_path)
-
-    @pytest.mark.parametrize("download_file", urls, indirect=True)
-    def test_parse(self, download_file):
-        parsed_cha = ChaFile(download_file).parse()
-        assert isinstance(parsed_cha, sktalk.corpus.conversation.Conversation)
-        source = parsed_cha.metadata["source"]
-        assert os.path.splitext(source)[1] == ".cha"
-        assert parsed_cha.utterances[0].begin == "00:00:00.000"
-        participant = parsed_cha.utterances[0].participant
-        assert participant in ["A", "B", "S"]
-        language = parsed_cha.metadata["Languages"]
-        assert language == ["eng"]
-        # TODO assert that there are no empty utterances
-
-    def test_split_time(self):
-        time = "(1748070, 1751978)"
-        begin_end = ("00:29:08.070", "00:29:11.978")
-        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
-
-        time = None
-        begin_end = (None, None)
-        assert ChaFile._split_time(time) == begin_end            # noqa: W0212
+    def test_wrapped_parser(self, path_source, cha_info, expected_metadata):
+        expected_n_utterances, expected_first, expected_last, expected_participants, expected_timing = cha_info
+        parsed_cha = Conversation.from_cha(path_source)
+        assert isinstance(parsed_cha, Conversation)
+        assert parsed_cha.metadata == expected_metadata
+        assert parsed_cha.utterances[0].utterance == expected_first
+        assert parsed_cha.utterances[-1].utterance == expected_last
+        assert {u.participant for u in parsed_cha.utterances} == expected_participants
+        assert len(parsed_cha.utterances) == expected_n_utterances
+        parsed_timing = [utt.time for utt in parsed_cha.utterances]
+        assert parsed_timing == expected_timing
 
     unclean_clean = [
         [

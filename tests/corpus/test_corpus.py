@@ -34,10 +34,10 @@ class TestCorpus():
             assert isinstance(corpus.conversations, list)
             assert conversations is None or corpus.conversations == conversations
 
-    def test_append(self, my_corpus, my_convo):
+    def test_append(self, my_corpus, convo):
         # conversation can be added to an existing corpus
-        my_corpus.append(my_convo)
-        assert my_corpus.conversations[-1] == my_convo
+        my_corpus.append(convo)
+        assert my_corpus.conversations[-1] == convo
 
         # it is not possible to add non-conversation objects to a corpus
         with pytest.raises(TypeError, match="type Conversation"):
@@ -63,3 +63,12 @@ class TestCorpus():
             my_corpus_read = json.load(f)
             assert isinstance(my_corpus_read, dict)
             assert my_corpus_read == my_corpus.asdict()
+
+    def test_from_jsonfile(self):
+        json_in = Corpus.from_json("tests/testdata/dummy_corpus.json")
+        assert isinstance(json_in, Corpus)
+        assert len(json_in.conversations) == 2
+        with pytest.raises(TypeError, match="cannot be imported as a Corpus"):
+            Corpus.from_json("tests/testdata/dummy_conversation.json")
+
+        # assert json_in.utterances[0].utterance == "Hello world"

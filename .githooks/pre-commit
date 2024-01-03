@@ -2,6 +2,8 @@
 
 ### To enable this githook, run:
 ### git config --local core.hooksPath .githooks
+### to disable:
+### git config --unset core.hooksPath
 
 echo "Script $0 triggered ..."
 
