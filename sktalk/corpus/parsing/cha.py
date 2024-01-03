@@ -45,7 +45,7 @@ class ChaFile(InputFile):
         default_return = {"utterance": None}
 
         extract_re = re.search(ChaFile.LINE_REGEX, line)
-        if not bool(extract_re):
+        if not extract_re:
             return default_return
 
         try:
