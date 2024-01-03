@@ -5,6 +5,11 @@ from .parser import InputFile
 
 
 class ChaFile(InputFile):
+    PARTICIPANT_REGEX = r"^\*(?P<participant>\S+)\:"
+    TIMING_REGEX = r"(?P<timing>\d{1,9}_\d{1,9})"
+    UTTERANCE_REGEX = r"\t(?P<utterance>.*)\s." + TIMING_REGEX
+    SPACER_REGEX = r"\([0-9.]+\)"
+
     def _pla_reader(self) -> pylangacq.Reader:
         return pylangacq.read_chat(self._path)
 
@@ -62,9 +67,9 @@ class ChaFile(InputFile):
 
     @staticmethod
     def _extract_timing(line):
-        timing = re.search(r"[0-9]{1,9}_[0-9]{1,9}", line)
+        timing = re.search(ChaFile.TIMING_REGEX, line)
         try:
-            timing = timing.group()
+            timing = timing.group("timing")
             timing = timing.split("_")
             timing = [int(t) for t in timing]
         except AttributeError:
@@ -73,21 +78,20 @@ class ChaFile(InputFile):
 
     @staticmethod
     def _extract_participant(line):
-        part_re = re.search(r"(?<=\*)\S+(?=\:)", line)
+        part_re = re.search(ChaFile.PARTICIPANT_REGEX, line)
         try:
-            participant = part_re.group()
+            participant = part_re.group("participant")
         except AttributeError:
             participant = None
         return participant
 
     @staticmethod
     def _extract_utterance(line):
-        utt_re = re.search(r"(?<=\t).*(?=\s.{1}[0-9]{1,9}_[0-9]{1,9})", line)
+        utt_re = re.search(ChaFile.UTTERANCE_REGEX, line)
         try:
-            utterance = utt_re.group()
-            if re.match(r"\([0-9.]+\)", utterance):
+            utterance = utt_re.group("utterance")
+            if re.match(ChaFile.SPACER_REGEX, utterance):
                 utterance = None
         except AttributeError:
             utterance = None
-
         return utterance
