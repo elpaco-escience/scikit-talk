@@ -5,10 +5,10 @@ from .parser import InputFile
 
 
 class ChaFile(InputFile):
-    TIMING_REGEX = r"\D(?P<timing>\d{1,9}_\d{1,9})\D"
-    # participant may not be repeated on each line
-    PARTICIPANT_REGEX = r"(^\*(?P<participant>[^:]+)\:){0,1}"
+    # participant may not be repeated on each line, hence the ?
+    PARTICIPANT_REGEX = r"(^\*(?P<participant>[^:]+)\:)?"
     UTTERANCE_REGEX = r"\s+(?P<utterance>.*)\s+"
+    TIMING_REGEX = r"\D(?P<timing>\d{1,9}_\d{1,9})\D"
     LINE_REGEX = PARTICIPANT_REGEX + UTTERANCE_REGEX + TIMING_REGEX
 
     SPACER_REGEX = r"\((?P<spacer>[\d.]+)\)"
