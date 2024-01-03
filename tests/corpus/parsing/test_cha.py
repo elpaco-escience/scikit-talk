@@ -11,7 +11,7 @@ def path_source():
 @pytest.fixture
 def cha_info():
     n_utterances = 15
-    participants = {'A', 'B'}
+    participants = {'MS. A', 'BertramKIBBEL'}
     timing = [[0, 1500],
               [1500, 2775],
               [2775, 3773],
