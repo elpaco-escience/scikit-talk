@@ -7,7 +7,7 @@
 @ID:	eng|test|A|||||Adult|||
 @ID:	eng|test|B|||||Adult|||
 @Media:	01, audio
-*MS. A:	0 0_1500
+*MS. A:	first line of utterance 0_1500
 *MS. A:	mm randomtext youâ‡— 1500_2775
 *MS. A:	randomtext 2775_3773
 	(0.3) 3773_4052
@@ -24,5 +24,5 @@
 *MS. A: 	                 âŒŠrandomtextr xxxâŒ‹ 19011_20132
 *BertramKIBBEL:  	nrandomtext 21090_23087
 	(1.4) 23087_24457
-*BertramKIBBEL:  	âŒˆrandomtext two 24457_25746
+*BertramKIBBEL:  	spaced (.) with multiple (2.4) spacers 24457_25746
 @End
