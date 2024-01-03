@@ -62,7 +62,7 @@ class ChaFile(InputFile):
 
     @classmethod
     def _extract_timing(cls, line):
-        timing = re.search(r"[0-9]+_[0-9]+", line)
+        timing = re.search(r"[0-9]{1,9}_[0-9]{1,9}", line)
         try:
             timing = timing.group()
             timing = timing.split("_")
@@ -82,7 +82,7 @@ class ChaFile(InputFile):
 
     @classmethod
     def _extract_utterance(cls, line):
-        utt_re = re.search(r"(?<=\t).*(?=\s.{1}[0-9]+_[0-9]+)", line)
+        utt_re = re.search(r"(?<=\t).*(?=\s.{1}[0-9]{1,9}_[0-9]{1,9})", line)
         try:
             utterance = utt_re.group()
             if re.match(r"\([0-9.]+\)", utterance):
