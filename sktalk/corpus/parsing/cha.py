@@ -13,7 +13,7 @@ class ChaFile(InputFile):
 
     def _extract_utterances(self):
         with open(self._path, encoding="utf-8") as f:
-            lines = f.read().splitlines()
+            lines = f.readlines()
         utterance_info = [self._extract_info(
             line) for line in lines if not line.startswith("@")]
 
@@ -21,11 +21,11 @@ class ChaFile(InputFile):
         collection = []
         timing, participant, utterance = None, None, None
         for info in utterance_info:
+            if info["utterance"] is None:
+                continue
             if info["utterance"] is not None:
                 timing = info["time"]
                 utterance = info["utterance"]
-            else:
-                continue
             if info["participant"] is not None:
                 participant = info["participant"]
             complete_utterance = Utterance(
@@ -71,8 +71,8 @@ class ChaFile(InputFile):
             timing = None
         return timing
 
-    @classmethod
-    def _extract_participant(cls, line):
+    @staticmethod
+    def _extract_participant(line):
         part_re = re.search(r"(?<=\*)\S+(?=\:)", line)
         try:
             participant = part_re.group()
