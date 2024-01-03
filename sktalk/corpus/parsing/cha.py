@@ -35,17 +35,17 @@ class ChaFile(InputFile):
             collection.append(complete_utterance)
         return collection
 
-    @classmethod
-    def _extract_info(cls, line):
-        participant = cls._extract_participant(line)
-        time = cls._extract_timing(line)
-        utterance = cls._extract_utterance(line)
+    @staticmethod
+    def _extract_info(line):
+        participant = ChaFile._extract_participant(line)
+        time = ChaFile._extract_timing(line)
+        utterance = ChaFile._extract_utterance(line)
         return ({"participant": participant,
                 "time": time,
                  "utterance": utterance})
 
-    @classmethod
-    def _clean_utterance(cls, utterance):
+    @staticmethod
+    def _clean_utterance(utterance):
         utterance = str(utterance)
         utterance = re.sub(r"^([^:]+):", "", utterance)
         utterance = re.sub(r"^\s+", "", utterance)
@@ -60,8 +60,8 @@ class ChaFile(InputFile):
         utterance = re.sub(r"[ \t]{1,5}$", "", utterance)
         return utterance
 
-    @classmethod
-    def _extract_timing(cls, line):
+    @staticmethod
+    def _extract_timing(line):
         timing = re.search(r"[0-9]{1,9}_[0-9]{1,9}", line)
         try:
             timing = timing.group()
@@ -80,8 +80,8 @@ class ChaFile(InputFile):
             participant = None
         return participant
 
-    @classmethod
-    def _extract_utterance(cls, line):
+    @staticmethod
+    def _extract_utterance(line):
         utt_re = re.search(r"(?<=\t).*(?=\s.{1}[0-9]{1,9}_[0-9]{1,9})", line)
         try:
             utterance = utt_re.group()
