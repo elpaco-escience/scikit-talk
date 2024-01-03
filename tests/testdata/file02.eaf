@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ANNOTATION_DOCUMENT AUTHOR="" DATE="2015-09-04T05:39:16+01:00" FORMAT="3.0" VERSION="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
+    <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
+        <MEDIA_DESCRIPTOR MEDIA_URL="file:///Users/file.mp4" MIME_TYPE="video/mp4" RELATIVE_MEDIA_URL="./file.mp4"/>
+        <MEDIA_DESCRIPTOR MEDIA_URL="file:///Users/file.wav" MIME_TYPE="audio/x-wav" RELATIVE_MEDIA_URL="./file.wav"/>
+        <PROPERTY NAME="lastUsedAnnotationId">3533</PROPERTY>
+    </HEADER>
+    <TIME_ORDER>
+        <TIME_SLOT TIME_SLOT_ID="ts1" TIME_VALUE="0"/>
+        <TIME_SLOT TIME_SLOT_ID="ts2" TIME_VALUE="820"/>
+        <TIME_SLOT TIME_SLOT_ID="ts3" TIME_VALUE="1420"/>
+        <TIME_SLOT TIME_SLOT_ID="ts4" TIME_VALUE="2020"/>
+        <TIME_SLOT TIME_SLOT_ID="ts5" TIME_VALUE="3200"/>
+        <TIME_SLOT TIME_SLOT_ID="ts6" TIME_VALUE="3860"/>
+        <TIME_SLOT TIME_SLOT_ID="ts7" TIME_VALUE="3880"/>
+        <TIME_SLOT TIME_SLOT_ID="ts8" TIME_VALUE="4480"/>
+        <TIME_SLOT TIME_SLOT_ID="ts9" TIME_VALUE="5800"/>
+        <TIME_SLOT TIME_SLOT_ID="ts10" TIME_VALUE="6200"/>
+        <TIME_SLOT TIME_SLOT_ID="ts11" TIME_VALUE="6600"/>
+        <TIME_SLOT TIME_SLOT_ID="ts12" TIME_VALUE="6860"/>
+        <TIME_SLOT TIME_SLOT_ID="ts13" TIME_VALUE="8020"/>
+        <TIME_SLOT TIME_SLOT_ID="ts14" TIME_VALUE="8480"/>
+        <TIME_SLOT TIME_SLOT_ID="ts15" TIME_VALUE="9540"/>
+        <TIME_SLOT TIME_SLOT_ID="ts16" TIME_VALUE="9660"/>
+    </TIME_ORDER>
+    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Phrases" PARTICIPANT="A" TIER_ID="Aleph Alpha">
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3521" TIME_SLOT_REF1="ts3" TIME_SLOT_REF2="ts4">
+                <ANNOTATION_VALUE>Lorem ipsum</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3522" TIME_SLOT_REF1="ts5" TIME_SLOT_REF2="ts6">
+                <ANNOTATION_VALUE>dolor sit amet</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3523" TIME_SLOT_REF1="ts7" TIME_SLOT_REF2="ts8">
+                <ANNOTATION_VALUE>consectetur</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3524" TIME_SLOT_REF1="ts15" TIME_SLOT_REF2="ts16">
+                <ANNOTATION_VALUE>adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        </TIER>
+    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Text" TIER_ID="Interlinear"/>
+    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Phrases" PARTICIPANT="B" TIER_ID="Bet Beta">
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3525" TIME_SLOT_REF1="ts1" TIME_SLOT_REF2="ts2">
+                <ANNOTATION_VALUE>Ut enim ad minim veniam</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3526" TIME_SLOT_REF1="ts9" TIME_SLOT_REF2="ts10">
+                <ANNOTATION_VALUE>quis</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3527" TIME_SLOT_REF1="ts11" TIME_SLOT_REF2="ts12">
+                <ANNOTATION_VALUE>nostrud exercitation</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <ALIGNABLE_ANNOTATION ANNOTATION_ID="a3528" TIME_SLOT_REF1="ts13" TIME_SLOT_REF2="ts14">
+                <ANNOTATION_VALUE>ullamco laboris nisi ut aliquip ex ea commodo consequat.</ANNOTATION_VALUE>
+            </ALIGNABLE_ANNOTATION>
+        </ANNOTATION>
+    </TIER>
+    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Words" PARENT_REF="Aleph Alpha" PARTICIPANT="A" TIER_ID="A_Words">
+        <ANNOTATION>
+            <REF_ANNOTATION ANNOTATION_ID="a3529" ANNOTATION_REF="a3522">
+                <ANNOTATION_VALUE>Duis aute</ANNOTATION_VALUE>
+            </REF_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <REF_ANNOTATION ANNOTATION_ID="a3530" ANNOTATION_REF="a3524">
+                <ANNOTATION_VALUE>irure dolor in reprehenderit</ANNOTATION_VALUE>
+            </REF_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <REF_ANNOTATION ANNOTATION_ID="a3531" ANNOTATION_REF="a3527">
+                <ANNOTATION_VALUE>in voluptate velit esse cillum dolore</ANNOTATION_VALUE>
+            </REF_ANNOTATION>
+        </ANNOTATION>
+        <ANNOTATION>
+            <REF_ANNOTATION ANNOTATION_ID="a3532" ANNOTATION_REF="a3528">
+                <ANNOTATION_VALUE>eu fugiat nulla pariatur.</ANNOTATION_VALUE>
+            </REF_ANNOTATION>
+        </ANNOTATION>
+    </TIER>
+    <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="Note" PARENT_REF="Aleph Alpha" PARTICIPANT="A" TIER_ID="A_Translation"/>
+    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="default-lt" TIME_ALIGNABLE="true"/>
+    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="Phrases" TIME_ALIGNABLE="true"/>
+    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="Text" TIME_ALIGNABLE="true"/>
+    <LINGUISTIC_TYPE CONSTRAINTS="Symbolic_Subdivision" GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="Words" TIME_ALIGNABLE="false"/>
+    <LINGUISTIC_TYPE CONSTRAINTS="Symbolic_Association" GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="Note" TIME_ALIGNABLE="false"/>
+    <LOCALE COUNTRY_CODE="US" LANGUAGE_CODE="en"/>
+    <CONSTRAINT DESCRIPTION="Time subdivision of parent annotation's time interval, no time gaps allowed within this interval" STEREOTYPE="Time_Subdivision"/>
+    <CONSTRAINT DESCRIPTION="Symbolic subdivision of a parent annotation. Annotations refering to the same parent are ordered" STEREOTYPE="Symbolic_Subdivision"/>
+    <CONSTRAINT DESCRIPTION="1-1 association with a parent annotation" STEREOTYPE="Symbolic_Association"/>
+    <CONSTRAINT DESCRIPTION="Time alignable annotations within the parent annotation's time interval, gaps are allowed" STEREOTYPE="Included_In"/>
+</ANNOTATION_DOCUMENT>
