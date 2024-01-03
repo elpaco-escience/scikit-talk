@@ -5,10 +5,12 @@ from .parser import InputFile
 
 
 class ChaFile(InputFile):
-    PARTICIPANT_REGEX = r"^\*(?P<participant>\S+)\:"
     TIMING_REGEX = r"(?P<timing>\d{1,9}_\d{1,9})"
-    UTTERANCE_REGEX = r"\t(?P<utterance>.*)\s." + TIMING_REGEX
-    SPACER_REGEX = r"\([0-9.]+\)"
+    PARTICIPANT_REGEX = r"(^\*(?P<participant>\S+)\:){0,1}" # participant is optional
+    UTTERANCE_REGEX = r"\t(?P<utterance>.*)\s."
+    LINE_REGEX = PARTICIPANT_REGEX + UTTERANCE_REGEX + TIMING_REGEX
+
+    SPACER_REGEX = r"\((?P<spacer>[\d.]+)\)"
 
     def _pla_reader(self) -> pylangacq.Reader:
         return pylangacq.read_chat(self._path)
@@ -28,9 +30,8 @@ class ChaFile(InputFile):
         for info in utterance_info:
             if info["utterance"] is None:
                 continue
-            if info["utterance"] is not None:
-                timing = info["time"]
-                utterance = info["utterance"]
+            timing = info["time"]
+            utterance = info["utterance"]
             if info["participant"] is not None:
                 participant = info["participant"]
             complete_utterance = Utterance(
@@ -42,15 +43,30 @@ class ChaFile(InputFile):
 
     @staticmethod
     def _extract_info(line):
-        participant = ChaFile._extract_participant(line)
-        time = ChaFile._extract_timing(line)
-        utterance = ChaFile._extract_utterance(line)
-        return ({"participant": participant,
-                "time": time,
-                 "utterance": utterance})
+        default_return = {"utterance": None}
+
+        extract_re = re.search(ChaFile.LINE_REGEX, line)
+        if not bool(extract_re):
+            return default_return
+
+        try:
+            utterance = ChaFile._clean_utterance(extract_re["utterance"])
+        except TypeError:
+            return default_return
+
+        if utterance is not None:
+            timing = ChaFile._clean_timing(extract_re["timing"])
+            return ({
+                "participant": extract_re["participant"],
+                "time": timing,
+                "utterance": utterance
+                })
+        return default_return
 
     @staticmethod
     def _clean_utterance(utterance):
+        if re.match(ChaFile.SPACER_REGEX, utterance):
+            return None
         utterance = str(utterance)
         utterance = re.sub(r"^([^:]+):", "", utterance)
         utterance = re.sub(r"^\s+", "", utterance)
@@ -66,32 +82,6 @@ class ChaFile(InputFile):
         return utterance
 
     @staticmethod
-    def _extract_timing(line):
-        timing = re.search(ChaFile.TIMING_REGEX, line)
-        try:
-            timing = timing.group("timing")
-            timing = timing.split("_")
-            timing = [int(t) for t in timing]
-        except AttributeError:
-            timing = None
-        return timing
-
-    @staticmethod
-    def _extract_participant(line):
-        part_re = re.search(ChaFile.PARTICIPANT_REGEX, line)
-        try:
-            participant = part_re.group("participant")
-        except AttributeError:
-            participant = None
-        return participant
-
-    @staticmethod
-    def _extract_utterance(line):
-        utt_re = re.search(ChaFile.UTTERANCE_REGEX, line)
-        try:
-            utterance = utt_re.group("utterance")
-            if re.match(ChaFile.SPACER_REGEX, utterance):
-                utterance = None
-        except AttributeError:
-            utterance = None
-        return utterance
+    def _clean_timing(timing):
+        timing = timing.split("_")
+        return [int(t) for t in timing] if len(timing) == 2 else None
