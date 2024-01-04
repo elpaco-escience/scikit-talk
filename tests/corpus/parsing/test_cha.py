@@ -11,7 +11,7 @@ def path_source():
 @pytest.fixture
 def cha_info():
     n_utterances = 15
-    utterance_first = "first line of utterance"
+    utterance_first = "⌈first line: of utterance⌉"
     utterance_last = "spaced (.) with multiple (2.4) spacers"
     participants = {'MS. A', 'BertramKIBBEL'}
     timing = [[0, 1500],
