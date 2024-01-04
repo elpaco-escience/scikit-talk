@@ -1,4 +1,3 @@
-import re
 import xml.etree.ElementTree as eTree
 from ..utterance import Utterance
 from .parser import InputFile
@@ -22,31 +21,13 @@ class EafFile(InputFile):
         return {}
 
     def _extract_utterances(self):
-        timedict = self._extract_times(self.root)
-
-        # once again, a terrible loop >.<
-        annotations, sorting = [], []
-
+        annotations = []
         for tier in self.root.findall(f".//{self.TIER}"):
-            participant = tier.get(self.TIER_ID)
-
-            for annotation in tier.findall(f".//{self.ALIGNABLE_ANNOTATION}"):
-                utterance = annotation.find(self.ANNOTATION_VALUE).text
-
-                begin = annotation.get(self.TIME_SLOT_REF1)
-                end = annotation.get(self.TIME_SLOT_REF2)
-                time = [timedict[begin], timedict[end]]
-
-                annotations.append(
-                    Utterance(
-                        participant=participant,
-                        utterance=utterance,
-                        time=time
-                    ))
-
-                order = re.search(r"\d+", begin)
-                sorting.append(int(order.group()))
-
+            tier_id = tier.get(self.TIER_ID)
+            utterances = [self._annotation_to_utterance(
+                annotation, tier_id) for annotation in tier.findall(f".//{self.ALIGNABLE_ANNOTATION}")]
+            annotations.extend(utterances)
+        sorting = [utt.time[0] for utt in annotations]
         return [utt for _, utt in sorted(zip(sorting, annotations))]
 
     @property
@@ -56,8 +37,19 @@ class EafFile(InputFile):
             self._root = tree.getroot()
         return self._root
 
-    @staticmethod
-    def _extract_times(root):
-        time_slots = root.find(
-            f".//{EafFile.TIME_ORDER}").findall(f".//{EafFile.TIME_SLOT}")
-        return {stamp.get(EafFile.TIME_SLOT_ID): int(stamp.get(EafFile.TIME_VALUE)) for stamp in time_slots}
+    @property
+    def timedict(self):
+        if not hasattr(self, "_timedict"):
+            time_slots = self.root.find(
+                f".//{self.TIME_ORDER}").findall(f".//{self.TIME_SLOT}")
+            self._timedict = {stamp.get(self.TIME_SLOT_ID): int(
+                stamp.get(self.TIME_VALUE)) for stamp in time_slots}
+        return self._timedict
+
+    def _annotation_to_utterance(self, annotation, tier_id):
+        begin = annotation.get(self.TIME_SLOT_REF1)
+        end = annotation.get(self.TIME_SLOT_REF2)
+        time = [self.timedict[begin], self.timedict[end]]
+        return Utterance(utterance=annotation.find(self.ANNOTATION_VALUE).text,
+                         time=time,
+                         participant=tier_id)
