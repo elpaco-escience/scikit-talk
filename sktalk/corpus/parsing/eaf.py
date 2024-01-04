@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as eTree
 from ..utterance import Utterance
 from .parser import InputFile
 
@@ -37,7 +37,7 @@ class EafFile(InputFile):
     @property
     def root(self):
         if not hasattr(self, "_root"):
-            tree = ET.parse(self._path)
+            tree = eTree.parse(self._path)
             self._root = tree.getroot()
         return self._root
 
