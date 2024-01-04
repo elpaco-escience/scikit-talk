@@ -27,7 +27,7 @@ class EafFile(InputFile):
             utterances = [self._annotation_to_utterance(
                 annotation, tier_id) for annotation in tier.findall(f".//{self.ALIGNABLE_ANNOTATION}")]
             annotations.extend(utterances)
-        sorting = [utt.time[0] for utt in annotations]
+        sorting = [[*utt.time, index] for index, utt in enumerate(annotations)]
         return [utt for _, utt in sorted(zip(sorting, annotations))]
 
     @property

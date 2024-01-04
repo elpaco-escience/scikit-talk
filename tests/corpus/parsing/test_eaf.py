@@ -11,16 +11,16 @@ def path_source():
 def eaf_info():
     n_utterances = 8
     utterance_first = "Ut enim ad minim veniam"
-    utterance_last = "adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+    utterance_last = "ullamco laboris nisi ut aliquip ex ea commodo consequat."
     participants = {'Aleph Alpha', 'Bet Beta'}
     timing = [
         [0, 820],
         [1420, 2020],
-        [3200, 3860],
+        [1420, 3860],
         [3880, 4480],
         [5800, 6200],
         [6600, 6860],
-        [8020, 8480],
+        [9540, 9660],
         [9540, 9660]]
     return n_utterances, utterance_first, utterance_last, participants, timing
 
