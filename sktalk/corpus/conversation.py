@@ -62,6 +62,26 @@ class Conversation(Writer):
         """
         return self._metadata
 
+    @property
+    def n_utterances(self):
+        """
+        Get the number of utterances in the conversation.
+
+        Returns:
+            int: The number of utterances in the conversation.
+        """
+        return len(self._utterances)
+
+    @property
+    def participants(self):
+        """
+        Get the participants in the conversation.
+
+        Returns:
+            set[str]: A set of participant names.
+        """
+        return {u.participant for u in self._utterances}
+
     @classmethod
     def from_cha(cls, path):
         """Parse conversation file in Cha format
@@ -234,10 +254,10 @@ class Conversation(Writer):
         Returns:
             int: number of participants
         """
-        participants = [u.participant for u in self.utterances]
+        participants = self.participants
         if except_none:
             participants = [p for p in participants if p is not None]
-        return len(set(participants))
+        return len(participants)
 
     def _update(self, field: str, values: list, **kwargs):
         """
