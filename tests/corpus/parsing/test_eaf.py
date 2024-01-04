@@ -9,17 +9,21 @@ def path_source():
 
 @pytest.fixture
 def eaf_info():
-    n_utterances = 8
+    n_utterances = 12
     utterance_first = "Ut enim ad minim veniam"
-    utterance_last = "ullamco laboris nisi ut aliquip ex ea commodo consequat."
-    participants = {'Aleph Alpha', 'Bet Beta'}
+    utterance_last = "eu fugiat nulla pariatur."
+    participants = {'Aleph Alpha', 'Bet Beta', 'A_Words'}
     timing = [
         [0, 820],
         [1420, 2020],
         [1420, 3860],
+        [1420, 3860],
         [3880, 4480],
         [5800, 6200],
         [6600, 6860],
+        [6600, 6860],
+        [9540, 9660],
+        [9540, 9660],
         [9540, 9660],
         [9540, 9660]]
     return n_utterances, utterance_first, utterance_last, participants, timing
