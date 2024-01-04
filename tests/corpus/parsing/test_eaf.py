@@ -31,7 +31,80 @@ def eaf_info():
 
 @pytest.fixture
 def expected_metadata():
-    return {'source': 'tests/testdata/file02.eaf'}
+    return {
+        'source': 'tests/testdata/file02.eaf',
+        'header': {
+            'MEDIA_FILE': '',
+            'TIME_UNITS': 'milliseconds'
+        },
+        'adocument': {
+            'AUTHOR': '',
+            'DATE': '2015-09-04T05:39:16+01:00',
+            'VERSION': '3.0',
+            'FORMAT': '3.0',
+            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+            'xsi:noNamespaceSchemaLocation': 'http://www.mpi.nl/tools/elan/EAFv2.8.xsd'
+        },
+        'licenses': [],
+        'locales': {
+            'en': ('US', None)
+        },
+        'languages': {},
+        'media_descriptors': [
+            {
+            'MEDIA_URL': 'file:///Users/file.mp4',
+            'MIME_TYPE': 'video/mp4',
+            'RELATIVE_MEDIA_URL': './file.mp4'
+            },
+            {
+            'MEDIA_URL': 'file:///Users/file.wav',
+            'MIME_TYPE': 'audio/x-wav',
+            'RELATIVE_MEDIA_URL': './file.wav'
+            }
+        ],
+        'properties': [
+            ('lastUsedAnnotationId', '3533')
+        ],
+        'linked_file_descriptors': [],
+        'constraints': {
+            'Time_Subdivision': "Time subdivision of parent annotation's time interval, no time gaps allowed within this interval",
+            'Symbolic_Subdivision': 'Symbolic subdivision of a parent annotation. Annotations refering to the same parent are ordered',
+            'Symbolic_Association': '1-1 association with a parent annotation',
+            'Included_In': "Time alignable annotations within the parent annotation's time interval, gaps are allowed"
+        },
+        'linguistic_types': {
+            'default-lt': {
+            'GRAPHIC_REFERENCES': 'false',
+            'LINGUISTIC_TYPE_ID': 'default-lt',
+            'TIME_ALIGNABLE': 'true'
+            },
+            'Phrases': {
+            'GRAPHIC_REFERENCES': 'false',
+            'LINGUISTIC_TYPE_ID': 'Phrases',
+            'TIME_ALIGNABLE': 'true'
+            },
+            'Text': {
+            'GRAPHIC_REFERENCES': 'false',
+            'LINGUISTIC_TYPE_ID': 'Text',
+            'TIME_ALIGNABLE': 'true'
+            },
+            'Words': {
+            'CONSTRAINTS': 'Symbolic_Subdivision',
+            'GRAPHIC_REFERENCES': 'false',
+            'LINGUISTIC_TYPE_ID': 'Words',
+            'TIME_ALIGNABLE': 'false'
+            },
+            'Note': {
+            'CONSTRAINTS': 'Symbolic_Association',
+            'GRAPHIC_REFERENCES': 'false',
+            'LINGUISTIC_TYPE_ID': 'Note',
+            'TIME_ALIGNABLE': 'false'
+            }
+        },
+        'controlled_vocabularies': {},
+        'external_refs': {},
+        'lexicon_refs': {}
+        }
 
 
 class TestEafFile:

@@ -8,7 +8,21 @@ class EafFile(InputFile):
     """Parser for ELAN files."""
 
     def _extract_metadata(self):
-        return {}
+        return {
+            "header": self.pympi_eaf.header,
+            "adocument": self.pympi_eaf.adocument,
+            "licenses": self.pympi_eaf.licenses,
+            "locales": self.pympi_eaf.locales,
+            "languages": self.pympi_eaf.languages,
+            "media_descriptors": self.pympi_eaf.media_descriptors,
+            "properties": self.pympi_eaf.properties,
+            "linked_file_descriptors": self.pympi_eaf.linked_file_descriptors,
+            "constraints": self.pympi_eaf.constraints,
+            "linguistic_types": self.pympi_eaf.linguistic_types,
+            "controlled_vocabularies": self.pympi_eaf.controlled_vocabularies,
+            "external_refs": self.pympi_eaf.external_refs,
+            "lexicon_refs": self.pympi_eaf.lexicon_refs
+        }
 
     def _extract_utterances(self):
         tiers = self.pympi_eaf.tiers
