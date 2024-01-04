@@ -16,6 +16,8 @@ class EafFile(InputFile):
             warnings.warn("No tiers specified, parsing all available tiers.")
             self._tiers = None
 
+        self._pympi_eaf = None
+
     def _extract_metadata(self):
         return {
             "header": self.pympi_eaf.header,
@@ -51,7 +53,7 @@ class EafFile(InputFile):
 
     @property
     def pympi_eaf(self):
-        if not hasattr(self, "_pympi_eaf"):
+        if self._pympi_eaf is None:
             self._pympi_eaf = Eaf(self._path)
         return self._pympi_eaf
 
