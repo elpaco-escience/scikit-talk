@@ -142,7 +142,7 @@ class TestEafFile:
         (['Nonexistent tier'], {}, 0, pytest.raises(KeyError,
          match="Available tiers: Aleph Alpha; Interlinear; Bet Beta; A_Words; A_Translation")),
     ])
-    def test_tier_selection(self, path_source, tiers, participants, n_utterances, error):
+    def test_tier_selection(self, path_source, tiers, participants, n_utterances, error):   # noqa: too-many-arguments
         with error:
             parsed_eaf = Conversation.from_eaf(path_source, tiers=tiers)
             assert {u.participant for u in parsed_eaf.utterances} == participants
