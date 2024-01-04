@@ -3,6 +3,7 @@ import warnings
 from typing import Optional
 import pandas as pd
 from .parsing.cha import ChaFile
+from .parsing.eaf import EafFile
 from .utterance import Utterance
 from .write.writer import Writer
 
@@ -64,6 +65,11 @@ class Conversation(Writer):
     @classmethod
     def from_cha(cls, path):
         utterances, metadata = ChaFile(path).parse()
+        return cls(utterances, metadata)
+
+    @classmethod
+    def from_eaf(cls, path):
+        utterances, metadata = EafFile(path).parse()
         return cls(utterances, metadata)
 
     @classmethod

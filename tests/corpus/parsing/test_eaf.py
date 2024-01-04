@@ -1,4 +1,5 @@
 import pytest
+from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.eaf import EafFile
 
 
@@ -52,14 +53,14 @@ def expected_metadata():
         'languages': {},
         'media_descriptors': [
             {
-            'MEDIA_URL': 'file:///Users/file.mp4',
-            'MIME_TYPE': 'video/mp4',
-            'RELATIVE_MEDIA_URL': './file.mp4'
+                'MEDIA_URL': 'file:///Users/file.mp4',
+                'MIME_TYPE': 'video/mp4',
+                'RELATIVE_MEDIA_URL': './file.mp4'
             },
             {
-            'MEDIA_URL': 'file:///Users/file.wav',
-            'MIME_TYPE': 'audio/x-wav',
-            'RELATIVE_MEDIA_URL': './file.wav'
+                'MEDIA_URL': 'file:///Users/file.wav',
+                'MIME_TYPE': 'audio/x-wav',
+                'RELATIVE_MEDIA_URL': './file.wav'
             }
         ],
         'properties': [
@@ -74,37 +75,37 @@ def expected_metadata():
         },
         'linguistic_types': {
             'default-lt': {
-            'GRAPHIC_REFERENCES': 'false',
-            'LINGUISTIC_TYPE_ID': 'default-lt',
-            'TIME_ALIGNABLE': 'true'
+                'GRAPHIC_REFERENCES': 'false',
+                'LINGUISTIC_TYPE_ID': 'default-lt',
+                'TIME_ALIGNABLE': 'true'
             },
             'Phrases': {
-            'GRAPHIC_REFERENCES': 'false',
-            'LINGUISTIC_TYPE_ID': 'Phrases',
-            'TIME_ALIGNABLE': 'true'
+                'GRAPHIC_REFERENCES': 'false',
+                'LINGUISTIC_TYPE_ID': 'Phrases',
+                'TIME_ALIGNABLE': 'true'
             },
             'Text': {
-            'GRAPHIC_REFERENCES': 'false',
-            'LINGUISTIC_TYPE_ID': 'Text',
-            'TIME_ALIGNABLE': 'true'
+                'GRAPHIC_REFERENCES': 'false',
+                'LINGUISTIC_TYPE_ID': 'Text',
+                'TIME_ALIGNABLE': 'true'
             },
             'Words': {
-            'CONSTRAINTS': 'Symbolic_Subdivision',
-            'GRAPHIC_REFERENCES': 'false',
-            'LINGUISTIC_TYPE_ID': 'Words',
-            'TIME_ALIGNABLE': 'false'
+                'CONSTRAINTS': 'Symbolic_Subdivision',
+                'GRAPHIC_REFERENCES': 'false',
+                'LINGUISTIC_TYPE_ID': 'Words',
+                'TIME_ALIGNABLE': 'false'
             },
             'Note': {
-            'CONSTRAINTS': 'Symbolic_Association',
-            'GRAPHIC_REFERENCES': 'false',
-            'LINGUISTIC_TYPE_ID': 'Note',
-            'TIME_ALIGNABLE': 'false'
+                'CONSTRAINTS': 'Symbolic_Association',
+                'GRAPHIC_REFERENCES': 'false',
+                'LINGUISTIC_TYPE_ID': 'Note',
+                'TIME_ALIGNABLE': 'false'
             }
         },
         'controlled_vocabularies': {},
         'external_refs': {},
         'lexicon_refs': {}
-        }
+    }
 
 
 class TestEafFile:
@@ -117,4 +118,16 @@ class TestEafFile:
         assert eaf_utts[-1].utterance == expected_last
         assert {u.participant for u in eaf_utts} == expected_participants
         parsed_timing = [utt.time for utt in eaf_utts]
+        assert parsed_timing == expected_timing
+
+    def test_wrapped_parser(self, path_source, eaf_info, expected_metadata):
+        expected_n_utterances, expected_first, expected_last, expected_participants, expected_timing = eaf_info
+        parsed_eaf = Conversation.from_eaf(path_source)
+        assert isinstance(parsed_eaf, Conversation)
+        assert parsed_eaf.metadata == expected_metadata
+        assert parsed_eaf.utterances[0].utterance == expected_first
+        assert parsed_eaf.utterances[-1].utterance == expected_last
+        assert {u.participant for u in parsed_eaf.utterances} == expected_participants
+        assert len(parsed_eaf.utterances) == expected_n_utterances
+        parsed_timing = [utt.time for utt in parsed_eaf.utterances]
         assert parsed_timing == expected_timing
