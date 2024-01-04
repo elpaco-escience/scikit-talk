@@ -64,11 +64,28 @@ class Conversation(Writer):
 
     @classmethod
     def from_cha(cls, path):
+        """Parse conversation file in Cha format
+
+        Args:
+            path (str): Path to the Cha file
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
         utterances, metadata = ChaFile(path).parse()
         return cls(utterances, metadata)
 
     @classmethod
-    def from_eaf(cls, path, tiers: Optional[list[str]] = None):
+    def from_eaf(cls, path: str, tiers: Optional[list[str]] = None):
+        """Parse conversation file in ELAN format
+
+        Args:
+            path (str): Path to the ELAN file
+            tiers (Optional[list[str]], optional): List of tiers to parse. Defaults to None, in which case all tiers are parsed.
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
         utterances, metadata = EafFile(path, tiers).parse()
         return cls(utterances, metadata)
 
