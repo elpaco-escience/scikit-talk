@@ -142,7 +142,7 @@ class Conversation(Writer):
             kwargs (dict): key-value pairs with which specific utterances can be selected
         """
         selected = self.select(**kwargs)
-        for u in selected._utterances[:n]:
+        for u in selected.utterances[:n]:
             if len(u.time) != 2:
                 time = "(no timing information)"
             else:
@@ -163,6 +163,15 @@ class Conversation(Writer):
             u.get(key) == value for key, value in kwargs.items())]
         utterances = [Utterance(**fields) for fields in utterances]
         return Conversation(utterances, suppress_warnings=True)
+
+    def remove(self, **kwargs):
+        """Remove utterances based on content in specific fields
+
+        Args:
+            kwargs (dict): key-value pairs with which specific utterances can be selected
+        """
+        to_remove = self.select(**kwargs)
+        self._utterances = [u for u in self._utterances if u not in to_remove._utterances]
 
     def asdict(self):
         """

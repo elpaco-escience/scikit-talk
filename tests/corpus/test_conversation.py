@@ -60,6 +60,14 @@ class TestConversation:
         captured = capfd.readouterr()
         assert captured.out.strip() == "(5500 - 7500) C: '6 utterance F'"
 
+    def test_conversation_remove(self, convo, convo_meta):
+        assert convo.n_utterances == 10
+        convo.remove(participant = "A")
+        assert convo.n_utterances == 7
+        # metadata is unaffected
+        assert convo.metadata == convo_meta
+        convo.remove(time = None)
+        assert convo.n_utterances == 6
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
