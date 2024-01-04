@@ -171,7 +171,7 @@ class Conversation(Writer):
             kwargs (dict): key-value pairs with which specific utterances can be selected
         """
         to_remove = self.select(**kwargs)
-        self._utterances = [u for u in self._utterances if u not in to_remove._utterances]
+        self._utterances = [u for u in self._utterances if u not in to_remove.utterances]
 
     def asdict(self):
         """
