@@ -133,12 +133,36 @@ class Conversation(Writer):
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError
 
-    def summarize(self):
+    def summary(self, n=10, **kwargs):
         """
-        Print a summary of the conversation.
+        Print the first n lines of a conversation.
+
+        Args:
+            n (int, optional): Number of lines to print. Defaults to 10.
+            kwargs (dict): key-value pairs with which specific utterances can be selected
         """
-        for utterance in self._utterances[:10]:
-            print(utterance)
+        selected = self.select(**kwargs)
+        for u in selected._utterances[:n]:
+            if len(u.time) != 2:
+                time = "(no timing information)"
+            else:
+                time = f"({u.time[0]} - {u.time[1]})"
+            print(f"{time} {u.participant}: '{u.utterance}'")
+
+    def select(self, **kwargs):
+        """Select utterances based on content in specific fields
+
+        Args:
+            kwargs (dict): key-value pairs with which specific utterances can be selected
+
+        Returns:
+            Conversation: Conversation object without metadata, containing a reduced set of utterances
+        """
+        utdict = [u.asdict() for u in self._utterances]
+        utterances = [u for u in utdict if all(
+            u.get(key) == value for key, value in kwargs.items())]
+        utterances = [Utterance(**fields) for fields in utterances]
+        return Conversation(utterances, suppress_warnings=True)
 
     def asdict(self):
         """

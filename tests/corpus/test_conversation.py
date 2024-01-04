@@ -38,6 +38,28 @@ class TestConversation:
         with pytest.raises(TypeError, match="cannot be imported as a Conversation"):
             Conversation.from_json("tests/testdata/dummy_corpus.json")
 
+    def test_conversation_properties(self, convo):
+        assert convo.participants == {"A", "B", "C", None}
+        assert convo.n_utterances == 10
+
+    def test_conversation_selection(self, convo):
+        selected_convo = convo.select(participant="A")
+        assert selected_convo.participants == {"A"}
+        assert selected_convo.n_utterances == 3
+        selected_convo = convo.select(utterance="6 utterance F")
+        assert selected_convo.n_utterances == 1
+        assert selected_convo.utterances[0].utterance == "6 utterance F"
+        selected_convo = convo.select()
+        assert selected_convo.n_utterances == 10
+
+    def test_conversation_summary(self, convo, capfd):
+        convo.summary(n=1)
+        captured = capfd.readouterr()
+        assert captured.out.strip() == "(0 - 1000) A: '0 utterance A'"
+        convo.summary(n=1, participant="C")
+        captured = capfd.readouterr()
+        assert captured.out.strip() == "(5500 - 7500) C: '6 utterance F'"
+
 
 class TestConversationMetrics:
     @pytest.mark.parametrize("args, error",
