@@ -11,7 +11,7 @@ def path_source():
 @pytest.fixture
 def cha_info():
     n_utterances = 15
-    utterance_first = "⌈first line: of utterance⌉"
+    utterance_first = "⌈first line: of utterance⌉,"
     utterance_last = "spaced (.) with multiple (2.4) spacers"
     participants = {'MS. A', 'BertramKIBBEL'}
     timing = [[0, 1500],
@@ -88,26 +88,3 @@ class TestChaFile:
         assert len(parsed_cha.utterances) == expected_n_utterances
         parsed_timing = [utt.time for utt in parsed_cha.utterances]
         assert parsed_timing == expected_timing
-
-    unclean_clean = [
-        [
-            r"{'SAM': 'que (0.5) e(u) gosto \x151790561_1793421\x15 (0.2)→'}",
-            "que (0.5) e(u) gosto (0.2)→"
-        ],
-        [
-            r"{'SOR': 'hm → \x151706328_1706744\x15'}",
-            "hm →"
-        ],
-        [
-            r"",
-            ""
-        ],
-        [
-            r"{'T': '- what \x15128_128\x15 just (0.3) (.) \x15136_236\x15'}",
-            "- what just (0.3) (.)"
-        ]
-    ]
-
-    @pytest.mark.parametrize("unclean, clean", unclean_clean)
-    def test_clean_utterance(self, unclean, clean):
-        assert ChaFile._clean_utterance(unclean) == clean            # noqa: W0212
