@@ -68,8 +68,8 @@ class Conversation(Writer):
         return cls(utterances, metadata)
 
     @classmethod
-    def from_eaf(cls, path):
-        utterances, metadata = EafFile(path).parse()
+    def from_eaf(cls, path, tiers: Optional[list[str]] = None):
+        utterances, metadata = EafFile(path, tiers).parse()
         return cls(utterances, metadata)
 
     @classmethod

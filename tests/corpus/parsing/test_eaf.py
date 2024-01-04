@@ -1,3 +1,4 @@
+from contextlib import nullcontext as does_not_raise
 import pytest
 from sktalk.corpus.conversation import Conversation
 from sktalk.corpus.parsing.eaf import EafFile
@@ -131,3 +132,18 @@ class TestEafFile:
         assert len(parsed_eaf.utterances) == expected_n_utterances
         parsed_timing = [utt.time for utt in parsed_eaf.utterances]
         assert parsed_timing == expected_timing
+
+    @pytest.mark.parametrize("tiers, participants, n_utterances, error", [
+        (None, {'Aleph Alpha', 'Bet Beta', 'A_Words'}, 12, does_not_raise()),
+        (['Aleph Alpha'], {'Aleph Alpha'}, 4, does_not_raise()),
+        (['Bet Beta', 'Aleph Alpha'], {
+         'Aleph Alpha', 'Bet Beta'}, 8, does_not_raise()),
+        ('A_Words', {'A_Words'}, 4, does_not_raise()),
+        (['Nonexistent tier'], {}, 0, pytest.raises(KeyError,
+         match="Available tiers: Aleph Alpha; Interlinear; Bet Beta; A_Words; A_Translation")),
+    ])
+    def test_tier_selection(self, path_source, tiers, participants, n_utterances, error):
+        with error:
+            parsed_eaf = Conversation.from_eaf(path_source, tiers=tiers)
+            assert {u.participant for u in parsed_eaf.utterances} == participants
+            assert len(parsed_eaf.utterances) == n_utterances

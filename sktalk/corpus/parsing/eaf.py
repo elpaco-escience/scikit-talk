@@ -1,4 +1,5 @@
 from itertools import chain
+from typing import Optional
 from pympi.Elan import Eaf
 from ..utterance import Utterance
 from .parser import InputFile
@@ -6,6 +7,10 @@ from .parser import InputFile
 
 class EafFile(InputFile):
     """Parser for ELAN files."""
+
+    def __init__(self, path: str, tiers: Optional[list[str]] = None):
+        super().__init__(path)
+        self._tiers = [tiers] if isinstance(tiers, str) else tiers
 
     def _extract_metadata(self):
         return {
@@ -25,7 +30,16 @@ class EafFile(InputFile):
         }
 
     def _extract_utterances(self):
-        tiers = self.pympi_eaf.tiers
+        available_tiers = self.pympi_eaf.tiers
+        if self._tiers:
+            tiers = [tier for tier in available_tiers if tier in self._tiers]
+            for tier in self._tiers:
+                if tier not in tiers:
+                    available = "; ".join(available_tiers.keys())
+                    raise KeyError(
+                        f"Tier {tier} not found in the file. Available tiers: {available}")
+        else:
+            tiers = available_tiers
         utterances = [self._annotation_to_utterances(tier) for tier in tiers]
         utterances = list(chain(*utterances))
         sorting = [[*utt.time, index] for index, utt in enumerate(utterances)]
