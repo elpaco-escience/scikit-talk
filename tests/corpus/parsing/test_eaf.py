@@ -141,6 +141,8 @@ class TestEafFile:
         ('A_Words', {'A_Words'}, 4, does_not_raise()),
         (['Nonexistent tier'], {}, 0, pytest.raises(KeyError,
          match="Available tiers: Aleph Alpha; Interlinear; Bet Beta; A_Words; A_Translation")),
+        ([], {'Aleph Alpha', 'Bet Beta', 'A_Words'}, 12, pytest.warns(
+            match="No tiers specified, parsing all available tiers.")),
     ])
     def test_tier_selection(self, path_source, tiers, participants, n_utterances, error):   # noqa: too-many-arguments
         with error:

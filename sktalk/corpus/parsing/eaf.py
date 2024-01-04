@@ -1,3 +1,4 @@
+import warnings
 from itertools import chain
 from typing import Optional
 from pympi.Elan import Eaf
@@ -11,6 +12,9 @@ class EafFile(InputFile):
     def __init__(self, path: str, tiers: Optional[list[str]] = None):
         super().__init__(path)
         self._tiers = [tiers] if isinstance(tiers, str) else tiers
+        if self._tiers == []:
+            warnings.warn("No tiers specified, parsing all available tiers.")
+            self._tiers = None
 
     def _extract_metadata(self):
         return {
