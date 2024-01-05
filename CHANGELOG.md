@@ -6,13 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.1] - 1900-12-31
+## [0.1.0] - 2024-01-05
 
 ### Added
 
+- Initial release
+- main modules `Corpus`, `Conversation` and `Utterance`
+- parsers for `.eaf` and `.cha` files
+- read and write `.json` files
+- write `.csv` files
+- calculate FTO in a Conversation object
+
 ### Removed
+
+N/A
 
 ### Changed
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
-[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.0.1
+N/A
+
+[Unreleased]: https://github.com/elpaco-escience/scikit-talk/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/elpaco-escience/scikit-talk/releases/tag/v0.1.0
