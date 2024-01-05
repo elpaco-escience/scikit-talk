@@ -25,7 +25,7 @@ class Utterance:
     metadata: Optional[dict[str, Any]] = None
 
     def __post_init__(self):
-        if not self.utterance_raw:  # if reading in existing data, we do not want to overwrite the raw utterance
+        if self.utterance_raw is None:  # if reading in existing data, we do not want to overwrite the raw utterance
             self.utterance_raw = self.utterance
         self.utterance = self._clean_utterance(self.utterance)
         self.utterance_list = self.utterance.split()
