@@ -21,7 +21,7 @@ class TestUtterance():
         ("上学 去, 我 现在 diaper@s 了 .", "上学 去 我 现在 diapers 了", 6, 14,
          ["上学", "去", "我", "现在", "diapers", "了"])
     ])
-    def test_postinit_utterance(self, utt_in, utt_out, nwords, nchars, uttlist):
+    def test_postinit_utterance(self, utt_in, utt_out, nwords, nchars, uttlist):    # noqa: too-many-arguments
         utt = Utterance(
             utterance=utt_in
         )
