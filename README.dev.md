@@ -152,7 +152,8 @@ Copy the changelog for this version into the description.
 Tag the release according to [semantic versioning guidelines](https://semver.org/), preceded with a `v` (e.g.: v1.0.0).
 The release title is the tag and the release date together (e.g.: v1.0.0 (2019-07-25)).
 
-Releasing on GitHub will automatically trigger the publication of the release to PyPI.
+The Zenodo integration will take care of updating the Zenodo record with a new release.
+Releasing on GitHub will also automatically trigger the publication of the release to PyPI, through a Github Action.
 To verify that everything works as expected, it is recommended to first publish a release candidate (see [below](#release-candidates)).
 
 > [!NOTE]
@@ -171,3 +172,4 @@ To verify that everything works as expected, it is recommended to first publish 
 1. Confirm that the released package can be installed
     - from PyPI with `pip install scikit-talk`
     - from test.PyPI with `pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/test-scikit-talk`
+1. The release should have triggered a [Zenodo upload](https://zenodo.org/). Confirm that the Zenodo record has been updated.
