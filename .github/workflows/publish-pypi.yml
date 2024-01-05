@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/test-scikit-talk
+      url: https://test.pypi.org/p/sktalk # the testpypi url is different as scikit-talk is still in use
     permissions:
       id-token: write
     steps:
