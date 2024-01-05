@@ -140,7 +140,7 @@ This section describes how to make a release in 3 parts:
 ### (1/3) Preparation
 
 1. Update the <CHANGELOG.md> (don't forget to update links at bottom of page)
-1. Verify that the information in `CITATION.cff` is correct, and that `.zenodo.json` contains equivalent data
+1. Verify that the information in `CITATION.cff` is correct
 1. Make sure the [version has been updated](#versioning).
 1. Run the unit tests with `pytest -v`
 

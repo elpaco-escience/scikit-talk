@@ -15,14 +15,21 @@ authors:
     family-names: Gabor
     given-names: Parti
   -
-    family-names: Viviani
-    given-names: Eva
-    orcid: "https://orcid.org/0000-0002-1330-0585"
-  -
     family-names: Dingemanse
     given-names: Mark
     orcid: "https://orcid.org/0000-0002-3290-5723"
-date-released: 2023-03-03
+  -
+    family-names: Schnober
+    given-names: Carsten
+    orcid: "https://orcid.org/0000-0001-9139-1577"
+  -
+    family-names: De Kleijn
+    given-names: Maurice
+  -
+    family-names: Qi
+    given-names: Ji
+    orcid: "https://orcid.org/0000-0001-8074-2730"
+date-released: 2024-01-05
 doi: 10.0000/FIXME
 version: "0.1.0"
 repository-code: "https://github.com/elpaco-escience/scikit-talk"
@@ -30,5 +37,5 @@ keywords:
     - conversation
     - language corpora
     - turn-taking
-message: "If you use this software, please cite it using these metadata."
+message: "If you use this software, please cite the original paper DOI:10.18653/v1/2021.sigdial-1.26"
 license: Apache-2.0
