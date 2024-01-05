@@ -62,8 +62,7 @@ class Conversation(Writer):
         """
         return self._metadata
 
-    @property
-    def n_utterances(self):
+    def __len__(self):
         """
         Get the number of utterances in the conversation.
 
