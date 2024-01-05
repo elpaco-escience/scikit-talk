@@ -4,6 +4,7 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from typing import Any
 from typing import Optional
+import warnings
 
 
 @dataclass
@@ -12,13 +13,15 @@ class Utterance:
     participant: Optional[str] = None
     time: Optional[list] = None
     begin: Optional[str] = None
+    begin_timestamp: Optional[str] = None
     end: Optional[str] = None
-    metadata: Optional[dict[str, Any]] = None
+    end_timestamp: Optional[str] = None
     utterance_raw: Optional[str] = None
     utterance_list: Optional[list[str]] = None
     n_words: Optional[int] = None
     n_characters: Optional[int] = None
     FTO: Optional[int] = None
+    metadata: Optional[dict[str, Any]] = None
 
     def __post_init__(self):
         if not self.utterance_raw:  # if reading in existing data, we do not want to overwrite the raw utterance
@@ -28,9 +31,13 @@ class Utterance:
         self.n_words = len(self.utterance_list)
         self.n_characters = sum(len(word) for word in self.utterance_list)
 
-        # calculate timestamps
-        if not self.begin or not self.end:
-            self._split_time()
+        self._validate_time()
+
+        if (not self.begin or not self.end) and self.time:
+            self.begin = self.time[0]
+            self.end = self.time[1]
+            self.begin_timestamp = self._to_timestamp(self.begin)
+            self.end_timestamp = self._to_timestamp(self.end)
 
     def get_audio(self):
         pass
@@ -80,25 +87,31 @@ class Utterance:
             return None
         return self.time[0] - planning_buffer >= other.time[0]
 
-    def _split_time(self):
-        try:
-            begin, end = self.time
-            self.begin = self._to_timestamp(begin)
-            self.end = self._to_timestamp(end)
-        except (ValueError, TypeError):
-            self.begin = None
-            self.end = None
+    def _validate_time(self):
+        errormsg = f"utterance {self.utterance} has invalid time {self.time}"
+
+        if self.time is None:
+            return True
+
+        if not isinstance(self.time, list) or len(self.time) != 2:
+            warnings.warn(errormsg)
+            self.time = None
+            return False
+
+        if not all(isinstance(time, (float, int)) for time in self.time):
+            warnings.warn(errormsg)
+            self.time = None
+            return False
+
+        if any(time > 86399999 or time < 0 for time in self.time) or self.time[0] > self.time[1]:
+            warnings.warn(f"{errormsg}")
+            self.time = None
+            return False
+
+        return True
 
     @staticmethod
     def _to_timestamp(time_ms):
-        try:
-            time_ms = float(time_ms)
-        except ValueError:
-            return None
-        if time_ms > 86399999:
-            raise ValueError(f"timestamp {time_ms} exceeds 24h")
-        if time_ms < 0:
-            raise ValueError(f"timestamp {time_ms} negative")
         time_dt = datetime.datetime.utcfromtimestamp(time_ms/1000)
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
