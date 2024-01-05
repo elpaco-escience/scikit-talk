@@ -78,7 +78,7 @@ class Conversation(Writer):
         Get the participants in the conversation.
 
         Returns:
-            set[str]: A set of participant names.
+            set[str]: A set of unique participant names.
         """
         return {u.participant for u in self._utterances}
 
