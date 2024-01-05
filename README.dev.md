@@ -172,4 +172,5 @@ To verify that everything works as expected, it is recommended to first publish 
 1. Confirm that the released package can be installed
     - from PyPI with `pip install scikit-talk`
     - from test.PyPI with `pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/test-scikit-talk`
-1. The release should have triggered a [Zenodo upload](https://zenodo.org/). Confirm that the Zenodo record has been updated.
+1. The release should have triggered a [Zenodo upload](https://zenodo.org/doi/10.5281/zenodo.10462997). Confirm that the Zenodo record has been updated.
+

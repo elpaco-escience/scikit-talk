@@ -30,8 +30,8 @@ authors:
     given-names: Ji
     orcid: "https://orcid.org/0000-0001-8074-2730"
 date-released: 2024-01-05
-doi: 10.0000/FIXME
-version: "0.1.0"
+doi: 10.5281/zenodo.10462997
+version: "0.1.1"
 repository-code: "https://github.com/elpaco-escience/scikit-talk"
 keywords:
     - conversation
