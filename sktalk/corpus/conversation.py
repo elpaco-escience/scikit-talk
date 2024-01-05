@@ -101,6 +101,10 @@ class Conversation(Writer):
         Args:
             path (str): Path to the ELAN file
             tiers (Optional[list[str]], optional): List of tiers to parse. Defaults to None, in which case all tiers are parsed.
+                If an empty list is passed, all tiers are parsed, but a warning is issued.
+
+        Raises:
+            KeyError if tiers are named that are not found in the file.
 
         Returns:
             Conversation: A Conversation object representing the conversation in the file.
