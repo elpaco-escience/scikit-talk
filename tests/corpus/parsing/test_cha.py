@@ -70,8 +70,8 @@ class TestChaFile:
         expected_n_utterances, expected_first, expected_last, expected_participants, expected_timing = cha_info
         cha_utts, cha_meta = ChaFile(path_source).parse()
         assert cha_meta == expected_metadata
-        assert cha_utts[0].utterance == expected_first
-        assert cha_utts[-1].utterance == expected_last
+        assert cha_utts[0].utterance_raw == expected_first
+        assert cha_utts[-1].utterance_raw == expected_last
         assert {u.participant for u in cha_utts} == expected_participants
         assert len(cha_utts) == expected_n_utterances
         parsed_timing = [utt.time for utt in cha_utts]
@@ -82,8 +82,8 @@ class TestChaFile:
         parsed_cha = Conversation.from_cha(path_source)
         assert isinstance(parsed_cha, Conversation)
         assert parsed_cha.metadata == expected_metadata
-        assert parsed_cha.utterances[0].utterance == expected_first
-        assert parsed_cha.utterances[-1].utterance == expected_last
+        assert parsed_cha.utterances[0].utterance_raw == expected_first
+        assert parsed_cha.utterances[-1].utterance_raw == expected_last
         assert {u.participant for u in parsed_cha.utterances} == expected_participants
         assert len(parsed_cha.utterances) == expected_n_utterances
         parsed_timing = [utt.time for utt in parsed_cha.utterances]
