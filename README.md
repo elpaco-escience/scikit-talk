@@ -1,6 +1,8 @@
-## Badges
+# Welcome to `scikit-talk`!
 
-(Customize these badges with your own links, and check https://shields.io/ or https://badgen.net/ to see which other badges are available.)
+`scikit-talk` is an open-source toolkit for processing collections of real-world conversational speech in Python. The toolkit aims to facilitate the exploration of large collections of transcriptions and annotations of conversational interaction.
+
+## Badges
 
 | fair-software.eu recommendations | |
 | :-- | :--  |
@@ -19,16 +21,15 @@
 | SonarCloud                         | [![sonarcloud](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/sonarcloud.yml) |
 | Citation data consistency               | [![cffconvert](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml/badge.svg)](https://github.com/elpaco-escience/scikit-talk/actions/workflows/cffconvert.yml) |
 
-
-## How to use scikit-talk
-
-Short description of package
-
-The project setup is documented in [project_setup.md](project_setup.md). Feel free to remove this document (and/or the link to this document) if you don't need it.
-
 ## Installation
 
-To install scikit-talk from GitHub repository, do:
+`scikit-talk can be installed from PyPI:
+
+```console
+python3 -m pip install scikit-talk
+```
+
+Alternatively, you can install the latest development version from GitHub:
 
 ```console
 git clone git@github.com:elpaco-escience/scikit-talk.git
@@ -43,8 +44,10 @@ To read more about the aims of this software, [this paper](https://aclanthology.
 
 ## Contributing
 
-If you want to contribute to the development of scikit-talk,
+If you want to contribute to the development of `scikit-talk,
 have a look at the [contribution guidelines](CONTRIBUTING.md).
+
+Detailed technical information on how to work with the code base can be found in [README.dev.md](README.dev.md).
 
 ## Credits
 
