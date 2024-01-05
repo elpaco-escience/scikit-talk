@@ -136,15 +136,15 @@ class Conversation(Writer):
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError
 
-    def summary(self, n=10, **kwargs):
+    def summary(self, n=10, **fields):
         """
         Print the first n lines of a conversation.
 
         Args:
             n (int, optional): Number of lines to print. Defaults to 10.
-            kwargs (dict): key-value pairs with which specific utterances can be selected
+            fields (dict): key-value pairs with which specific utterances can be selected
         """
-        selected = self.select(**kwargs)
+        selected = self.select(**fields)
         for u in selected.utterances[:n]:
             if len(u.time) != 2:
                 time = "(no timing information)"
@@ -152,28 +152,26 @@ class Conversation(Writer):
                 time = f"({u.time[0]} - {u.time[1]})"
             print(f"{time} {u.participant}: '{u.utterance}'")
 
-    def select(self, **kwargs):
+    def select(self, **fields):
         """Select utterances based on content in specific fields
 
         Args:
-            kwargs (dict): key-value pairs with which specific utterances can be selected
+            fields (dict): key-value pairs with which specific utterances can be selected
 
         Returns:
             Conversation: Conversation object without metadata, containing a reduced set of utterances
         """
-        utdict = [u.asdict() for u in self._utterances]
-        utterances = [u for u in utdict if all(
-            u.get(key) == value for key, value in kwargs.items())]
-        utterances = [Utterance(**fields) for fields in utterances]
+        utterances = [utterance for utterance in self._utterances if all(
+            getattr(utterance, key) == value for key, value in fields.items())]
         return Conversation(utterances, suppress_warnings=True)
 
-    def remove(self, **kwargs):
+    def remove(self, **fields):
         """Remove utterances based on content in specific fields
 
         Args:
-            kwargs (dict): key-value pairs with which specific utterances can be selected
+            fields (dict): key-value pairs with which specific utterances can be selected
         """
-        to_remove = self.select(**kwargs)
+        to_remove = self.select(**fields)
         self._utterances = [
             u for u in self._utterances if u not in to_remove.utterances]
 
@@ -298,7 +296,7 @@ class Conversation(Writer):
 
     def _update(self, field: str, values: list, **kwargs):
         """
-        Update the all utterances in the conversation with calculated values
+        Update all utterances in the conversation with calculated values
 
         This function also stores relevant arguments in the Conversation metadata.
 
