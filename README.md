@@ -23,7 +23,7 @@ Scikit-talk is an open-source toolkit for processing collections of real-world c
 
 ## Installation
 
-scikit-talk can be installed from PyPI:
+Scikit-talk can be installed from PyPI:
 
 ```console
 python3 -m pip install scikit-talk
