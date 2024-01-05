@@ -1,8 +1,9 @@
-import datetime
 import re
 import warnings
 from dataclasses import asdict
 from dataclasses import dataclass
+from datetime import datetime
+from datetime import timezone
 from typing import Any
 from typing import Optional
 
@@ -112,7 +113,7 @@ class Utterance:
 
     @staticmethod
     def _to_timestamp(time_ms):
-        time_dt = datetime.datetime.utcfromtimestamp(time_ms/1000)
+        time_dt = datetime.fromtimestamp(time_ms/1000, tz = timezone.utc)
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
     @staticmethod
