@@ -1,5 +1,4 @@
 import warnings
-from itertools import chain
 from typing import Optional
 from pympi.Elan import Eaf
 from ..utterance import Utterance
@@ -37,16 +36,18 @@ class EafFile(InputFile):
 
     def _extract_utterances(self):
         available_tiers = self.pympi_eaf.tiers
-        if self._tiers:
+        if self._tiers is not None:
             tiers = [tier for tier in available_tiers if tier in self._tiers]
-            for tier in self._tiers:
-                if tier not in tiers:
-                    available = "; ".join(available_tiers.keys())
-                    raise KeyError(
-                        f"Tier {tier} not found in the file. Available tiers: {available}")
+            if unavailable := "; ".join(
+                [tier for tier in self._tiers if tier not in available_tiers]
+            ):
+                available = "; ".join(available_tiers.keys())
+                raise KeyError(
+                    f"Tier(s) {unavailable} not found in the file. Available tiers: {available}")
         else:
             tiers = available_tiers
-        utterances = [utterance for tier in tiers for utterance in self._annotation_to_utterances(tier)]
+        utterances = [
+            utterance for tier in tiers for utterance in self._annotation_to_utterances(tier)]
         sorting = [[*utt.time, index] for index, utt in enumerate(utterances)]
         return [utt for _, utt in sorted(zip(sorting, utterances))]
 
