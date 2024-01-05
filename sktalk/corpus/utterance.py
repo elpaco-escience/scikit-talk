@@ -92,7 +92,7 @@ class Utterance:
         valid = isinstance(self.time, list) and len(self.time) == 2
         valid = valid and all(isinstance(time, (float, int))
                               for time in self.time)
-        valid = valid and all(time >= 0 and time < 86399999
+        valid = valid and all(time >= 0 and time < 86399999     # noqa R1716
                               for time in self.time)
         valid = valid and self.time[0] < self.time[1]
 
