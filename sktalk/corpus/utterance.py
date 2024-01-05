@@ -89,9 +89,12 @@ class Utterance:
         return self.time[0] - planning_buffer >= other.time[0]
 
     def _validate_time(self):
-        valid = isinstance(self.time, list) and len(self.time) == 2 and all(
-            isinstance(time, (float, int)) for time in self.time) and all(
-            time >= 0 and time < 86399999 for time in self.time) and self.time[0] <= self.time[1]
+        valid = isinstance(self.time, list) and len(self.time) == 2
+        valid = valid and all(isinstance(time, (float, int))
+                              for time in self.time)
+        valid = valid and all(time >= 0 and time < 86399999
+                              for time in self.time)
+        valid = valid and self.time[0] < self.time[1]
 
         if not valid and self.time is not None:
             warnings.warn(
