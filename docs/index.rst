@@ -6,14 +6,11 @@
 scikit-talk user documentation
 ==============================
 
-Scikit-talk will be an open-source toolkit for processing collections of
+Scikit-talk is an open-source toolkit for processing collections of
 real-world conversational speech in Python. The toolkit aims to facilitate the
 exploration of large collections of transcriptions and annotations of
 conversational interaction, specifically tailored to applications in speech
 processing and Conversational AI.
-
-Scikit-talk is under active development, and currently includes a preprocessor
-module that allows the import of several common transcription formats.
 
 You can read the full paper here: `Liesenfeld et al. (2021) <https://aclanthology.org/2021.sigdial-1.26/>`_
 
