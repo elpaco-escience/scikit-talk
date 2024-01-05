@@ -1,6 +1,6 @@
-# Welcome to `scikit-talk`!
+# Welcome to Scikit-talk!
 
-`scikit-talk` is an open-source toolkit for processing collections of real-world conversational speech in Python. The toolkit aims to facilitate the exploration of large collections of transcriptions and annotations of conversational interaction.
+Scikit-talk is an open-source toolkit for processing collections of real-world conversational speech in Python. The toolkit aims to facilitate the exploration of large collections of transcriptions and annotations of conversational interaction.
 
 ## Badges
 
@@ -23,7 +23,7 @@
 
 ## Installation
 
-`scikit-talk can be installed from PyPI:
+scikit-talk can be installed from PyPI:
 
 ```console
 python3 -m pip install scikit-talk
@@ -44,7 +44,7 @@ To read more about the aims of this software, [this paper](https://aclanthology.
 
 ## Contributing
 
-If you want to contribute to the development of `scikit-talk,
+If you want to contribute to the development of scikit-talk,
 have a look at the [contribution guidelines](CONTRIBUTING.md).
 
 Detailed technical information on how to work with the code base can be found in [README.dev.md](README.dev.md).
