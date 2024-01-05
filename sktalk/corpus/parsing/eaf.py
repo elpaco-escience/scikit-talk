@@ -46,8 +46,7 @@ class EafFile(InputFile):
                         f"Tier {tier} not found in the file. Available tiers: {available}")
         else:
             tiers = available_tiers
-        utterances = [self._annotation_to_utterances(tier) for tier in tiers]
-        utterances = list(chain(*utterances))
+        utterances = [utterance for tier in tiers for utterance in self._annotation_to_utterances(tier)]
         sorting = [[*utt.time, index] for index, utt in enumerate(utterances)]
         return [utt for _, utt in sorted(zip(sorting, utterances))]
 
