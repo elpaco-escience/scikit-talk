@@ -13,7 +13,7 @@ def path_source():
 def eaf_info():
     n_utterances = 12
     utterance_first = "Ut enim ad minim veniam"
-    utterance_last = "eu fugiat nulla pariatur."
+    utterance_last = "eu fugiat nulla pariatur"
     participants = {'Aleph Alpha', 'Bet Beta', 'A_Words'}
     timing = [
         [0, 820],

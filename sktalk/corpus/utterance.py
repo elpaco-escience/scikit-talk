@@ -1,7 +1,9 @@
-import datetime
 import re
+import warnings
 from dataclasses import asdict
 from dataclasses import dataclass
+from datetime import datetime
+from datetime import timezone
 from typing import Any
 from typing import Optional
 
@@ -11,35 +13,32 @@ class Utterance:
     utterance: str
     participant: Optional[str] = None
     time: Optional[list] = None
-    begin: Optional[str] = None
-    end: Optional[str] = None
-    metadata: Optional[dict[str, Any]] = None
-    utterance_clean: Optional[str] = None
+    begin: Optional[int] = None
+    begin_timestamp: Optional[str] = None
+    end: Optional[int] = None
+    end_timestamp: Optional[str] = None
+    utterance_raw: Optional[str] = None
     utterance_list: Optional[list[str]] = None
     n_words: Optional[int] = None
     n_characters: Optional[int] = None
-    time_to_next: Optional[int] = None
-    dyadic: Optional[bool] = None
     FTO: Optional[int] = None
+    metadata: Optional[dict[str, Any]] = None
 
     def __post_init__(self):
-        # clean utterance:
-        if not self.utterance_clean:
-            self._clean_utterance()
+        if self.utterance_raw is None:  # if reading in existing data, we do not want to overwrite the raw utterance
+            self.utterance_raw = self.utterance
+        self.utterance = self._clean_utterance(self.utterance)
+        self.utterance_list = self.utterance.split()
+        self.n_words = len(self.utterance_list)
+        self.n_characters = sum(len(word) for word in self.utterance_list)
 
-        # generate a list of words in the utterance
-        if not self.utterance_list:
-            self.utterance_list = self.utterance_clean.split()
+        self._validate_time()
 
-        # count words and characters
-        if not self.n_words:
-            self.n_words = len(self.utterance_list)
-        if not self.n_characters:
-            self.n_characters = sum(len(word) for word in self.utterance_list)
-
-        # calculate timestamps
-        if not self.begin or not self.end:
-            self._split_time()
+        if (not self.begin or not self.end) and self.time:
+            self.begin = self.time[0]
+            self.end = self.time[1]
+            self.begin_timestamp = self._to_timestamp(self.begin)
+            self.end_timestamp = self._to_timestamp(self.end)
 
     def get_audio(self):
         pass
@@ -50,16 +49,6 @@ class Utterance:
     @classmethod
     def _fromdict(cls, fields):
         return Utterance(**fields)
-
-    def _clean_utterance(self):
-        # remove leading and trailing whitespace
-        self.utterance_clean = self.utterance.strip()
-        # remove square brackets and their contents, e.g. [laugh]
-        self.utterance_clean = re.sub(r'\[[^\]]*\]', '', self.utterance_clean)
-        # remove punctuation inside and outside of words
-        self.utterance_clean = re.sub(r'[^\w\s]', '', self.utterance_clean)
-        # remove numbers that are surrounded by spaces
-        self.utterance_clean = re.sub(r'\s\d+\s', ' ', self.utterance_clean)
 
     def until(self, other):
         return other.time[0] - self.time[1]
@@ -99,27 +88,35 @@ class Utterance:
             return None
         return self.time[0] - planning_buffer >= other.time[0]
 
-    def _split_time(self):
-        try:
-            begin, end = self.time
-            self.begin = self._to_timestamp(begin)
-            self.end = self._to_timestamp(end)
-        except (ValueError, TypeError):
-            self.begin = None
-            self.end = None
+    def _validate_time(self):
+        valid = isinstance(self.time, list) and len(self.time) == 2
+        valid = valid and all(isinstance(time, (float, int))
+                              for time in self.time)
+        valid = valid and all(time >= 0 and time < 86399999     # noqa R1716
+                              for time in self.time)
+        valid = valid and self.time[0] < self.time[1]
+
+        if not valid and self.time is not None:
+            warnings.warn(
+                f"utterance {self.utterance} has invalid time {self.time}")
+        if not valid:
+            self.time = None
 
     @staticmethod
     def _to_timestamp(time_ms):
-        try:
-            time_ms = float(time_ms)
-        except ValueError:
-            return None
-        if time_ms > 86399999:
-            raise ValueError(f"timestamp {time_ms} exceeds 24h")
-        if time_ms < 0:
-            raise ValueError(f"timestamp {time_ms} negative")
-        time_dt = datetime.datetime.utcfromtimestamp(time_ms/1000)
+        time_dt = datetime.fromtimestamp(time_ms/1000, tz=timezone.utc)
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
-    # TODO function: that prints summary of data, shows it to user
-    # TODO function: create a pandas data frame with the utterances
+    @staticmethod
+    def _clean_utterance(utterance):
+        bracketed_content = r'[\[<]\w*[\]>]'  # e.g. [laugh] or <laugh>
+        punctuation = r"[^\w\s']"  # except apostrophe
+        numbers = r'\b\d+\b'  # only as a single word, not when inside a word
+        multiple_spaces = r'\s+(?=\s{1})'
+
+        clean_utterance = str(utterance).strip()
+        for regex in [bracketed_content, punctuation, numbers, multiple_spaces]:
+            clean_utterance = re.sub(regex, '', clean_utterance)
+
+        clean_utterance = str(clean_utterance).strip()
+        return clean_utterance

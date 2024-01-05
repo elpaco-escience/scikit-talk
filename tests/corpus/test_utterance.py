@@ -1,27 +1,54 @@
+from contextlib import nullcontext as does_not_raise
 import pytest
 from sktalk.corpus.utterance import Utterance
 
 
 class TestUtterance():
-    @pytest.mark.parametrize("utt_in, nwords, nchars, uttlist", [
-        ("Hello world", 2, 10, ["Hello", "world"]),
-        ("One", 1, 3, ["One"]),
-        ("", 0, 0, []),
-        ("Hello [laugh]", 1, 5,  ["Hello"]),
-        ("[laugh] hello [laugh] [noise]!", 1, 5, ["hello"]),
-        ("Hello 567 world", 2, 10, ["Hello", "world"]),
-        ("He5lo wor4d", 2, 10, ["He5lo", "wor4d"]),
-        ("zung1 ji3 jyut6", 3, 13, ["zung1", "ji3", "jyut6"]),
-        ("上学 去, 我 现在 diaper@s 了 .", 6, 14,
+    @pytest.mark.parametrize("utt_in, utt_out, nwords, nchars, uttlist", [
+        ("Hello world", "Hello world", 2, 10, ["Hello", "world"]),
+        ("One", "One", 1, 3, ["One"]),
+        ("", "", 0, 0, []),
+        ("Hello [laugh]", "Hello", 1, 5,  ["Hello"]),
+        ("Hello <laugh>", "Hello", 1, 5,  ["Hello"]),
+        ("Hello (3.1)", "Hello", 1, 5,  ["Hello"]),
+        ("Hello (3.1) world", "Hello world", 2, 10,  ["Hello", "world"]),
+        ("(3.1) world", "world", 1, 5,  ["world"]),
+        ("[laugh] hello [laugh] [noise]!", "hello", 1, 5, ["hello"]),
+        ("Hello 567 world", "Hello world", 2, 10, ["Hello", "world"]),
+        ("He5lo wor4d", "He5lo wor4d", 2, 10, ["He5lo", "wor4d"]),
+        ("zung1 ji3 jyut6", "zung1 ji3 jyut6",
+         3, 13, ["zung1", "ji3", "jyut6"]),
+        ("上学 去, 我 现在 diaper@s 了 .", "上学 去 我 现在 diapers 了", 6, 14,
          ["上学", "去", "我", "现在", "diapers", "了"])
     ])
-    def test_postinit(self, utt_in, nwords, nchars, uttlist):
+    def test_postinit_utterance(self, utt_in, utt_out, nwords, nchars, uttlist):    # noqa: too-many-arguments
         utt = Utterance(
             utterance=utt_in
         )
+        assert utt.utterance == utt_out
         assert utt.n_words == nwords
         assert utt.n_characters == nchars
         assert utt.utterance_list == uttlist
+
+    @pytest.mark.parametrize("time_in, time_out, timestamp_begin, warning", [
+        (None, None, None, does_not_raise()),
+        ([222222, 400000], [222222, 400000], "00:03:42.222", does_not_raise()),
+        ("Text", None, None, pytest.warns(match="invalid time")),
+        ("[1,2,3]", None, None, pytest.warns(match="invalid time")),
+        ("[222222, 43523500000]", None, None,
+         pytest.warns(match="invalid time")),
+        ("[-4, 10]", None, None, pytest.warns(match="invalid time")),
+        ("[29, 10]", None, None, pytest.warns(match="invalid time")),
+        ("['text', 'text']", None, None, pytest.warns(match="invalid time"))
+    ])
+    def test_postinit_time(self, time_in, time_out, timestamp_begin, warning):
+        with warning:
+            utt = Utterance(
+                utterance="text",
+                time=time_in
+            )
+            assert utt.time == time_out
+            assert utt.begin_timestamp == timestamp_begin
 
     def test_asdict(self):
         utt = Utterance(
@@ -61,33 +88,12 @@ class TestUtterance():
             window) == expected_percentage
 
     milliseconds_timestamp = [
-        ["0", "00:00:00.000"],
-        ["1706326", "00:28:26.326"],
-        ["222222", "00:03:42.222"],
-        ["None", None]
+        [0, "00:00:00.000"],
+        [1706326, "00:28:26.326"],
+        [222222, "00:03:42.222"]
     ]
 
     @pytest.mark.parametrize("milliseconds, timestamp", milliseconds_timestamp)
     def test_to_timestamp(self, milliseconds, timestamp):
         utt = Utterance(utterance="")
         assert utt._to_timestamp(milliseconds) == timestamp   # noqa: W0212
-
-    def test_to_timestamp_errors(self):
-        utt = Utterance(utterance="")
-        with pytest.raises(ValueError, match="exceeds 24h"):
-            utt._to_timestamp("987654321")                    # noqa: W0212
-
-        with pytest.raises(ValueError, match="negative"):
-            utt._to_timestamp("-1")                           # noqa: W0212
-
-    time_begin_end = [[(1748070, 1751978), "00:29:08.070", "00:29:11.978"],
-                      [[1748070, 1751978], "00:29:08.070", "00:29:11.978"],
-                      [[1], None, None],
-                      [1, None, None],
-                      [None, None, None]]
-
-    @pytest.mark.parametrize("time, begin, end", time_begin_end)
-    def test_split_time(self, time, begin, end):
-        utt = Utterance(utterance="", time=time)
-        assert utt.begin == begin
-        assert utt.end == end

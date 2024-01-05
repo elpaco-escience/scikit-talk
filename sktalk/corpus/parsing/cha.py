@@ -66,19 +66,7 @@ class ChaFile(InputFile):
     def _clean_utterance(utterance):
         if re.match(ChaFile.SPACER_REGEX, utterance):
             return None
-        utterance = str(utterance)
-        utterance = re.sub(r"^([^:]+):", "", utterance)
-        utterance = re.sub(r"^\s+", "", utterance)
-        utterance = re.sub(r"[ \t]{1,5}$", "", utterance)
-        utterance = re.sub(r"\}$", "", utterance)
-        utterance = re.sub(r'^\"', "", utterance)
-        utterance = re.sub(r'\"$', "", utterance)
-        utterance = re.sub(r"^\'", "", utterance)
-        utterance = re.sub(r"\'$", "", utterance)
-        utterance = re.sub(r"\\x15\d+_\d+\\x15", "", utterance)
-        utterance = re.sub(r" {2}", " ", utterance)
-        utterance = re.sub(r"[ \t]{1,5}$", "", utterance)
-        return utterance
+        return str(utterance).strip()
 
     @staticmethod
     def _clean_timing(timing):
