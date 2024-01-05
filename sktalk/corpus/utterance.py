@@ -13,9 +13,9 @@ class Utterance:
     utterance: str
     participant: Optional[str] = None
     time: Optional[list] = None
-    begin: Optional[str] = None
+    begin: Optional[int] = None
     begin_timestamp: Optional[str] = None
-    end: Optional[str] = None
+    end: Optional[int] = None
     end_timestamp: Optional[str] = None
     utterance_raw: Optional[str] = None
     utterance_list: Optional[list[str]] = None
