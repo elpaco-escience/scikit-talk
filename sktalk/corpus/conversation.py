@@ -3,6 +3,7 @@ import warnings
 from typing import Optional
 import pandas as pd
 from .parsing.cha import ChaFile
+from .parsing.eaf import EafFile
 from .utterance import Utterance
 from .write.writer import Writer
 
@@ -61,9 +62,54 @@ class Conversation(Writer):
         """
         return self._metadata
 
+    def __len__(self):
+        """
+        Get the number of utterances in the conversation.
+
+        Returns:
+            int: The number of utterances in the conversation.
+        """
+        return len(self._utterances)
+
+    @property
+    def participants(self):
+        """
+        Get the participants in the conversation.
+
+        Returns:
+            set[str]: A set of unique participant names.
+        """
+        return {u.participant for u in self._utterances}
+
     @classmethod
     def from_cha(cls, path):
+        """Parse conversation file in Cha format
+
+        Args:
+            path (str): Path to the Cha file
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
         utterances, metadata = ChaFile(path).parse()
+        return cls(utterances, metadata)
+
+    @classmethod
+    def from_eaf(cls, path: str, tiers: Optional[list[str]] = None):
+        """Parse conversation file in ELAN format
+
+        Args:
+            path (str): Path to the ELAN file
+            tiers (Optional[list[str]], optional): List of tiers to parse. Defaults to None, in which case all tiers are parsed.
+                If an empty list is passed, all tiers are parsed, but a warning is issued.
+
+        Raises:
+            KeyError if tiers are named that are not found in the file.
+
+        Returns:
+            Conversation: A Conversation object representing the conversation in the file.
+        """
+        utterances, metadata = EafFile(path, tiers).parse()
         return cls(utterances, metadata)
 
     @classmethod
@@ -90,12 +136,44 @@ class Conversation(Writer):
     def get_utterance(self, index) -> "Utterance":  # noqa: F821
         raise NotImplementedError
 
-    def summarize(self):
+    def summary(self, n=10, **fields):
         """
-        Print a summary of the conversation.
+        Print the first n lines of a conversation.
+
+        Args:
+            n (int, optional): Number of lines to print. Defaults to 10.
+            fields (dict): key-value pairs with which specific utterances can be selected
         """
-        for utterance in self._utterances[:10]:
-            print(utterance)
+        selected = self.select(**fields)
+        for u in selected.utterances[:n]:
+            if len(u.time) != 2:
+                time = "(no timing information)"
+            else:
+                time = f"({u.time[0]} - {u.time[1]})"
+            print(f"{time} {u.participant}: '{u.utterance}'")
+
+    def select(self, **fields):
+        """Select utterances based on content in specific fields
+
+        Args:
+            fields (dict): key-value pairs with which specific utterances can be selected
+
+        Returns:
+            Conversation: Conversation object without metadata, containing a reduced set of utterances
+        """
+        utterances = [utterance for utterance in self._utterances if all(
+            getattr(utterance, key) == value for key, value in fields.items())]
+        return Conversation(utterances, suppress_warnings=True)
+
+    def remove(self, **fields):
+        """Remove utterances based on content in specific fields
+
+        Args:
+            fields (dict): key-value pairs with which specific utterances can be selected
+        """
+        to_remove = self.select(**fields)
+        self._utterances = [
+            u for u in self._utterances if u not in to_remove.utterances]
 
     def asdict(self):
         """
@@ -211,14 +289,14 @@ class Conversation(Writer):
         Returns:
             int: number of participants
         """
-        participants = [u.participant for u in self.utterances]
+        participants = self.participants
         if except_none:
             participants = [p for p in participants if p is not None]
-        return len(set(participants))
+        return len(participants)
 
     def _update(self, field: str, values: list, **kwargs):
         """
-        Update the all utterances in the conversation with calculated values
+        Update all utterances in the conversation with calculated values
 
         This function also stores relevant arguments in the Conversation metadata.
 
