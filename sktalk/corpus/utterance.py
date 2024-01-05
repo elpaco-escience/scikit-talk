@@ -14,28 +14,19 @@ class Utterance:
     begin: Optional[str] = None
     end: Optional[str] = None
     metadata: Optional[dict[str, Any]] = None
-    utterance_clean: Optional[str] = None
+    utterance_raw: Optional[str] = None
     utterance_list: Optional[list[str]] = None
     n_words: Optional[int] = None
     n_characters: Optional[int] = None
-    time_to_next: Optional[int] = None
-    dyadic: Optional[bool] = None
     FTO: Optional[int] = None
 
     def __post_init__(self):
-        # clean utterance:
-        if not self.utterance_clean:
-            self._clean_utterance()
-
-        # generate a list of words in the utterance
-        if not self.utterance_list:
-            self.utterance_list = self.utterance_clean.split()
-
-        # count words and characters
-        if not self.n_words:
-            self.n_words = len(self.utterance_list)
-        if not self.n_characters:
-            self.n_characters = sum(len(word) for word in self.utterance_list)
+        if not self.utterance_raw:  # if reading in existing data, we do not want to overwrite the raw utterance
+            self.utterance_raw = self.utterance
+        self.utterance = self._clean_utterance(self.utterance)
+        self.utterance_list = self.utterance.split()
+        self.n_words = len(self.utterance_list)
+        self.n_characters = sum(len(word) for word in self.utterance_list)
 
         # calculate timestamps
         if not self.begin or not self.end:
@@ -50,16 +41,6 @@ class Utterance:
     @classmethod
     def _fromdict(cls, fields):
         return Utterance(**fields)
-
-    def _clean_utterance(self):
-        # remove leading and trailing whitespace
-        self.utterance_clean = self.utterance.strip()
-        # remove square brackets and their contents, e.g. [laugh]
-        self.utterance_clean = re.sub(r'\[[^\]]*\]', '', self.utterance_clean)
-        # remove punctuation inside and outside of words
-        self.utterance_clean = re.sub(r'[^\w\s]', '', self.utterance_clean)
-        # remove numbers that are surrounded by spaces
-        self.utterance_clean = re.sub(r'\s\d+\s', ' ', self.utterance_clean)
 
     def until(self, other):
         return other.time[0] - self.time[1]
@@ -121,5 +102,16 @@ class Utterance:
         time_dt = datetime.datetime.utcfromtimestamp(time_ms/1000)
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
-    # TODO function: that prints summary of data, shows it to user
-    # TODO function: create a pandas data frame with the utterances
+    @staticmethod
+    def _clean_utterance(utterance):
+        bracketed_content = r'[\[<]\w*[\]>]'  # e.g. [laugh] or <laugh>
+        punctuation = r"[^\w\s']"  # except apostrophe
+        numbers = r'\b\d+\b'  # only as a single word, not when inside a word
+        multiple_spaces = r'\s+(?=\s{1})'
+
+        clean_utterance = str(utterance).strip()
+        for regex in [bracketed_content, punctuation, numbers, multiple_spaces]:
+            clean_utterance = re.sub(regex, '', clean_utterance)
+
+        clean_utterance = str(clean_utterance).strip()
+        return clean_utterance

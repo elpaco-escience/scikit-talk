@@ -3,22 +3,28 @@ from sktalk.corpus.utterance import Utterance
 
 
 class TestUtterance():
-    @pytest.mark.parametrize("utt_in, nwords, nchars, uttlist", [
-        ("Hello world", 2, 10, ["Hello", "world"]),
-        ("One", 1, 3, ["One"]),
-        ("", 0, 0, []),
-        ("Hello [laugh]", 1, 5,  ["Hello"]),
-        ("[laugh] hello [laugh] [noise]!", 1, 5, ["hello"]),
-        ("Hello 567 world", 2, 10, ["Hello", "world"]),
-        ("He5lo wor4d", 2, 10, ["He5lo", "wor4d"]),
-        ("zung1 ji3 jyut6", 3, 13, ["zung1", "ji3", "jyut6"]),
-        ("上学 去, 我 现在 diaper@s 了 .", 6, 14,
+    @pytest.mark.parametrize("utt_in, utt_out, nwords, nchars, uttlist", [
+        ("Hello world", "Hello world", 2, 10, ["Hello", "world"]),
+        ("One", "One", 1, 3, ["One"]),
+        ("", "", 0, 0, []),
+        ("Hello [laugh]", "Hello", 1, 5,  ["Hello"]),
+        ("Hello <laugh>", "Hello", 1, 5,  ["Hello"]),
+        ("Hello (3.1)", "Hello", 1, 5,  ["Hello"]),
+        ("Hello (3.1) world", "Hello world", 2, 10,  ["Hello", "world"]),
+        ("(3.1) world", "world", 1, 5,  ["world"]),
+        ("[laugh] hello [laugh] [noise]!", "hello", 1, 5, ["hello"]),
+        ("Hello 567 world", "Hello world", 2, 10, ["Hello", "world"]),
+        ("He5lo wor4d", "He5lo wor4d", 2, 10, ["He5lo", "wor4d"]),
+        ("zung1 ji3 jyut6", "zung1 ji3 jyut6",
+         3, 13, ["zung1", "ji3", "jyut6"]),
+        ("上学 去, 我 现在 diaper@s 了 .", "上学 去 我 现在 diapers 了", 6, 14,
          ["上学", "去", "我", "现在", "diapers", "了"])
     ])
-    def test_postinit(self, utt_in, nwords, nchars, uttlist):
+    def test_postinit(self, utt_in, utt_out, nwords, nchars, uttlist):
         utt = Utterance(
             utterance=utt_in
         )
+        assert utt.utterance == utt_out
         assert utt.n_words == nwords
         assert utt.n_characters == nchars
         assert utt.utterance_list == uttlist
