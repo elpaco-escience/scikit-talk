@@ -89,31 +89,19 @@ class Utterance:
         return self.time[0] - planning_buffer >= other.time[0]
 
     def _validate_time(self):
-        errormsg = f"utterance {self.utterance} has invalid time {self.time}"
+        valid = isinstance(self.time, list) and len(self.time) == 2 and all(
+            isinstance(time, (float, int)) for time in self.time) and all(
+            time >= 0 and time < 86399999 for time in self.time) and self.time[0] <= self.time[1]
 
-        if self.time is None:
-            return True
-
-        if not isinstance(self.time, list) or len(self.time) != 2:
-            warnings.warn(errormsg)
+        if not valid and self.time is not None:
+            warnings.warn(
+                f"utterance {self.utterance} has invalid time {self.time}")
+        if not valid:
             self.time = None
-            return False
-
-        if not all(isinstance(time, (float, int)) for time in self.time):
-            warnings.warn(errormsg)
-            self.time = None
-            return False
-
-        if any(time > 86399999 or time < 0 for time in self.time) or self.time[0] > self.time[1]:
-            warnings.warn(f"{errormsg}")
-            self.time = None
-            return False
-
-        return True
 
     @staticmethod
     def _to_timestamp(time_ms):
-        time_dt = datetime.fromtimestamp(time_ms/1000, tz = timezone.utc)
+        time_dt = datetime.fromtimestamp(time_ms/1000, tz=timezone.utc)
         return time_dt.strftime("%H:%M:%S.%f")[:-3]
 
     @staticmethod
