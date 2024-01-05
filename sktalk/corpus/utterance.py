@@ -1,10 +1,10 @@
 import datetime
 import re
+import warnings
 from dataclasses import asdict
 from dataclasses import dataclass
 from typing import Any
 from typing import Optional
-import warnings
 
 
 @dataclass

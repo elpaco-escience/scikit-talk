@@ -1,6 +1,6 @@
+from contextlib import nullcontext as does_not_raise
 import pytest
 from sktalk.corpus.utterance import Utterance
-from contextlib import nullcontext as does_not_raise
 
 
 class TestUtterance():
