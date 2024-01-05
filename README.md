@@ -6,7 +6,7 @@
 | :-- | :--  |
 | (1/5) code repository              | [![github repo badge](https://img.shields.io/badge/github-repo-000.svg?logo=github&labelColor=gray&color=blue)](git@github.com:elpaco-escience/scikit-talk) |
 | (2/5) license                      | [![github license badge](https://img.shields.io/github/license/elpaco-escience/scikit-talk)](git@github.com:elpaco-escience/scikit-talk) |
-| (3/5) community registry           | [![RSD](https://img.shields.io/badge/rsd-diversity-aware.svg)](https://www.research-software.nl/projects/diversity-aware) [![workflow pypi badge](https://img.shields.io/pypi/v/scikit-talk.svg?colorB=blue)](https://pypi.python.org/project/scikit-talk/) |
+| (3/5) community registry           | [![RSD](https://img.shields.io/badge/rsd-scikit-talk.svg)](https://research-software-directory.org/software/scikit-talk) [![workflow pypi badge](https://img.shields.io/pypi/v/scikit-talk.svg?colorB=blue)](https://pypi.python.org/project/scikit-talk/) |
 | (4/5) citation                     | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10462997.svg)](https://doi.org/10.5281/zenodo.10462997) |
 | (5/5) checklist                    | [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7195/badge)](https://www.bestpractices.dev/projects/7195) |
 | howfairis                          | [![fair-software badge](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu) |
