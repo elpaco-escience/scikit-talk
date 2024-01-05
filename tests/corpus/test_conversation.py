@@ -46,19 +46,19 @@ class TestConversation:
         selected_convo = convo.select(participant="A")
         assert selected_convo.participants == {"A"}
         assert len(selected_convo) == 3
-        selected_convo = convo.select(utterance="6 utterance F")
+        selected_convo = convo.select(utterance="X6 utterance F")
         assert len(selected_convo) == 1
-        assert selected_convo.utterances[0].utterance == "6 utterance F"
+        assert selected_convo.utterances[0].utterance == "X6 utterance F"
         selected_convo = convo.select()
         assert len(selected_convo) == 10
 
     def test_conversation_summary(self, convo, capfd):
         convo.summary(n=1)
         captured = capfd.readouterr()
-        assert captured.out.strip() == "(0 - 1000) A: '0 utterance A'"
+        assert captured.out.strip() == "(0 - 1000) A: 'X0 utterance A'"
         convo.summary(n=1, participant="C")
         captured = capfd.readouterr()
-        assert captured.out.strip() == "(5500 - 7500) C: '6 utterance F'"
+        assert captured.out.strip() == "(5500 - 7500) C: 'X6 utterance F'"
 
     def test_conversation_remove(self, convo, convo_meta):
         assert len(convo) == 10
