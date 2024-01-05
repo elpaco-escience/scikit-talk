@@ -134,81 +134,43 @@ bumpversion patch
 This section describes how to make a release in 3 parts:
 
 1. preparation
-1. making a release on PyPI
 1. making a release on GitHub
+1. verification
 
 ### (1/3) Preparation
 
 1. Update the <CHANGELOG.md> (don't forget to update links at bottom of page)
-2. Verify that the information in `CITATION.cff` is correct, and that `.zenodo.json` contains equivalent data
-3. Make sure the [version has been updated](#versioning).
-4. Run the unit tests with `pytest -v`
+1. Verify that the information in `CITATION.cff` is correct
+1. Make sure the [version has been updated](#versioning).
+1. Run the unit tests with `pytest -v`
 
-### (2/3) PyPI
+### (2/3) Release on GitHub
 
-In a new terminal, without an activated virtual environment or an env directory:
+Releases start on GitHub.
+Open [releases](https://github.com/elpaco-escience/scikit-talk/releases/new) and draft a new release.
+Copy the changelog for this version into the description.
+Tag the release according to [semantic versioning guidelines](https://semver.org/), preceded with a `v` (e.g.: v1.0.0).
+The release title is the tag and the release date together (e.g.: v1.0.0 (2019-07-25)).
 
-```shell
-# prepare a new directory
-cd $(mktemp -d scikit-talk.XXXXXX)
+The Zenodo integration will take care of updating the Zenodo record with a new release.
+Releasing on GitHub will also automatically trigger the publication of the release to PyPI, through a Github Action.
+To verify that everything works as expected, it is recommended to first publish a release candidate (see [below](#release-candidates)).
 
-# fresh git clone ensures the release has the state of origin/main branch
-git clone git@github.com:elpaco-escience/scikit-talk .
+> [!NOTE]
+>
+> #### Release candidates
+>
+> When releasing a release candidate on Github, tick the pre-release box, and amend the version tag with `-rc` and the candidate number (e.g. v1.0.0-rc1).
+> Ensure the release candidate version is accurate in `CITATION.cff`.
+> Versions with "rc" (release candidate) in their version tag will only be published to [test.PyPI](https://test.pypi.org/project/test-scikit-talk/).
+> Other version tags will trigger a [PyPI release](https://pypi.org/project/scikit-talk/).
+> Inspect `.github/workflows/publish-pypi.yml` for more information.
 
-# prepare a clean virtual environment and activate it
-python3 -m venv env
-source env/bin/activate
+### (3/3) Verification
 
-# make sure to have a recent version of pip and setuptools
-python3 -m pip install --upgrade pip setuptools
+1. Verify the publication to [testPyPI](https://test.pypi.org/project/test-scikit-talk/) or [PyPI](https://pypi.org/project/scikit-talk/) (depending on the version tag).
+1. Confirm that the released package can be installed
+    - from PyPI with `pip install scikit-talk`
+    - from test.PyPI with `pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/test-scikit-talk`
+1. The release should have triggered a [Zenodo upload](https://zenodo.org/doi/10.5281/zenodo.10462997). Confirm that the Zenodo record has been updated.
 
-# install runtime dependencies and publishing dependencies
-python3 -m pip install --no-cache-dir .
-python3 -m pip install --no-cache-dir .[publishing]
-
-# clean up any previously generated artefacts
-rm -rf scikit-talk.egg-info
-rm -rf dist
-
-# create the source distribution and the wheel
-python3 setup.py sdist bdist_wheel
-
-# upload to test pypi instance (requires credentials)
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-```
-
-Visit
-[https://test.pypi.org/project/scikit-talk](https://test.pypi.org/project/scikit-talk)
-and verify that your package was uploaded successfully. Keep the terminal open, we'll need it later.
-
-In a new terminal, without an activated virtual environment or an env directory:
-
-```shell
-cd $(mktemp -d scikit-talk-test.XXXXXX)
-
-# prepare a clean virtual environment and activate it
-python3 -m venv env
-source env/bin/activate
-
-# make sure to have a recent version of pip and setuptools
-pip install --upgrade pip setuptools
-
-# install from test pypi instance:
-python3 -m pip -v install --no-cache-dir \
---index-url https://test.pypi.org/simple/ \
---extra-index-url https://pypi.org/simple scikit-talk
-```
-
-Check that the package works as it should when installed from pypitest.
-
-Then upload to pypi.org with:
-
-```shell
-# Back to the first terminal,
-# FINAL STEP: upload to PyPI (requires credentials)
-twine upload dist/*
-```
-
-### (3/3) GitHub
-
-Don't forget to also make a [release on GitHub](git@github.com:elpaco-escience/scikit-talk/releases/new). If your repository uses the GitHub-Zenodo integration this will also trigger Zenodo into making a snapshot of your repository and sticking a DOI on it.
