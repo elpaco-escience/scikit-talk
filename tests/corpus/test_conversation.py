@@ -40,17 +40,17 @@ class TestConversation:
 
     def test_conversation_properties(self, convo):
         assert convo.participants == {"A", "B", "C", None}
-        assert convo.n_utterances == 10
+        assert len(convo) == 10
 
     def test_conversation_selection(self, convo):
         selected_convo = convo.select(participant="A")
         assert selected_convo.participants == {"A"}
-        assert selected_convo.n_utterances == 3
+        assert len(selected_convo) == 3
         selected_convo = convo.select(utterance="6 utterance F")
-        assert selected_convo.n_utterances == 1
+        assert len(selected_convo) == 1
         assert selected_convo.utterances[0].utterance == "6 utterance F"
         selected_convo = convo.select()
-        assert selected_convo.n_utterances == 10
+        assert len(selected_convo) == 10
 
     def test_conversation_summary(self, convo, capfd):
         convo.summary(n=1)
@@ -61,13 +61,13 @@ class TestConversation:
         assert captured.out.strip() == "(5500 - 7500) C: '6 utterance F'"
 
     def test_conversation_remove(self, convo, convo_meta):
-        assert convo.n_utterances == 10
+        assert len(convo) == 10
         convo.remove(participant="A")
-        assert convo.n_utterances == 7
+        assert len(convo) == 7
         # metadata is unaffected
         assert convo.metadata == convo_meta
         convo.remove(time=None)
-        assert convo.n_utterances == 6
+        assert len(convo) == 6
 
 
 class TestConversationMetrics:
