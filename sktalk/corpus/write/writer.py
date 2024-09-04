@@ -53,11 +53,11 @@ class Writer(abc.ABC):
         df = pd.DataFrame(norm)
         
         def process_element(x):
-                if isinstance(x, list):
-                    return ', '.join(x)
-                if isinstance(x, dict):
-                    return json.dumps(x)  # or ', '.join([f'{k}: {v}' for k, v in x.items()])
-                return x
+            if isinstance(x, list):
+                return ', '.join(x)
+            if isinstance(x, dict):
+                return json.dumps(x)  # or ', '.join([f'{k}: {v}' for k, v in x.items()])
+            return x
         
         df[:] = np.vectorize(process_element)(df)
         return df
