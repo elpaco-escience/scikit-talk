@@ -51,8 +51,16 @@ class Writer(abc.ABC):
     def _metadata_to_df(cls, metadata: dict):
         norm = pd.json_normalize(data=metadata, sep="_")
         df = pd.DataFrame(norm)
-        df[:] = np.vectorize(lambda x: ', '.join(
-            x) if isinstance(x, list) else x)(df)
+        
+        def process_element(x):
+            if isinstance(x, list):
+                return ', '.join(x)
+            elif isinstance(x, dict):
+                return json.dumps(x)  # or ', '.join([f'{k}: {v}' for k, v in x.items()])
+            else:
+                return x
+        
+        df[:] = np.vectorize(process_element)(df)
         return df
 
     @property
