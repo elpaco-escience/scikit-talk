@@ -1,0 +1,6 @@
+start_time,end_time,participant,utterance,key,language,uid
+2.0,2.9,pablo,"unit test",/public-dutch/dutch-01,dutch,dutch-public-000-000-000001
+1.2,2.5,pablo,"prueba de audio",/public-spanish/spanish-01,spanish,spanish-public-000-000-000001
+1.9,2.9,pablo,"los tests",/public-spanish/spanish-02,spanish,spanish-public-000-000-000002
+1.9,2.9,none,"nothing",/missing_file,klingon,klingon-000-000-000001
+10.2,12.5,pablo,"out of bounds",/public-spanish/spanish-wrong,spanish,spanish-public-000-000-000003
