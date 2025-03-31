@@ -4,33 +4,33 @@ from math import floor, ceil
 import warnings
 
 ## ===== Input/Output =====
-def extend_dataframe(df):
+def extend_dataframe(df, data_folder = "data"):
     """ Extends our dataframe with:
     - sample rate
     - the audio snippet 
     """
-    snippets = subset_all_audios(df)
+    snippets = subset_all_audios(df, data_folder)
     df.insert(len(df.columns), "audio", snippets)
 
-    rates = samplerate_from_keys(df["key"])
+    rates = samplerate_from_keys(df["key"], data_folder)
     df.insert(len(df.columns), "rate", rates)
 
     return df
 
-def audio_from_key(key, sr = None, **kwargs):
+def audio_from_key(key, sr = None, data_folder = "data", **kwargs):
     """ Equivalent to librosa.core.load, but works with keys instead of with filenames """
     try: # This try/catch structure allows the workflow to continue when batch-processing files
-        audio, rate = librosa.core.load(filename_from_key(key), sr=sr, **kwargs) # sr=None uses the native sampling rate
+        audio, rate = librosa.core.load(filename_from_key(key, data_folder), sr=sr, **kwargs) # sr=None uses the native sampling rate
         audio = audio.astype('float32')
     except:
         warnings.warn(f"Something went wrong with key: {key}")
         audio = [None]
     return audio # We'll ignore the rate in this function output
 
-def samplerate_from_key(key, **kwargs):
+def samplerate_from_key(key, data_folder = "data", **kwargs):
     """ Equivalent to librosa.get_samplerate, but works with keys instead of with filenames """
     try: # This try/catch structure allows the workflow to continue when batch-processing files
-        sr = librosa.get_samplerate(filename_from_key(key), **kwargs)
+        sr = librosa.get_samplerate(filename_from_key(key, data_folder), **kwargs)
     except:
         warnings.warn(f"Something went wrong with key: {key}")
         sr = 0
@@ -58,7 +58,7 @@ def subset_audio(audio, start_time, end_time, rate):
         return [None]
 
 
-def subset_audio_from_key(df, key, row=0, start_time = None, end_time = None):
+def subset_audio_from_key(df, key, row=0, start_time = None, end_time = None, data_folder = "data"):
     """
     Extracts a subset of audio from a given key in the dataframe.
 
@@ -74,8 +74,8 @@ def subset_audio_from_key(df, key, row=0, start_time = None, end_time = None):
     """
 
     # Get the audio
-    sr = samplerate_from_key(key)
-    audio = audio_from_key(key, sr)
+    sr = samplerate_from_key(key, data_folder)
+    audio = audio_from_key(key, sr, data_folder)
 
     # Cut it
     ## First, we filter by key
@@ -95,11 +95,12 @@ def subset_audio_from_key(df, key, row=0, start_time = None, end_time = None):
 
     return subset_audio(audio, start_time, end_time, sr)
 
-def subset_all_audios(df):
+def subset_all_audios(df, data_folder = "data"):
     """Extracts all the audio snippets
 
     Args:
         df (pd.Dataframe): our data frame
+        data_folder: location of the .wav files
 
     Returns:
         np.array: A list with the audio clippings
@@ -111,8 +112,8 @@ def subset_all_audios(df):
     keys = df['key'].unique()
     for key in keys:
         # Open the audio file only once per file (as opposed to once per row)
-        audio = audio_from_key(key)
-        rate = samplerate_from_key(key)
+        audio = audio_from_key(key, data_folder=data_folder)
+        rate = samplerate_from_key(key, data_folder)
 
         # Extract and append the relevant audio snippet
         aux = df[df['key'] == key]
@@ -123,8 +124,8 @@ def subset_all_audios(df):
     return snippets
 
 # Some handy list comprehensions
-def samplerate_from_keys(keys, **kwargs):
-    return [samplerate_from_key(key, **kwargs) for key in keys]
+def samplerate_from_keys(keys, data_folder = "data", **kwargs):
+    return [samplerate_from_key(key, data_folder, **kwargs) for key in keys]
 
 ## ===== Auxiliary functions =====
 def filename_from_key(key, data_folder = "data", ext = ".wav"):
@@ -132,7 +133,7 @@ def filename_from_key(key, data_folder = "data", ext = ".wav"):
     return data_folder + key + ext #TODO: consider improving this using os.path
 
 
-def listen_audio_from_key(df, key, row=0, start_time = None, end_time = None):
+def listen_audio_from_key(df, key, row=0, start_time = None, end_time = None, data_folder = "data"):
     """
     Plays a subset of audio from a given key in the dataframe.
 
@@ -142,11 +143,12 @@ def listen_audio_from_key(df, key, row=0, start_time = None, end_time = None):
     row (int, optional): The row index to use if multiple rows match the key. Defaults to 0.
     start_time (float, optional): The start time for the audio subset. If None, it is taken from the dataframe. Defaults to None.
     end_time (float, optional): The end time for the audio subset. If None, it is taken from the dataframe. Defaults to None.
+    data_folder (optional): The location of the .wav files
 
     Returns:
     Audio: A playable audio object
     """
-    subset = subset_audio_from_key(df, key, row, start_time, end_time)
+    subset = subset_audio_from_key(df, key, row, start_time, end_time, data_folder)
 
     return Audio(data = subset, rate = samplerate_from_key(key))
 

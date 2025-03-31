@@ -2,6 +2,8 @@ import numpy as np
 from pandas import read_csv
 from sktalk.corpus.parsing.csv import *
 
+data_folder = "tests/testdata/csv"
+
 def test_samplerate_from_key():
     test_cases = [
         ("/public-dutch/dutch-01", 24000),
@@ -11,7 +13,7 @@ def test_samplerate_from_key():
     ]
     
     for key, expected_rate in test_cases:
-        rate = samplerate_from_key(key)
+        rate = samplerate_from_key(key, data_folder)
         assert(rate == expected_rate)
 
 def test_audio_from_key():
@@ -28,7 +30,7 @@ def test_audio_from_key():
     ]
 
     for key, expected_checksum in test_cases:
-        audio = audio_from_key(key)
+        audio = audio_from_key(key, data_folder=data_folder)
         if expected_checksum is None:
             assert(audio == [None])
         else:
@@ -37,7 +39,7 @@ def test_audio_from_key():
 
 def test_extend_dataframe():
     df = read_csv("tests/testdata/test_csv.csv")
-    df = extend_dataframe(df)
+    df = extend_dataframe(df, data_folder)
 
     expected_values = {
         "key": ["/public-dutch/dutch-01", "/public-spanish/spanish-01", "/public-spanish/spanish-02", "/missing_file", "/public-spanish/spanish-wrong"],
